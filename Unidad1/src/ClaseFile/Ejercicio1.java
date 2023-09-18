@@ -61,6 +61,7 @@ public class Ejercicio1 {
 				System.out.println("Objeto borrado");
 			}
 			else {
+				//Si la carpeta no está vacía no se borra y se produce un error
 				System.out.println("Error al borrar el objeto");
 			}
 		}
