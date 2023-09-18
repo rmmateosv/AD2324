@@ -103,3 +103,40 @@ user global configuration and to define the default location to store repositori
 not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
 EGit might behave differently since they see different configuration options.
 This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY org.eclipse.equinox.security 1 0 2023-09-18 13:05:19.494
+!MESSAGE New keyring password generated. 
+
+!ENTRY org.eclipse.egit.core 4 0 2023-09-18 13:05:45.415
+!MESSAGE An exception occurred during push on URI https://github.com/rmmateosv/AD2324.git: https://github.com/rmmateosv/AD2324.git: not authorized
+!STACK 0
+org.eclipse.jgit.errors.TransportException: https://github.com/rmmateosv/AD2324.git: not authorized
+	at org.eclipse.jgit.transport.TransportHttp.connect(TransportHttp.java:696)
+	at org.eclipse.jgit.transport.TransportHttp.connect(TransportHttp.java:638)
+	at org.eclipse.jgit.transport.TransportHttp.openPush(TransportHttp.java:541)
+	at org.eclipse.jgit.transport.PushProcess.execute(PushProcess.java:138)
+	at org.eclipse.jgit.transport.Transport.push(Transport.java:1537)
+	at org.eclipse.egit.core.op.PushOperation.run(PushOperation.java:269)
+	at org.eclipse.egit.ui.internal.push.PushJob.performJob(PushJob.java:86)
+	at org.eclipse.egit.ui.internal.jobs.RepositoryJob.run(RepositoryJob.java:59)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+
+!ENTRY org.eclipse.egit.ui 4 0 2023-09-18 13:05:45.417
+!MESSAGE Can't connect to any repository: https://github.com/rmmateosv/AD2324.git (https://github.com/rmmateosv/AD2324.git: not authorized)
+
+!ENTRY org.eclipse.egit.core 4 0 2023-09-18 13:08:24.037
+!MESSAGE An exception occurred during push on URI https://github.com/rmmateosv/AD2324.git: https://github.com/rmmateosv/AD2324.git: not authorized
+!STACK 0
+org.eclipse.jgit.errors.TransportException: https://github.com/rmmateosv/AD2324.git: not authorized
+	at org.eclipse.jgit.transport.TransportHttp.connect(TransportHttp.java:696)
+	at org.eclipse.jgit.transport.TransportHttp.connect(TransportHttp.java:638)
+	at org.eclipse.jgit.transport.TransportHttp.openPush(TransportHttp.java:541)
+	at org.eclipse.jgit.transport.PushProcess.execute(PushProcess.java:138)
+	at org.eclipse.jgit.transport.Transport.push(Transport.java:1537)
+	at org.eclipse.egit.core.op.PushOperation.run(PushOperation.java:269)
+	at org.eclipse.egit.ui.internal.push.PushJob.performJob(PushJob.java:86)
+	at org.eclipse.egit.ui.internal.jobs.RepositoryJob.run(RepositoryJob.java:59)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+
+!ENTRY org.eclipse.egit.ui 4 0 2023-09-18 13:08:24.039
+!MESSAGE Can't connect to any repository: https://github.com/rmmateosv/AD2324.git (https://github.com/rmmateosv/AD2324.git: not authorized)
