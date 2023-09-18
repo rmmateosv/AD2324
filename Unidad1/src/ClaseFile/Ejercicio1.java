@@ -42,14 +42,14 @@ public class Ejercicio1 {
 					renombrarFichero();
 					break;
 				case 5:
-					borrarFichero();
+					borrarObjeto();
 					break;
 				
 			}
 		
 		}while(opcion!=0);
 	}
-	private static void borrarFichero() {
+	private static void borrarObjeto() {
 		// TODO Auto-generated method stub
 		mostrarContenido();
 		System.out.println("Introduce el nombre del objeto a borrar");
@@ -63,6 +63,9 @@ public class Ejercicio1 {
 			else {
 				System.out.println("Error al borrar el objeto");
 			}
+		}
+		else {
+			System.out.println("Error, no existe el objeto");
 		}
 		
 	}
