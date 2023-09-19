@@ -10,7 +10,7 @@ public class Ejercicio1 {
 	
 	public static Scanner t  = new Scanner(System.in);
 	//Ruta de la carpeta
-	public static String rutaCarpeta = "C:\\rosa";
+	public static String rutaCarpeta = "rosa";
 	
 	//Tenemos que declarar un objeto que represente el formato deseado de fecha
 	static SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy hh:mm");
@@ -26,6 +26,7 @@ public class Ejercicio1 {
 			System.out.println("3-Crear fichero o carpeta");
 			System.out.println("4-Renombrar fichero");
 			System.out.println("5-Borrar fichero");
+			System.out.println("6-Mostrar contenido de miCarpeta recursivo");
 			opcion = t.nextInt();t.nextLine();
 			
 			switch(opcion) {
@@ -34,6 +35,7 @@ public class Ejercicio1 {
 					break;
 				case 2:
 					mostrarContenido();
+					
 					break;
 				case 3:
 					crearObjeto();
@@ -44,10 +46,29 @@ public class Ejercicio1 {
 				case 5:
 					borrarObjeto();
 					break;
+				case 6:
+					mostrarContenido(rutaCarpeta,0);
 				
 			}
 		
 		}while(opcion!=0);
+	}
+	private static void mostrarContenido(String ruta, int numTab) {
+		// TODO Auto-generated method stub
+		File f = new File(ruta);
+		//Obtener el contenido
+		File[] contenido = f.listFiles();
+		//Recorremos contenido para mostrar
+		for(File c:contenido) {	
+			//Pintar tabulaciones
+			for(int i=0;i<numTab;i++) {
+				System.out.print("\t");
+			}
+			System.out.println(c.getName());
+			if(c.isDirectory()) {
+				mostrarContenido(c.getAbsolutePath(), numTab+1);
+			}
+		}
 	}
 	private static void borrarObjeto() {
 		// TODO Auto-generated method stub
