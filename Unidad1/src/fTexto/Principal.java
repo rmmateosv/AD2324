@@ -2,6 +2,7 @@ package fTexto;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Principal {
@@ -18,7 +19,7 @@ public class Principal {
 			System.out.println("0-Salir");
 			System.out.println("1-Alta Alumno");
 			System.out.println("2-Mostrar Alumnos");
-			System.out.println("3-Modificar Alumno");
+			System.out.println("3-Baja Alumno");
 			System.out.println("4-Borrar Alumno");
 			System.out.println("5-Mostrar por dni");
 			opcion = t.nextInt();
@@ -29,7 +30,7 @@ public class Principal {
 				altaAlumno();
 				break;
 			case 2:
-
+				mostrarAlumnos();
 				break;
 			case 3:
 
@@ -46,6 +47,15 @@ public class Principal {
 		} while (opcion != 0);
 	}
 
+	private static void mostrarAlumnos() {
+		// TODO Auto-generated method stub
+		ArrayList<Alumno> alumnos= ad.obtenerAlumnos();
+		for(Alumno a:alumnos) {
+			System.out.println(a);
+		}
+		
+	}
+
 	private static void altaAlumno() {
 		// TODO Auto-generated method stub
 		try {
@@ -55,8 +65,9 @@ public class Principal {
 			// Comprobar si existe el dni en el fichero
 			Alumno a = ad.obtenerAlumno(dni);
 			if (a == null) {
-				// Alumno no existes, por lo que se puede crear
+				// Alumno no existe, por lo que se puede crear
 				a= new Alumno();
+				a.setDni(dni);
 				// Pedir resto de datos
 				System.out.println("Nombre:");
 				a.setNombre(t.nextLine());

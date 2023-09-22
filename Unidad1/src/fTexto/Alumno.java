@@ -1,5 +1,6 @@
 package fTexto;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Alumno {
@@ -57,6 +58,16 @@ public class Alumno {
 	public void setActivo(boolean activo) {
 		this.activo = activo;
 	}
+	@Override
+	public String toString() {
+		SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+		return "Alumno [dni=" + dni + ", "
+				+ "nombre=" + nombre + ", "
+				+ "fechaN=" + formatoFecha.format(fechaN) + ", "
+				+ "numExp=" + numExp + ", estatura="
+				+ estatura + ", activo=" + activo + "]";
+	}
+	
 	
 	
 }
