@@ -63,6 +63,20 @@ public class Principal {
 				System.out.println("Fecha Nacimiento (dd/mm/yyyy)");
 
 				a.setFechaN(ad.formatoFecha.parse(t.nextLine()));
+				System.out.println("Nº de expediente:");
+				a.setNumExp(t.nextInt());t.nextLine();
+				System.out.println("Estatura:");
+				a.setEstatura(t.nextFloat());t.nextLine();
+				a.setActivo(true);
+				
+				//Guardar el alumno en el fichero
+				if(ad.crearAlumno(a)) {
+					System.out.println("Alumno creado");
+				}
+				else {
+					
+					System.out.println("Error, alumno no creado");
+				}
 
 			} else {
 				System.out.println("Error, el alumno ya existe");
