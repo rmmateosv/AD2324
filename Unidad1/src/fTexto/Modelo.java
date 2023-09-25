@@ -228,4 +228,71 @@ public class Modelo {
 		return resultado;
 	}
 
+	public boolean borrarAlumno(Alumno a) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		
+		//Declarar dos ficheros el fichero Original, para leer
+		//un fichero tmp para escribir
+		BufferedReader fOriginal = null;
+		BufferedWriter fTmp = null;
+		try {
+			//Abrir los dos ficheros
+			fOriginal = new BufferedReader(new FileReader(nombreFichero));
+			fTmp = new BufferedWriter(new FileWriter("alumnos.tmp",false));
+			
+			//REcorrer el fOriginal
+			String linea;
+			while((linea=fOriginal.readLine())!=null) {
+				//Dividir la línea en campos
+				String[] campos = linea.split(";");
+				//Comprobar si hay que modificar el alumno o no
+				if(!campos[0].equalsIgnoreCase(a.getDni())) {
+					//Escribir el alumno en el fichero temporal
+					fTmp.write(linea+"\n");				
+				}
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			if(fOriginal!=null) {
+				try {
+					fOriginal.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if(fTmp!=null) {
+				try {
+					fTmp.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		//Borrar el fichero original y renombrar el temporal
+		File fO = new File(nombreFichero);
+		File fT = new File("alumnos.tmp");
+		if(fO.delete()) {
+			//REnombrar
+			if(fT.renameTo(fO)) {
+				resultado = true;
+			}
+			else {
+				System.out.println("Error, no se ha podido borrar el fT");
+			}
+		}
+		else {
+			System.out.println("Error, no se ha podido borrar el fO");
+		}
+		return resultado;
+	}
+
 }

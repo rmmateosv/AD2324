@@ -36,15 +36,46 @@ public class Principal {
 				bajaAlumno();
 				break;
 			case 4:
-
+				borrarAlumno();
 				break;
 			case 5:
-
+				mostrarPorDni();
 				break;
 
 			}
 
 		} while (opcion != 0);
+	}
+
+	private static void mostrarPorDni() {
+		// TODO Auto-generated method stub
+		mostrarAlumnos();
+		System.out.println("Introduce DNI");
+		Alumno a = ad.obtenerAlumno(t.nextLine());
+		if(a!=null) {
+			System.out.println(a);
+		}
+		else {
+			System.out.println("Erorr, el alumno no existe");
+		}
+	}
+
+	private static void borrarAlumno() {
+		// TODO Auto-generated method stub
+		mostrarAlumnos();
+		System.out.println("Introduce dni:");
+		Alumno a = ad.obtenerAlumno(t.nextLine());
+		if(a!=null) {
+			if(ad.borrarAlumno(a)) {
+				System.out.println("Alumno  borrado");
+			}
+			else {
+				System.out.println("Error al borrar el alumno");
+			}
+		}
+		else {
+			System.out.println("Error, no existe alumno");
+		}
 	}
 
 	private static void bajaAlumno() {
