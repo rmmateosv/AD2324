@@ -33,7 +33,7 @@ public class Principal {
 				mostrarAlumnos();
 				break;
 			case 3:
-
+				bajaAlumno();
 				break;
 			case 4:
 
@@ -45,6 +45,24 @@ public class Principal {
 			}
 
 		} while (opcion != 0);
+	}
+
+	private static void bajaAlumno() {
+		// TODO Auto-generated method stub
+		mostrarAlumnos();
+		System.out.println("Introduce dni:");
+		Alumno a = ad.obtenerAlumno(t.nextLine());
+		if(a!=null) {
+			if(ad.bajaAlumno(a)) {
+				System.out.println("Alumno dado de baja");
+			}
+			else {
+				System.out.println("Error al dar de baja el alumno");
+			}
+		}
+		else {
+			System.out.println("Error, no existe alumno");
+		}
 	}
 
 	private static void mostrarAlumnos() {
