@@ -9,7 +9,7 @@ public class Principal {
 	public static Scanner t = new Scanner(System.in);
 
 	// Declaramos el objeto modelo que accede a los datos
-	public static Modelo ad = new Modelo("alumnos.txt");
+	public static Modelo ad = new Modelo("asignaturas.bin");
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -51,7 +51,7 @@ public class Principal {
 			
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Error, formato de fecha incorrecto");
 		}
 		
 		
