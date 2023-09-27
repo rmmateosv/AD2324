@@ -49,6 +49,14 @@ public class Principal {
 			//Obtener el id
 			as.setId(ad.obtenerId());
 			
+			//Crear la asignaturas en fichero binario
+			if(ad.crearAsig(as)) {
+				System.out.println("Asignatura creada: "+as);
+			}
+			else {
+				System.out.println("Error, no se ha creado la asignatura");
+			}
+			
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Error, formato de fecha incorrecto");

@@ -1,8 +1,10 @@
 package fBinario;
 
+import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -10,7 +12,7 @@ public class Modelo {
 	private String nombreFichero; // Fichero binario de asignaturas
 
 	// Fichero de accceso aleatorio para obtener el id de nueva asig
-	private String nombreFichConfig = ".config";
+	private String nombreFichConfig = ".Miconfig";
 
 	public Modelo(String nombreFichero) {
 		this.nombreFichero = nombreFichero;
@@ -30,12 +32,12 @@ public class Modelo {
 		RandomAccessFile fA = null;
 
 		try {
-			// Abrir el fichero RandomAccessFile para leer y escribir (rw)
-			fA = new RandomAccessFile(nombreFichConfig, "rw");
-			
 			// Chequear si existe .config
 			File f = new File(nombreFichConfig);
-			if (f.exists()) {
+			boolean existe = f.exists();
+			// Abrir el fichero RandomAccessFile para leer y escribir (rw)
+			fA = new RandomAccessFile(nombreFichConfig, "rw");
+			if (existe) {
 				// Recorrer el fichero y leer el nº
 				while (true) {
 					// Leer el nº
@@ -43,10 +45,15 @@ public class Modelo {
 					// Colocamos el apuntador del fichero al principio para sobreescribir el nº
 					// Despalazamos hacia atrás(restamos) 4 Bytes
 					fA.seek(fA.getFilePointer() - 4);
+					// Escribimos el nuevo nº
+					fA.writeInt(resultado);
 				}
 			}
-			// Escribimos el nuevo nº
-			fA.writeInt(resultado);
+			else {
+				// Escribimos el nuevo nº
+				fA.writeInt(resultado);
+			}
+			
 			
 		} catch (EOFException e) {
 			// TODO: handle exception
@@ -66,6 +73,47 @@ public class Modelo {
 			}
 		}
 
+		return resultado;
+	}
+
+	public boolean crearAsig(Asignatura as) {
+		// TODO Auto-generated method stub
+		boolean resultado=false;
+		
+		//Declarar fichero 
+		DataOutputStream f = null;
+		
+		
+		try {
+			//abrir fichero
+			f = new DataOutputStream(new FileOutputStream(nombreFichero,true));
+			//Escribir asignatura
+			//ID (int)
+			f.writeInt(as.getId());
+			//Nombre
+			f.writeChars(as.getNombre()+"\n");
+			//Fecha (long)
+			f.writeLong(as.getFechaRD().getTime());
+			f.writeFloat(as.getCreditos());
+			f.writeBoolean(as.isActiva());
+			resultado = true;
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			if(f!=null) {
+				try {
+					f.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 		return resultado;
 	}
 
