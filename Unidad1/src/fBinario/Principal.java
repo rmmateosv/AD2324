@@ -28,10 +28,21 @@ public class Principal {
 			case 1:
 				altaAsignatura();
 				break;
+			case 2:
+				mostrarAsignaturas();
+				break;
 			
 			}
 
 		} while (opcion != 0);
+	}
+
+	private static void mostrarAsignaturas() {
+		// TODO Auto-generated method stub
+		ArrayList<Asignatura> asigs = ad.obtenerAsignaturas();
+		for(Asignatura as:asigs) {
+			System.out.println(as);
+		}
 	}
 
 	private static void altaAsignatura() {

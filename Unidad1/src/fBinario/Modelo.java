@@ -1,12 +1,16 @@
 package fBinario;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class Modelo {
 	private String nombreFichero; // Fichero binario de asignaturas
@@ -100,6 +104,57 @@ public class Modelo {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			if(f!=null) {
+				try {
+					f.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return resultado;
+	}
+
+	public ArrayList<Asignatura> obtenerAsignaturas() {
+		// TODO Auto-generated method stub
+		ArrayList<Asignatura> resultado = new ArrayList<Asignatura>();
+		
+		DataInputStream f = null;
+		
+		try {
+			f=new DataInputStream(new FileInputStream(nombreFichero));
+			while(true) {
+				Asignatura as = new Asignatura();
+				as.setId(f.readInt());
+				//Nombre
+				char letra;
+				//Inicializamos el nombre a vacío para
+				//poder concatenar
+				as.setNombre("");
+				while((letra=f.readChar())!='\n') {
+					as.setNombre(as.getNombre()+letra);
+				}
+				//Convertir fecha long en fecha Date
+				as.setFechaRD(new Date(f.readLong()));
+				as.setCreditos(f.readFloat());
+				as.setActiva(f.readBoolean());
+				
+				resultado.add(as);
+				
+			}
+		} 
+		catch (EOFException e) {
+			// TODO: handle exception
+		}
+		catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Aún no hay asignaturas");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
