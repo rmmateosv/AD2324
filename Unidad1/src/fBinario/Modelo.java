@@ -52,13 +52,11 @@ public class Modelo {
 					// Escribimos el nuevo nº
 					fA.writeInt(resultado);
 				}
-			}
-			else {
+			} else {
 				// Escribimos el nuevo nº
 				fA.writeInt(resultado);
 			}
-			
-			
+
 		} catch (EOFException e) {
 			// TODO: handle exception
 		} catch (IOException e) {
@@ -82,21 +80,20 @@ public class Modelo {
 
 	public boolean crearAsig(Asignatura as) {
 		// TODO Auto-generated method stub
-		boolean resultado=false;
-		
-		//Declarar fichero 
+		boolean resultado = false;
+
+		// Declarar fichero
 		DataOutputStream f = null;
-		
-		
+
 		try {
-			//abrir fichero
-			f = new DataOutputStream(new FileOutputStream(nombreFichero,true));
-			//Escribir asignatura
-			//ID (int)
+			// abrir fichero
+			f = new DataOutputStream(new FileOutputStream(nombreFichero, true));
+			// Escribir asignatura
+			// ID (int)
 			f.writeInt(as.getId());
-			//Nombre
-			f.writeChars(as.getNombre()+"\n");
-			//Fecha (long)
+			// Nombre
+			f.writeChars(as.getNombre() + "\n");
+			// Fecha (long)
 			f.writeLong(as.getFechaRD().getTime());
 			f.writeFloat(as.getCreditos());
 			f.writeBoolean(as.isActiva());
@@ -107,9 +104,8 @@ public class Modelo {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		finally {
-			if(f!=null) {
+		} finally {
+			if (f != null) {
 				try {
 					f.close();
 				} catch (IOException e) {
@@ -124,43 +120,40 @@ public class Modelo {
 	public ArrayList<Asignatura> obtenerAsignaturas() {
 		// TODO Auto-generated method stub
 		ArrayList<Asignatura> resultado = new ArrayList<Asignatura>();
-		
+
 		DataInputStream f = null;
-		
+
 		try {
-			f=new DataInputStream(new FileInputStream(nombreFichero));
-			while(true) {
+			f = new DataInputStream(new FileInputStream(nombreFichero));
+			while (true) {
 				Asignatura as = new Asignatura();
 				as.setId(f.readInt());
-				//Nombre
+				// Nombre
 				char letra;
-				//Inicializamos el nombre a vacío para
-				//poder concatenar
+				// Inicializamos el nombre a vacío para
+				// poder concatenar
 				as.setNombre("");
-				while((letra=f.readChar())!='\n') {
-					as.setNombre(as.getNombre()+letra);
+				while ((letra = f.readChar()) != '\n') {
+					as.setNombre(as.getNombre() + letra);
 				}
-				//Convertir fecha long en fecha Date
+				// Convertir fecha long en fecha Date
 				as.setFechaRD(new Date(f.readLong()));
 				as.setCreditos(f.readFloat());
 				as.setActiva(f.readBoolean());
-				
+
 				resultado.add(as);
-				
+
 			}
-		} 
-		catch (EOFException e) {
+		} catch (EOFException e) {
 			// TODO: handle exception
-		}
-		catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Aún no hay asignaturas");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		finally {
-			if(f!=null) {
+		} finally {
+			if (f != null) {
 				try {
 					f.close();
 				} catch (IOException e) {
@@ -168,6 +161,191 @@ public class Modelo {
 					e.printStackTrace();
 				}
 			}
+		}
+		return resultado;
+	}
+
+	public Asignatura obtenerAsignatura(int id) {
+		Asignatura resultado = null;
+
+		// TODO Auto-generated method stub
+		DataInputStream ra = null;
+		try {
+			ra = new DataInputStream(new FileInputStream(nombreFichero));
+			while (true) {
+				if (ra.readInt() == id) {
+					resultado = new Asignatura();
+
+					resultado.setId(id);
+					char letra;
+					resultado.setNombre("");
+					while ((letra = ra.readChar()) != '\n') {
+						resultado.setNombre(resultado.getNombre() + letra);
+					}
+					resultado.setFechaRD(new Date(ra.readLong()));
+					resultado.setCreditos(ra.readFloat());
+					resultado.setActiva(ra.readBoolean());
+					return resultado;
+				} else {
+					// Si la asignatura no es la buscada
+					// Leer todos los datos para avanzar al siguiente id
+					while (ra.readChar() != '\n') {
+					}
+					ra.readLong();
+					ra.readFloat();
+					ra.readBoolean();
+				}
+			}
+		} catch (FileNotFoundException e) {
+			// TODO: handle exception
+			System.out.println("Aún no hay asignaturas");
+		} catch (EOFException e) {
+
+		} catch (IOException e) {
+
+		} finally {
+			if (ra != null) {
+				try {
+					ra.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return resultado;
+	}
+
+	public boolean darBajaAsignatura(Asignatura a) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		DataOutputStream fTmp = null;
+		DataInputStream f = null;
+		try {
+			fTmp = new DataOutputStream(new FileOutputStream("asignaturas.tmp", false));
+			f = new DataInputStream(new FileInputStream(nombreFichero));
+			while (true) {
+				int id = f.readInt();
+				// Escribo el id
+
+				fTmp.writeInt(id);
+				char letra;
+				String nombre = "";
+				while ((letra = f.readChar()) != '\n') {
+					nombre += letra;
+				}
+				fTmp.writeChars(nombre + "\n");
+				fTmp.writeLong(f.readLong());
+				fTmp.writeFloat(f.readFloat());
+				boolean activa = f.readBoolean();
+				if (id == a.getId()) {
+					// Modificar el campo activa
+					activa = false;
+				}
+				fTmp.writeBoolean(activa);
+
+			}
+		} catch (EOFException e) {
+			// TODO: handle exception
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (f != null)
+					f.close();
+				if (fTmp != null)
+					fTmp.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		// Borrar y renombrar
+		File fO = new File(nombreFichero);
+		if (fO.delete()) {
+			File fT = new File("asignaturas.tmp");
+			if (fT.renameTo(fO)) {
+				resultado = true;
+			} else {
+				System.out.println("Error al renombrar");
+			}
+		} else {
+			System.out.println("Error al borrar fichero original");
+		}
+		return resultado;
+	}
+
+	public boolean borrarAsignatura(Asignatura a) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		DataOutputStream fTmp = null;
+		DataInputStream f = null;
+		try {
+			fTmp = new DataOutputStream(new FileOutputStream("asignaturas.tmp", false));
+			f = new DataInputStream(new FileInputStream(nombreFichero));
+			while (true) {
+				int id = f.readInt();
+				if(id==a.getId()) {
+					char letra;
+					while (f.readChar() != '\n') {
+					}
+					//Leer los bytes del long 8, float 4 y boolean 1
+					byte[] resto = new byte[13];
+					f.read(resto);
+				}
+				else {
+					// Escribo el id
+					fTmp.writeInt(id);
+					char letra;
+					String nombre = "";
+					while ((letra = f.readChar()) != '\n') {
+						nombre += letra;
+					}
+					fTmp.writeChars(nombre + "\n");
+					//Leer los bytes del long 8, float 4 y boolean 1
+					byte[] resto = new byte[13];
+					f.read(resto);
+					fTmp.write(resto);
+				}
+
+			}
+		} catch (EOFException e) {
+			// TODO: handle exception
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (f != null)
+					f.close();
+				if (fTmp != null)
+					fTmp.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		// Borrar y renombrar
+		File fO = new File(nombreFichero);
+		if (fO.delete()) {
+			File fT = new File("asignaturas.tmp");
+			if (fT.renameTo(fO)) {
+				resultado = true;
+			} else {
+				System.out.println("Error al renombrar");
+			}
+		} else {
+			System.out.println("Error al borrar fichero original");
 		}
 		return resultado;
 	}

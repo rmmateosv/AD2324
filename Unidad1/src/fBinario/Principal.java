@@ -31,12 +31,53 @@ public class Principal {
 			case 2:
 				mostrarAsignaturas();
 				break;
+			case 3:
+				bajaAsignatura();
+				break;
+			case 4:
+				borrarAsignatura();
+				break;
 			
 			}
 
 		} while (opcion != 0);
 	}
-
+	
+	private static void borrarAsignatura() {
+		System.out.print("Introduce el id de la asignatura que quieres dar de baja:");
+		Asignatura a = ad.obtenerAsignatura(t.nextInt());t.nextLine();
+		if(a!=null) {
+			if(ad.borrarAsignatura(a)) {
+				System.out.println("Asignatura borrada");
+			}
+			else {
+				System.out.println("Error al borrar la asignatura");
+			}
+		}
+		else {
+			System.out.println("Error, asignatura no existe");
+		}
+	}
+	
+	
+	private static void bajaAsignatura() {
+		System.out.print("Introduce el id de la asignatura que quieres dar de baja:");
+		Asignatura a = ad.obtenerAsignatura(t.nextInt());t.nextLine();
+		if(a!=null) {
+			if(ad.darBajaAsignatura(a)) {
+				System.out.println("Asignatura modificada");
+			}
+			else {
+				System.out.println("Error al modificar la asignatura");
+			}
+		}
+		else {
+			System.out.println("Error, asignatura no existe");
+		}
+		
+	
+		
+	}
 	private static void mostrarAsignaturas() {
 		// TODO Auto-generated method stub
 		ArrayList<Asignatura> asigs = ad.obtenerAsignaturas();
