@@ -4,18 +4,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Nota {
+	private int id; // 4B
 	private String dni; //9 caractares = 18B
 	private int asig;   // 4B
 	private Date fecha; // 8B
 	private float nota; // 4B
 	private String valoracion; //50 caracteres => 100B
-	// TAmaño del registro: 134B
+	// TAmaño del registro: 138B
 	
 	public Nota() {
 		
 	}
-	public Nota(String dni, int asig, Date fecha, float nota, String valoracion) {
+	public Nota(int id, String dni, int asig, Date fecha, float nota, String valoracion) {
 		
+		this.id = id;
 		this.dni = dni;
 		this.asig = asig;
 		this.fecha = fecha;
@@ -30,6 +32,13 @@ public class Nota {
 				", fecha=" + formato.format(fecha) 
 				+ ", nota=" + nota + ", valoracion="
 				+ valoracion + "]";
+	}
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
 	}
 	public String getDni() {
 		return dni;
