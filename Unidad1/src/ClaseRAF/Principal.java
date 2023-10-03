@@ -12,7 +12,7 @@ public class Principal {
 	public static Scanner t = new Scanner(System.in);
 
 	// Declaramos el objeto modelo que accede a los datos
-	public static Modelo adNotas = new Modelo("");
+	public static Modelo adNotas = new Modelo("notas.bin");
 
 	// Declaramos un acceso a datos de la clase fichero binario - Asignaturas
 	public static fBinario.Modelo adAsig = new fBinario.Modelo("asignaturas.bin");
@@ -39,7 +39,7 @@ public class Principal {
 				altaNota();
 				break;
 			case 2:
-
+				mostrarNotas();
 				break;
 			case 3:
 
@@ -52,6 +52,14 @@ public class Principal {
 
 		} while (opcion != 0);
 	}
+
+	private static void mostrarNotas() {
+		// TODO Auto-generated method stub
+		ArrayList<Nota> notas = adNotas.obtenerNotas();
+		for(Nota n:notas) {
+			System.out.println(n);
+		}
+	}	
 
 	private static void altaNota() {
 		// TODO Auto-generated method stub
@@ -88,7 +96,7 @@ public class Principal {
 					n.setNota(t.nextFloat());t.nextLine();
 					System.out.println("Valoración");
 					n.setValoracion(t.nextLine());
-					//Guardar en el fichero
+					//Guardar en el fichero RandomAccessFile
 					if(adNotas.crearNota(n)) {
 						System.out.println("Nota creada");
 					}

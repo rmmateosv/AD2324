@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class Nota {
 	private int id; // 4B
-	private String dni; //9 caractares = 18B
+	private String dni; //9 caractares 18B
 	private int asig;   // 4B
 	private Date fecha; // 8B
 	private float nota; // 4B
