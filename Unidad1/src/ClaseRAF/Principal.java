@@ -42,7 +42,7 @@ public class Principal {
 				mostrarNotas();
 				break;
 			case 3:
-
+				modificarNota();
 				break;
 			case 4:
 
@@ -51,6 +51,26 @@ public class Principal {
 			}
 
 		} while (opcion != 0);
+	}
+
+	private static void modificarNota() {
+		// TODO Auto-generated method stub
+		mostrarNotas();
+		System.out.println("Introduce el id de la nota a modificar");
+		Nota n = adNotas.obtenerNota(t.nextInt());t.nextLine();
+		if(n!=null) {
+			System.out.println("Introduce nueva nota");
+			n.setNota(t.nextFloat());t.nextLine();
+			if(adNotas.modificarNota(n)) {
+				System.out.println("Nota modificada");
+			}
+			else {
+				System.out.println("Error al modificar la nota");
+			}
+		}
+		else {
+			System.out.println("Error, la nota no existe");
+		}
 	}
 
 	private static void mostrarNotas() {

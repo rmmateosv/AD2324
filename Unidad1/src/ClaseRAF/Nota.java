@@ -28,7 +28,7 @@ public class Nota {
 	@Override
 	public String toString() {
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yy");
-		return "Nota [dni=" + dni + ", asig=" + asig +
+		return "Nota [id= "+id+"+dni=" + dni + ", asig=" + asig +
 				", fecha=" + formato.format(fecha) 
 				+ ", nota=" + nota + ", valoracion="
 				+ valoracion + "]";

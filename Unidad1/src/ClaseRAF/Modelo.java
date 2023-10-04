@@ -117,6 +117,120 @@ public class Modelo {
 		}
 		return resultado;
 	}
+
+	public Nota obtenerNota(int idBuscado) {
+		// TODO Auto-generated method stub
+		Nota resultado = null;
+		RandomAccessFile f = null;
+		try {
+			f = new RandomAccessFile(nombreFichero, "r");
+			while(true) {
+				//Leer el id
+				int idLeido = f.readInt();
+				if(idLeido==idBuscado) {
+					//Encontrado
+					resultado = new Nota();
+					resultado.setId(idLeido);
+					String dni="";
+					for(int i=0; i<9;i++) {
+						dni+=f.readChar();
+					}
+					//trim:quita espacios en blanco
+					resultado.setDni(dni.trim());
+					resultado.setAsig(f.readInt());
+					resultado.setFecha(new Date(f.readLong()));
+					resultado.setNota(f.readFloat());
+					String val="";
+					for(int i=0; i<50;i++) {
+						val+=f.readChar();
+					}
+					//trim:quita espacios en blanco
+					resultado.setValoracion(val.trim());
+					return resultado;
+					
+				}
+				else {
+					//Continuar al siguiente
+					//Desplazar desde la posición actual 134 B
+					//18 dni+4 asig+8 fecha+4 nota+100 valoracion=134
+					f.seek(f.getFilePointer()+134);
+				}
+			}
+		} 
+		catch (EOFException e) {
+			// TODO: handle exception
+		}
+		catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			if(f!=null) {
+				try {
+					f.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return resultado;
+	}
+
+	public boolean modificarNota(Nota n) {
+		// TODO Auto-generated method stub
+		boolean resultado=false;
+		RandomAccessFile f = null;
+		try {
+			f = new RandomAccessFile(nombreFichero, "rw");
+			while(true) {
+				//Leer el id
+				int idLeido = f.readInt();
+				if(idLeido==n.getId()) {
+					//Encontrado
+					//Saltamos para colocar el apuntador 
+					//justo delante del campo nota
+					//Saltamos 18 dni+ 4 asi+ 8 fecha=30B
+					f.seek(f.getFilePointer()+30);
+					//Escribir nota
+					f.writeFloat(n.getNota());
+					return true;
+					
+				}
+				else {
+					//Continuar al siguiente
+					//Desplazar desde la posición actual 134 B
+					//18 dni+4 asig+8 fecha+4 nota+100 valoracion=134
+					f.seek(f.getFilePointer()+134);
+				}
+			}
+		} 
+		catch (EOFException e) {
+			// TODO: handle exception
+		}
+		catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			if(f!=null) {
+				try {
+					f.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return resultado;
+	}
 	
 	
 		
