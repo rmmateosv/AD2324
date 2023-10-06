@@ -1,9 +1,10 @@
 package fTexto;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Alumno {
+public class Alumno  implements Serializable{
 	private String dni;
 	private String nombre;
 	private Date fechaN;

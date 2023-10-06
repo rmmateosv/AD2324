@@ -1,9 +1,10 @@
 package ClaseRAF;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Nota {
+public class Nota  implements Serializable{
 	private int id; // 4B
 	private String dni; //9 caractares 18B
 	private int asig;   // 4B

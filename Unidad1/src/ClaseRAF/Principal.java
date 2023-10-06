@@ -29,8 +29,8 @@ public class Principal {
 			System.out.println("1-Alta Nota");
 			System.out.println("2-Mostrar Notas");
 			System.out.println("3-Modificar Nota");
-			System.out.println("4-Borrar Nota");
-			System.out.println("2-Mostrar Nota Alumno");
+			System.out.println("4-Mostrar notas de un alumno");
+			System.out.println("5-Borrar nota");
 			opcion = t.nextInt();
 			t.nextLine();
 
@@ -45,12 +45,53 @@ public class Principal {
 				modificarNota();
 				break;
 			case 4:
-
+				mostrarNotasAlumno();
 				break;
-
+			case 5:
+				borrarNota();
+				break;
 			}
 
 		} while (opcion != 0);
+	}
+	
+	private static void borrarNota() {
+		// TODO Auto-generated method stub
+		mostrarNotas();
+		System.out.println("Introduce el id de la nota a modificar");
+		Nota n = adNotas.obtenerNota(t.nextInt());t.nextLine();
+		if(n!=null) {
+			if(adNotas.borrarNota(n)) {
+				System.out.println("Nota modificada");
+			}
+			else {
+				System.out.println("Error al modificar la nota");
+			}
+		}
+		else {
+			System.out.println("Error, la nota no existe");
+		}
+	}
+
+	public static void mostrarNotasAlumno() {
+		// Mostrar alumnos
+		ArrayList<Alumno> alumnos = adAlumnos.obtenerAlumnos();
+		for (Alumno a : alumnos) {
+			System.out.println(a);
+		}
+		System.out.println("Introduce el dni de un alumno");
+		ArrayList<Nota> alumno = adNotas.obtenerAlumno(t.nextLine());
+		if(!alumno.isEmpty()) {
+			for(Nota n:alumno) {
+				System.out.println(n);
+			}
+					
+		}else {
+			
+			System.out.println("Alumno no encontrado");
+		}
+	
+		
 	}
 
 	private static void modificarNota() {

@@ -1,9 +1,10 @@
 package fBinario;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Asignatura {
+public class Asignatura  implements Serializable{
 	private int id;
 	private String nombre;
 	private Date fechaRD; //Fecha Real Decreto
