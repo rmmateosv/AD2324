@@ -80,7 +80,7 @@ public class Principal {
 			System.out.println(a);
 		}
 		System.out.println("Introduce el dni de un alumno");
-		ArrayList<Nota> alumno = adNotas.obtenerAlumno(t.nextLine());
+		ArrayList<Nota> alumno = adNotas.obtenerNotasAlumno(t.nextLine());
 		if(!alumno.isEmpty()) {
 			for(Nota n:alumno) {
 				System.out.println(n);

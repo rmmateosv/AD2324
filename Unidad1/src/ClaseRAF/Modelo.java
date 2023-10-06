@@ -221,7 +221,7 @@ public class Modelo {
 		return resultado;
 	}
 
-	public ArrayList<Nota> obtenerAlumno(String dniBuscado) {
+	public ArrayList<Nota> obtenerNotasAlumno(String dniBuscado) {
 		// TODO Auto-generated method stub
 
 		ArrayList<Nota> resultado = new ArrayList<Nota>();
