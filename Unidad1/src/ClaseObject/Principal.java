@@ -44,7 +44,7 @@ public class Principal {
 				crearHistorial();
 				break;
 			case 2:
-				
+				mostrarHistorial();
 				break;
 			case 3:
 				
@@ -58,6 +58,14 @@ public class Principal {
 			}
 
 		} while (opcion != 0);
+	}
+
+	private static void mostrarHistorial() {
+		// TODO Auto-generated method stub
+		ArrayList<Historial> historiales = adHistorial.obtenerHistoriales();
+		for(Historial h:historiales) {
+			System.out.println(h);
+		}
 	}
 
 	private static void crearHistorial() {

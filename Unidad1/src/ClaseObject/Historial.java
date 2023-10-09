@@ -30,7 +30,7 @@ public class Historial implements Serializable{
 		
 		for(Object[] obj:datos) {
 			//Mostrar datos de asignatura y de la nota
-			resultado += obj[0]+"\t[nota="+obj[1]+"]";
+			resultado += "\t"+obj[0]+"\n\t\t[nota="+obj[1]+"]\n";
 		}
 		return resultado;
 	}
