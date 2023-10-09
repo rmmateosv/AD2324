@@ -47,7 +47,7 @@ public class Principal {
 				mostrarHistorial();
 				break;
 			case 3:
-				
+				modificarNota();
 				break;
 			case 4:
 				
@@ -58,6 +58,47 @@ public class Principal {
 			}
 
 		} while (opcion != 0);
+	}
+
+	private static void modificarNota() {
+		// TODO Auto-generated method stub
+		ArrayList<Alumno> alumnos = adAlumnos.obtenerAlumnos();
+		for(Alumno a:alumnos) {
+			System.out.println(a);
+		}
+		System.out.println("Introduce dni:");
+		Alumno a = adAlumnos.obtenerAlumno(t.nextLine());
+		if(a!=null) {
+			Historial h = adHistorial.obtenerHistorial(a);
+			if(h!=null) {
+				//Mostrar solamente las notas
+				for(Object[] o:h.getDatos()) {
+					System.out.println(o[1]);
+				}
+				System.out.println("Introduce el id de la nota a modificar");
+				Nota n = adHistorial.obtenerNota(a,t.nextInt()); t.nextLine();
+				if(n!=null) {
+					System.out.println("Introduce nueva nota:");
+					n.setNota(t.nextFloat()); t.nextLine();
+					if(adHistorial.modificarNota(a,n)) {
+						System.out.println("Nota modificada");
+					}
+					else {
+						System.out.println("Error al modificar la nota");
+					}
+				}
+				else {
+					System.out.println("Error, no existe la nota");
+				}
+				
+			}
+			else {
+				System.out.println("Error, no existe el historial");
+			}
+		}
+		else {
+			System.out.println("Error, no existe el alumno");
+		}
 	}
 
 	private static void mostrarHistorial() {

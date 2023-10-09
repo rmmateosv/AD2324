@@ -29,7 +29,7 @@ public class Nota  implements Serializable{
 	@Override
 	public String toString() {
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yy");
-		return "Nota [id= "+id+"+dni=" + dni + ", asig=" + asig +
+		return "Nota [id= "+id+" dni=" + dni + ", asig=" + asig +
 				", fecha=" + formato.format(fecha) 
 				+ ", nota=" + nota + ", valoracion="
 				+ valoracion + "]";
