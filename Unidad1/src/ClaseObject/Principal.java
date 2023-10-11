@@ -53,13 +53,45 @@ public class Principal {
 				
 				break;
 			case 5:
-				
+				borrarHistorial();
 				break;
 			}
 
 		} while (opcion != 0);
 	}
 
+private static void borrarHistorial() {
+		
+		System.out.println("--------------------------------------------------");
+		ArrayList<Alumno> alumnos = adAlumnos.obtenerAlumnos();
+		for(Alumno a:alumnos) {
+			System.out.println(a);
+		}
+		System.out.println("--------------------------------------------------");
+		System.out.println("Introduce el DNI del alumno para borrar su historial:");
+		
+		// Busqueda de los datos del alumnos
+		Alumno alumno = adAlumnos.obtenerAlumno(t.nextLine());		
+		if(alumno !=null) {
+			Historial delHist = adHistorial.obtenerHistorial(alumno);
+			if(delHist!=null) {
+				if(!adHistorial.triturarHistorial(delHist)) {
+					System.out.println("Error, al borrar el editorial");
+				}
+				else {
+					System.out.println("Historial borrado");
+				}
+			}
+			else {
+				System.out.println("Error, no existe el historial");
+			}
+		}
+		else {
+			System.out.println("Error, el alumno no existe");
+		}
+		
+		
+	}
 	private static void modificarNota() {
 		// TODO Auto-generated method stub
 		ArrayList<Alumno> alumnos = adAlumnos.obtenerAlumnos();

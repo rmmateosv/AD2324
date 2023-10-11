@@ -257,4 +257,79 @@ public class Modelo {
 		return resultado;
 	}
 	
+	public boolean triturarHistorial(Historial delHist)  {
+		Boolean resultado=false;
+		
+		// Accesos de escritura y carga del fichero.
+		ObjectInputStream carga = null;
+		ObjectOutputStream salida = null;
+		
+		try {
+			carga= new ObjectInputStream(new FileInputStream(nombreFichero));
+			salida = new ObjectOutputStream(new FileOutputStream("historial.tmp",false));
+			
+			while(true) {
+				
+				// Leemos objeto por objeto
+				Historial elegido = (Historial) carga.readObject();
+				
+				// Comparamos en busca del elemento que borraremos
+				if(!elegido.getAlumno().getDni().equalsIgnoreCase(delHist.getAlumno().getDni())) {
+										
+					salida.writeObject(elegido);
+				}
+			}
+	
+		}
+		catch (EOFException e) {
+			// TODO: handle exception
+		}
+		catch (ClassNotFoundException e) {
+			// TODO: handle exception
+		}
+		catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				if(carga!=null) {
+				
+					carga.close();
+				} 
+				if(salida!=null) {
+					
+					salida.close();
+				} 
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+			File adios = new File(nombreFichero);
+			if(adios.delete()) {
+				File temporal = new File("historial.tmp");
+				if(temporal.renameTo(adios)) {
+					resultado = true;
+				}
+				else 
+					System.out.println("Error al renombrar el fichero");
+			}
+			else 
+				System.out.println("Error al borrar el antiguo fichero");
+		
+		
+		System.out.println("-------------------------");
+		return resultado;
+	}
+
+
+
+	
+	
 }
