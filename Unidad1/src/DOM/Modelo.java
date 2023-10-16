@@ -1,6 +1,7 @@
 package DOM;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,9 +18,14 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.xml.sax.SAXException;
 
 import ClaseObject.Historial;
 import ClaseRAF.Nota;
@@ -142,5 +148,70 @@ public class Modelo {
 			e.printStackTrace();
 		}
 		return resultado;	
+	}
+
+	public void mostrarXML() {
+		// TODO Auto-generated method stub
+		//Cargar el fichero XML en un árbolDOM
+		File f = new File(nombreFichero);
+		if(f.exists()) {
+			try {
+				Document doc = DocumentBuilderFactory.newInstance().
+						                             newDocumentBuilder().
+						                             parse(f);
+				//Obtener nodo raíz
+				Element raiz = doc.getDocumentElement();
+				pintarNodo(raiz,0);
+				
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else {
+			System.out.println("Aún no se ha creado el fichero");
+		}
+	}
+
+	private void pintarNodo(Node nodo, int nivel) {
+		// TODO Auto-generated method stub
+		//Tabular
+		for(int i=0;i<nivel;i++) {
+			System.out.print("\t");
+		}
+		System.out.print("<"+nodo.getNodeName());
+		//Obtenemos y pintamos los atributos
+		NamedNodeMap atrib = nodo.getAttributes();
+		for(int i=0; i<atrib.getLength(); i++) {
+			Attr a = (Attr) atrib.item(i);
+			System.out.print(" "+a.getName()+"=\""+a.getValue()+"\"");
+		}
+		System.out.println(">");
+		//Obtener hijos del nodo
+		NodeList hijos = nodo.getChildNodes();
+		for(int i=0;i<hijos.getLength();i++) {
+			//Si un nodo es de tipo texto, pintamos su contenido
+			//Si no, llamamos al método pintarNodo de forma recursiva
+			if(hijos.item(i).getNodeType()==Node.TEXT_NODE) {
+				//Pintar una tabulación más
+				for(int j=0;j<=nivel;j++) {
+					System.out.print("\t");
+				}
+				System.out.println(hijos.item(i).getTextContent());
+			}
+			else {
+				pintarNodo(hijos.item(i), nivel+1);
+			}
+		}
+		for(int i=0;i<nivel;i++) {
+			System.out.print("\t");
+		}
+		System.out.println("</"+nodo.getNodeName()+">");
 	}
 }
