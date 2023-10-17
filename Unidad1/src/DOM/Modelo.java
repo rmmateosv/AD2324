@@ -214,4 +214,127 @@ public class Modelo {
 		}
 		System.out.println("</"+nodo.getNodeName()+">");
 	}
+
+	public boolean existeAlumno(String dni) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		
+		File f = new File(nombreFichero);
+		if(f.exists()) {
+			try {
+				Document doc = DocumentBuilderFactory.newInstance().
+			      newDocumentBuilder().parse(f);
+				
+				//Obtener todos los nodos historial que es donde está el dni
+				//para poder comparar
+				NodeList historiales = doc.getElementsByTagName("historial");
+				for(int i=0;i<historiales.getLength();i++) {
+					Element historial = (Element) historiales.item(i);
+					//Obtener atributo dni
+					if(historial.getAttribute("dni").equalsIgnoreCase(dni)) {
+						return true;
+					}
+					
+				}
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return resultado;
+	}
+
+	public boolean modificar(String dni, String nuevoNombre) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		
+		File f = new File(nombreFichero);
+		if(f.exists()) {
+			try {
+				Document doc = DocumentBuilderFactory.newInstance().
+			      newDocumentBuilder().parse(f);
+				
+				//Obtener todos los nodos historial que es donde está el dni
+				//para poder comparar
+				NodeList historiales = doc.getElementsByTagName("historial");
+				for(int i=0;i<historiales.getLength();i++) {
+					Element historial = (Element) historiales.item(i);
+					//Obtener atributo dni
+					if(historial.getAttribute("dni").equalsIgnoreCase(dni)) {
+						//Modificar el nombre que es un elemento hijo
+						//del elemento historial
+						//Element nombre = (Element) historial.getChildNodes().item(0);
+						Element nombre = (Element) historial.getFirstChild();
+						//Obtener el textElement de nombre
+						Text textoNombre = (Text) nombre.getFirstChild();
+						//Modificamos el texto del nombre
+						textoNombre.setNodeValue(nuevoNombre);
+						//Volvemos a generar el fichero
+						generarFichero(doc);
+						return true;
+					}
+					
+				}
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return resultado;
+	}
+
+	public boolean borrar(String dni) {
+		// TODO Auto-generated method stub
+boolean resultado = false;
+		
+		File f = new File(nombreFichero);
+		if(f.exists()) {
+			try {
+				Document doc = DocumentBuilderFactory.newInstance().
+			      newDocumentBuilder().parse(f);
+				
+				//Obtener todos los nodos historial que es donde está el dni
+				//para poder comparar
+				NodeList historiales = doc.getElementsByTagName("historial");
+				for(int i=0;i<historiales.getLength();i++) {
+					Element historial = (Element) historiales.item(i);
+					//Obtener atributo dni
+					if(historial.getAttribute("dni").equalsIgnoreCase(dni)) {
+						historial.getParentNode().removeChild(historial);
+						//Volvemos a generar el fichero
+						generarFichero(doc);
+						return true;
+					}
+					
+				}
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return resultado;
+	}
+
+	
 }

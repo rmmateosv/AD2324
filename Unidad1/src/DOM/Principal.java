@@ -24,6 +24,7 @@ public class Principal {
 			System.out.println("1-Crear fichero xml");
 			System.out.println("2-Mostrar fichero xml");
 			System.out.println("3-Modificar nombre alumno en fichero XML");
+			System.out.println("4-Borrar historial en fichero XML");
 			opcion = t.nextInt();
 			t.nextLine();
 
@@ -37,9 +38,27 @@ public class Principal {
 				case 3:
 					modificarNombreAlumno();
 					break;
+				case 4:
+					borrarHistorial();
+					break;
 			}
 
 		} while (opcion != 0);
+	}
+
+	private static void borrarHistorial() {
+		// TODO Auto-generated method stub
+		mostrarXML();
+		System.out.println("Introduce dni:");
+		String dni = t.nextLine();
+		if(adDOM.existeAlumno(dni)) {
+			if(adDOM.borrar(dni)) {
+				System.out.println("Historial borrado");
+			}
+			else {
+				System.out.println("Error al borrar el historial");
+			}
+		}
 	}
 
 	private static void modificarNombreAlumno() {
