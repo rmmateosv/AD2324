@@ -50,6 +50,11 @@ public class Nota {
 	public void setFechaExamen(String fechaExamen) {
 		this.fechaExamen = fechaExamen;
 	}
+	@Override
+	public String toString() {
+		return "Nota [asignatura=" + asignatura + ", nota=" + nota + ", nombreAsig=" + nombreAsig + ", fechaExamen="
+				+ fechaExamen + "]";
+	}
 	
 	
 	

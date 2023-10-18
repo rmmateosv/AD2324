@@ -2,6 +2,7 @@ package JAXB;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -56,6 +57,17 @@ public class Centro {
 
 	public void setAlumno(String alumno) {
 		this.alumno = alumno;
+	}
+
+	@Override
+	public String toString() {
+		String resultado = 
+		 "Centro [fecha=" + fecha + ", ies=" + ies +"]";
+		for(Historial h:historiales) {
+			resultado+=h;
+		}
+		return resultado;
+		
 	}
 	
 	

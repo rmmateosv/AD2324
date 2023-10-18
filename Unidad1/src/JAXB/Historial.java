@@ -48,6 +48,16 @@ public class Historial {
 	public void setNotas(ArrayList<Nota> notas) {
 		this.notas = notas;
 	}
+
+	@Override
+	public String toString() {
+		String resultado =
+		 "\nHistorial [dni=" + dni + ", nombreAL=" + nombreAL  + "]";
+		for(Nota n:notas) {
+			resultado+=n;
+		}
+		return resultado;
+	}
 	
 	
 }
