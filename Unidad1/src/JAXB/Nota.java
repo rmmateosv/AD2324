@@ -52,7 +52,7 @@ public class Nota {
 	}
 	@Override
 	public String toString() {
-		return "Nota [asignatura=" + asignatura + ", nota=" + nota + ", nombreAsig=" + nombreAsig + ", fechaExamen="
+		return "\n\t\tNota [asignatura=" + asignatura + ", nota=" + nota + ", nombreAsig=" + nombreAsig + ", fechaExamen="
 				+ fechaExamen + "]";
 	}
 	

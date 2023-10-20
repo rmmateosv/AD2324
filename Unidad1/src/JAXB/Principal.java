@@ -53,17 +53,67 @@ public class Principal {
 	}
 
 	private static void borrarHistorial() {
-		
+		Centro c = adJaxb.unmarshal();
+		if(c!=null) {
+			mostrarXML();
+			System.out.println("Introduce el dni del alumno a borrar");
+			String dni = t.nextLine();
+			//Buscar el alumno en c
+			for(Historial h:c.getHistoriales()) {
+				if(h.getDni().equalsIgnoreCase(dni)) {
+					//Borrar el historial del array list
+					c.getHistoriales().remove(h);
+					if(adJaxb.marshal(c)) {
+						System.out.println("Alumno borrado");					
+					}
+					else {
+						System.out.println("Error al borrar el alumno");
+					}
+					break;
+				}
+			}
+		}
+		else {
+			System.out.println("Error, al cargar el fichero");
+		}
 	}
 
 	private static void modificarNombreAlumno() {
-		
+		Centro c = adJaxb.unmarshal();
+		if(c!=null) {
+			mostrarXML();
+			System.out.println("Introduce el dni del alumno a modficar");
+			String dni = t.nextLine();
+			//Buscar el alumno en c
+			for(Historial h:c.getHistoriales()) {
+				if(h.getDni().equalsIgnoreCase(dni)) {
+					System.out.println("Introduce nuevo nombre");
+					h.setNombreAL(t.nextLine());
+					if(adJaxb.marshal(c)) {
+						System.out.println("Alumno modificado");					
+					}
+					else {
+						System.out.println("Error al modficar el alumno");
+					}
+					break;
+				}
+			}
+		}
+		else {
+			System.out.println("Error, al cargar el fichero");
+		}
 		
 	}
 
 	private static void mostrarXML() {
 		// TODO Auto-generated method stub
-		
+		Centro c = adJaxb.unmarshal();
+		if(c!=null) {
+			System.out.println(c);
+		}
+		else {
+			System.out.println("Error, al cargar el fichero");
+		}
 	}
 
 	private static void crearXML() {

@@ -52,7 +52,7 @@ public class Historial {
 	@Override
 	public String toString() {
 		String resultado =
-		 "\nHistorial [dni=" + dni + ", nombreAL=" + nombreAL  + "]";
+		 "\n\tHistorial [dni=" + dni + ", nombreAL=" + nombreAL  + "]";
 		for(Nota n:notas) {
 			resultado+=n;
 		}
