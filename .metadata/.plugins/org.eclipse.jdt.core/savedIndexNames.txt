@@ -2,7 +2,6 @@ INDEX VERSION 1.134+C:\Users\Profesor\eclipse-workspace2324\.metadata\.plugins\o
 3251249088.index
 2110533067.index
 1277734864.index
-2378022224.index
 3551925639.index
 1865797976.index
 495250236.index

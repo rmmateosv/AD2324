@@ -41,7 +41,36 @@ public class Principal {
 	}
 	private static void ejer1() {
 		// TODO Auto-generated method stub
-		ArrayList<Venta> ventasTXT = 
+		//Obtener ventas de fichero de texto
+		ArrayList<Ventas> ventasTXT = ad.obtenerVentasTXT();
+		//Procesar cada venta
+		for(Ventas v: ventasTXT) {			
+			Ventas vOBJ = ad.obtenerVentaOBJ(v.getIdProducto());
+			if(vOBJ==null) {
+				//Si el id de producto no está en ventas obj => crear venta obj
+				if(ad.crearVentaObj(v)) {
+					System.out.println("Venta creada "+ v);
+				}
+				else {
+					System.out.println("Error al crea la venta "+ v);
+				}
+			}
+			else {
+				//Si no => modficar venta
+				//Actualizar el cantidad y el importe
+				vOBJ.setCantidadVendidad(vOBJ.getCantidadVendidad()+v.getCantidadVendidad());
+				vOBJ.setImporteRecaudado(vOBJ.getImporteRecaudado()+v.getImporteRecaudado());
+				if(ad.modificarVenta(vOBJ)) {
+					System.out.println("Venta modificada "+ v);
+				}
+				else {
+					System.out.println("Error al modficar la venta "+ v);
+				}
+			}
+			
+		}
+		
+		
 	}
 
 	

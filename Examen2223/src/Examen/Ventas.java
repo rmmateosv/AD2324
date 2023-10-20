@@ -1,14 +1,14 @@
 package Examen;
 
 public class Ventas {
-	private int idProducto,cantidadVedidad;
+	private int idProducto,cantidadVendidad;
 	private float importeRecaudado;
 	public Ventas() {
 		
 	}
 	public Ventas(int idProducto, int cantidadVedidad, float importeRecaudado) {
 		this.idProducto = idProducto;
-		this.cantidadVedidad = cantidadVedidad;
+		this.cantidadVendidad = cantidadVedidad;
 		this.importeRecaudado = importeRecaudado;
 	}
 	public int getIdProducto() {
@@ -17,11 +17,11 @@ public class Ventas {
 	public void setIdProducto(int idProducto) {
 		this.idProducto = idProducto;
 	}
-	public int getCantidadVedidad() {
-		return cantidadVedidad;
+	public int getCantidadVendidad() {
+		return cantidadVendidad;
 	}
-	public void setCantidadVedidad(int cantidadVedidad) {
-		this.cantidadVedidad = cantidadVedidad;
+	public void setCantidadVendidad(int cantidadVedidad) {
+		this.cantidadVendidad = cantidadVedidad;
 	}
 	public float getImporteRecaudado() {
 		return importeRecaudado;
@@ -31,7 +31,7 @@ public class Ventas {
 	}
 	@Override
 	public String toString() {
-		return "Ventas [idProducto=" + idProducto + ", cantidadVedidad=" + cantidadVedidad + ", importeRecaudado="
+		return "Ventas [idProducto=" + idProducto + ", cantidadVedidad=" + cantidadVendidad + ", importeRecaudado="
 				+ importeRecaudado + "]";
 	}
 	
