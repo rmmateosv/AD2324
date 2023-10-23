@@ -27,7 +27,7 @@ public class Principal {
 					ejer1();
 					break;
 				case 2:
-					
+					ejer2();
 					break;
 				case 3:
 					
@@ -38,6 +38,25 @@ public class Principal {
 			}
 
 		} while (opcion != 0);
+	}
+	private static void ejer2() {
+		// TODO Auto-generated method stub
+		ArrayList<Ventas> ventas = ad.obtenerVentas();
+		for(Ventas v:ventas) {
+			Stock s = new Stock();
+			s.setId(v.getIdProducto());
+			System.out.println("Introduce nombre para producto "+v.getIdProducto());
+			s.setNombre(t.nextLine());
+			System.out.println("Introduce stock para producto "+v.getIdProducto());
+			s.setStock(t.nextInt());t.nextLine();
+			if(ad.crearStock(s)) {
+				System.out.println("Stock creado:"+s);
+			}
+			else {
+				System.out.println("Error al crear stock:"+s);
+			}
+		}
+		ArrayList<Stock> ventas = ad.obtenerVentas();
 	}
 	private static void ejer1() {
 		// TODO Auto-generated method stub
@@ -70,7 +89,11 @@ public class Principal {
 			
 		}
 		
-		
+		//Mostrar Ventas
+		ArrayList<Ventas> ventas = ad.obtenerVentas();
+		for(Ventas v:ventas) {
+			System.out.println(v);
+		}
 	}
 
 	
