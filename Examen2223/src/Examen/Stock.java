@@ -1,10 +1,10 @@
 package Examen;
 
 public class Stock {
-	private int id;
-	private String nombre;
-	private int stock;
-	
+	private int id; //4 B
+	private String nombre; //30c => 60B
+	private int stock; // 4B
+	//Tamaño del registro = 68B
 	
 	public Stock() {
 		super();
