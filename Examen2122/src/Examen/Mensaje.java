@@ -4,11 +4,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Mensaje {
-	private Date fecha;
-	private int id;
-	private String nombre;
-	private String texto;
-	private boolean leido=false;
+	private Date fecha; //8
+	private int id;//4
+	private String nombre;//200
+	private String texto;//400
+	private boolean leido=false;//1
+	//Tamaño: 613
 	public Mensaje() {
 		
 	}

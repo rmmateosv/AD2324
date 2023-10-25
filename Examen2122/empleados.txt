@@ -1,0 +1,4 @@
+1;Florentino Fernández;true
+2;Carla Martín;true
+3;Javier Bernal;false
+4;Miriam Mas;true

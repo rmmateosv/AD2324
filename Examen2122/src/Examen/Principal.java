@@ -46,7 +46,31 @@ public class Principal {
 
 	private static void ejer2() {
 		// TODO Auto-generated method stub
-		
+		mostrarEmpleados();
+		System.out.println("Introduce Id");
+		Empleado e = ad.obtenerEmpleado(t.nextInt());t.nextLine();
+		if(e==null) {
+			System.out.println("Error, no existe el empleado");
+		}
+		else {
+			//Marcar mensajes como leidos
+			if(ad.marcarLeidos(e)) {
+				System.out.println("Mensajes leídos");
+			}
+			else {
+				System.out.println("Error, no se han marcado los mensajes como leídos");
+			}
+			//Mostrar mensajes del fichero
+			mostrarMensajes(e);
+		}
+	}
+
+	private static void mostrarMensajes(Empleado e) {
+		// TODO Auto-generated method stub
+		ArrayList<Mensaje> mensajes = ad.obtenerMensajes(e);
+		for (Mensaje mensaje : mensajes) {
+			System.out.println(mensaje);
+		}
 	}
 
 	private static void ejer1() {
@@ -64,6 +88,9 @@ public class Principal {
 				System.out.println("Introduce texto del mensaje");
 				Mensaje m = new Mensaje(new Date(), e.getId(), 
 						e.getNombre(), t.nextLine(), false);
+				if(ad.crearMensaje(m)) {
+					System.out.println("Mensaje creado");
+				}
 			}
 			else {
 				System.out.println("Error, el empleado está de baja");
