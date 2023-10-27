@@ -2,11 +2,13 @@ package Examen;
 
 import java.io.BufferedReader;
 import java.io.EOFException;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Modelo {
 	
@@ -133,20 +135,21 @@ public class Modelo {
 			f= new RandomAccessFile(NOMBRE_FB,"rw");
 			while(true) {
 				//Leer el id del empleado ¡¡!SALTAR FECHA!
-				f.skipBytes(8);
+				f.seek(f.getFilePointer()+8);
 				int idLeido = f.readInt();
 				if(idLeido==emp.getId()) {
 					//Leer si está leído
-					f.skipBytes(600);
+					f.seek(f.getFilePointer()+600);
 					boolean leido = f.readBoolean();
 					if(!leido) {
 						//Escribir true en leido
-						f.skipBytes(-1);
+						f.seek(f.getFilePointer()-1);
 						f.writeBoolean(true);
+						resultado=true;
 					}
 				}
 				else {
-					f.skipBytes(601);
+					f.seek(f.getFilePointer()+601);
 				}
 			}
 		} 
@@ -181,15 +184,29 @@ public class Modelo {
 			f= new RandomAccessFile(NOMBRE_FB,"r");
 			while(true) {
 				//Leer el id del empleado ¡¡!SALTAR FECHA!
-				f.skipBytes(8);
+				f.seek(f.getFilePointer()+8);
 				int idLeido = f.readInt();
 				if(idLeido==emp.getId()) {
 					//Nos ponemos al principio del registro
-					f.skipBytes(-12);
-					Mensaje m
+					f.seek(f.getFilePointer()-12);
+					Mensaje m = new Mensaje();
+					m.setFecha(new Date(f.readLong()));
+					m.setId(f.readInt());
+					m.setNombre("");
+					for (int i = 0; i < 100; i++) {
+						m.setNombre(m.getNombre() + f.readChar());
+					}					
+					m.setNombre(m.getNombre().trim());
+					m.setTexto("");
+					for (int i = 0; i < 200; i++) {
+						m.setTexto(m.getTexto() + f.readChar());
+					}
+					m.setTexto(m.getTexto().trim());
+					m.setLeido(f.readBoolean());
+					resultado.add(m);
 				}
 				else {
-					f.skipBytes(601);
+					f.seek(f.getFilePointer()+601);
 				}
 			}
 		} 
@@ -215,4 +232,108 @@ public class Modelo {
 		}
 		return resultado;
 	}
+	
+	public boolean borrarMensajes(int id) {
+		boolean resultado = false;
+		RandomAccessFile r = null;
+		RandomAccessFile rTemp = null;
+
+		try {
+			r = new RandomAccessFile("mensajes.bin", "r");
+			rTemp = new RandomAccessFile("mensajesTemp.bin", "rw");
+			while (true) {				
+				long fecha = r.readLong();
+				int idLEido= r.readInt();
+				if (idLEido != id) {
+					rTemp.writeLong(fecha);
+					rTemp.writeInt(idLEido);
+					byte[] resto = new byte[601];
+					r.read(resto);
+					rTemp.write(resto);					
+				} else {
+					r.skipBytes(601);
+				}
+			}
+		} catch (EOFException E) {
+
+		} catch (FileNotFoundException e) {
+			System.out.println("Fichero no existe");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (r != null) {
+					r.close();
+				}
+				if (rTemp != null) {
+					rTemp.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		File original = new File("mensajes.bin");
+		File remake = new File("mensajesTemp.bin");
+		if (original.exists()) {
+			if (original.delete()) {
+				if (remake.renameTo(original)) {
+					resultado = true;
+				} else {
+					System.out.println("Error al renombrar");
+				}
+			} else {
+				System.out.println("Error,no se ha borrado el fichero");
+			}
+		} else {
+			System.out.println("No existe");
+		}
+		return resultado;
+	}
+
+	public ArrayList<Mensaje> obtenerTodosMensajes() {
+		// TODO Auto-generated method stub
+		ArrayList<Mensaje> listMen = new ArrayList<Mensaje>();
+		RandomAccessFile r = null;
+		try {
+			r = new RandomAccessFile("mensajes.bin", "r");
+			Mensaje m = new Mensaje();
+
+			while (true) {
+				m.setFecha(new Date(r.readLong()));
+				m.setId(r.readInt());
+				m.setNombre("");
+				for (int i = 0; i < 100; i++) {
+					m.setNombre(m.getNombre() + r.readChar());
+				}
+				String letra = m.getNombre().trim();
+				m.setNombre(letra);
+				m.setTexto("");
+				for (int i = 0; i < 200; i++) {
+					m.setTexto(m.getTexto() + r.readChar());
+				}
+				m.setTexto(m.getTexto().trim());
+				m.setLeido(r.readBoolean());
+				listMen.add(m);
+			}
+
+		} catch (EOFException E) {
+
+		} catch (FileNotFoundException e) {
+			System.out.println("Fichero no existe");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (r != null) {
+					r.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return listMen;
+	}
+
 }

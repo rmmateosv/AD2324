@@ -2,6 +2,7 @@ package Examen;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 public class Principal {
@@ -33,15 +34,65 @@ public class Principal {
 			case 3:
 				ejer3();
 				break;
-			
+			case 4:
+				ejer4();
+				break;
 			}
 
 		} while (opcion != 0);
 	}
 
+	private static void ejer4() {
+		// TODO Auto-generated method stub
+		mostrarEmpleados();
+		System.out.println("Introduce un id de empleado: ");
+		int id = t.nextInt();
+		Empleado e = ad.obtenerEmpleado(id);
+		if (e != null) {
+			ArrayList<Mensaje> mensajes = ad.obtenerMensajes(e);
+			Chat c = new Chat();
+			c.setIdEmpleado(e.getId());
+			c.setNombre(e.getNombre());
+			c.setTotal(mensajes.size());
+			int contador=1;
+			for (Mensaje mensaje : mensajes) {				
+				MensajesXML m = new MensajesXML(m.getFecha(), contador, m.getNombre(), 
+						m.getTexto(), m.isLeido());
+				c.getMensajes().add(m);
+				contador++;
+			}
+			if(ad.marshall(id)) {
+				
+			}else {
+			}
+		}else {
+			System.out.println("No existe el empleado ");
+		}
+	}
+
 	private static void ejer3() {
 		// TODO Auto-generated method stub
-		
+		mostrarEmpleados();
+		System.out.println("Introduce un id de empleado: ");
+		int id =t.nextInt();
+		Empleado e = ad.obtenerEmpleado(id);
+		if (e != null) {
+			if(ad.borrarMensajes(id)) {
+				System.out.println("Todos los mensajes han sido borrados");
+				ArrayList<Mensaje> todoMensaje= ad.obtenerTodosMensajes();
+				mostrarMensajes(todoMensaje);
+			}else {
+			}
+		}else {
+			System.out.println("No existe el empleado ");
+		}
+	}
+
+	private static void mostrarMensajes(ArrayList<Mensaje> todoMensaje) {
+		// TODO Auto-generated method stub
+		for (Mensaje mensaje : todoMensaje) {
+			System.out.println(mensaje);
+		}
 	}
 
 	private static void ejer2() {
