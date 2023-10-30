@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <libraryInfos>
+    <libraryInfo home="C:\Program Files\Java\jdk-12.0.2" version="12.0.2"/>
     <libraryInfo home="C:\Users\Profesor\Desktop\eclipse2324\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_17.0.7.v20230425-1502" version="17.0.7"/>
     <libraryInfo home="C:\Users\Profesor\Desktop\eclipse2324\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_17.0.7.v20230425-1502\jre" version="17.0.7"/>
 </libraryInfos>

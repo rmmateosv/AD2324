@@ -10,6 +10,10 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
 public class Modelo {
 	
 	final String NOMBRE_FT = "empleados.txt";
@@ -334,6 +338,20 @@ public class Modelo {
 			}
 		}
 		return listMen;
+	}
+
+	public boolean marshall(Chat c) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			Marshaller m = JAXBContext.newInstance(Chat.class).createMarshaller();
+			m.marshal(c, new File(c.getIdEmpleado()+".xml"));
+			resultado = true;
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
 	}
 
 }

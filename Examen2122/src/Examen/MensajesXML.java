@@ -6,9 +6,10 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = {"feha","texto"})
+@XmlType(propOrder = {"fecha","texto"})
 public class MensajesXML {
 	private Date fecha; //8
 	private int id;//4
@@ -44,7 +45,7 @@ public class MensajesXML {
 	public String getNombre() {
 		return nombre;
 	}
-	@Transient
+	@XmlTransient
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}

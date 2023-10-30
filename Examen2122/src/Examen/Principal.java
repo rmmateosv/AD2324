@@ -56,13 +56,13 @@ public class Principal {
 			c.setTotal(mensajes.size());
 			int contador=1;
 			for (Mensaje mensaje : mensajes) {				
-				MensajesXML m = new MensajesXML(m.getFecha(), contador, m.getNombre(), 
-						m.getTexto(), m.isLeido());
+				MensajesXML m = new MensajesXML(mensaje.getFecha(), contador, mensaje.getNombre(), 
+						mensaje.getTexto(), mensaje.isLeido());
 				c.getMensajes().add(m);
 				contador++;
 			}
-			if(ad.marshall(id)) {
-				
+			if(ad.marshall(c)) {
+				System.out.println("Chat generado");
 			}else {
 			}
 		}else {
