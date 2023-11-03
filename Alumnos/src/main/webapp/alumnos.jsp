@@ -6,8 +6,10 @@
 //REcuperar alumnos que vienen del controlador
 ArrayList<Alumno> alumnos = (ArrayList<Alumno>) request.getAttribute("alumnos");
 if(alumnos==null){
-	alumnos = new ArrayList<>();
+	response.sendRedirect("ControladorAlumnos");
 }
+//Obtener el mensaje que viene del controlador
+String mensaje = (String) request.getAttribute("mensaje");
 %>
 <!DOCTYPE html>
 <html>
@@ -57,8 +59,20 @@ if(alumnos==null){
 		</div>
 	</section>
 	<section>
+
+			<%
+			if(mensaje!=null){
+				out.println("<div class='container mt-1 p-1 w-100 border'>");
+				out.println("<h6 class='text-danger'>"+mensaje+"</h6></div>");	
+			}
+			%>
+		
+	</section>
+	<section>
+	<div class="container mt-3 p-3 w-100 border">
 		<!--  pintar alumnos en una tabla -->
-		<table>
+		<form action="ControladorAlumnos" class="form-inline" method="post">
+		<table class="table table-striped">
 			<tr>
 				<th>DNI</th>
 				<th>Nombre</th>
@@ -66,20 +80,30 @@ if(alumnos==null){
 				<th>Nº Expediente</th>
 				<th>Estatura</th>
 				<th>Activo</th>
+				<th>Acciones</th>
 			</tr>
 			<%
-			for(Alumno a : alumnos){
-				out.println("<tr>");
-				out.println("<td>"+a.getDni()+"</td>");
-				out.println("<td>"+a.getNombre()+"</td>");
-				out.println("<td>"+a.getFechaN()+"</td>");
-				out.println("<td>"+a.getNumExp()+"</td>");
-				out.println("<td>"+a.getEstatura()+"</td>");
-				out.println("<td>"+a.isActivo()+"</td>");
-				out.println("</tr>");
+			if(alumnos!=null){
+				for(Alumno a : alumnos){
+					out.println("<tr>");
+					out.println("<td>"+a.getDni()+"</td>");
+					out.println("<td>"+a.getNombre()+"</td>");
+					out.println("<td>"+a.getFechaN()+"</td>");
+					out.println("<td>"+a.getNumExp()+"</td>");
+					out.println("<td>"+a.getEstatura()+"</td>");
+					out.println("<td>"+a.isActivo()+"</td>");
+					out.println("<td>"+
+					"<button type='submit' name='accion' value='baja/"+a.getDni()+"' class='btn btn-outline-primary'>Baja</button>"+
+					"<button type='submit' name='accion' value='borrar/"+a.getDni()+"' class='btn btn-outline-danger'>Borrar</button>"+					
+							"</td>");
+					out.println("</tr>");
+				}
 			}
 			%>
+			
 		</table>
+		</form>
+		</div>
 	</section>
 	
 	<footer>

@@ -21,6 +21,7 @@ public class ControladorAlumnos extends HttpServlet {
 	// Crear el acceso a datos
 	private static Modelo ad = new Modelo("alumnos.txt");
 	private SimpleDateFormat fechaHTML = new SimpleDateFormat("yyyy-MM-dd");
+	private static String mensaje="";
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -41,19 +42,46 @@ public class ControladorAlumnos extends HttpServlet {
 		// Leer el parámetro acción
 		String accion = request.getParameter("accion");
 		if (accion != null) {
-			switch (accion) {
+			String[]  eleccion = accion.split("/");
+			switch (eleccion [0]) {
 			case "crear":
 				crearAlumno(request, response);
 				break;
+			case "baja":
+				bajaAlumno(request, response,eleccion[1]);
+				break;
+			case "borrar":
+				borrarAlumno(request, response,eleccion[1]);
+				break;
 			default:
-				// Redireccionar a la página alumnos.jsp
-				request.getRequestDispatcher("alumnos.jsp").forward(request, response);
+				cargarVistaAlumno(request, response);
 			}
 		} 
 		else {
-			// Redireccionar a la página alumnos.jsp
-			request.getRequestDispatcher("alumnos.jsp").forward(request, response);
+			cargarVistaAlumno(request, response);
 		}
+	}
+
+	private void borrarAlumno(HttpServletRequest request, HttpServletResponse response, String dni) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void bajaAlumno(HttpServletRequest request, HttpServletResponse response, String dni) {
+		// TODO Auto-generated method stub
+		Alumno a = ad.obtenerAlumno(dni);
+		if(a!=null) {
+			if(ad.bajaAlumno(a)) {
+				mensaje="Alumno dado de baja";
+			}
+			else {
+				mensaje="Error al dar de baja el alumno";
+			}
+		}
+		else {
+			mensaje="Error, el alumno no existe";
+		}
+		cargarVistaAlumno(request, response);
 	}
 
 	private void crearAlumno(HttpServletRequest request, HttpServletResponse response) {
@@ -68,13 +96,16 @@ public class ControladorAlumnos extends HttpServlet {
 						Integer.parseInt(request.getParameter("estatura")), true);
 				if(ad.crearAlumno(a)) {
 					System.out.println("Alumno creado");
+					mensaje="Alumno Creado";
 				}
 				else {
 					System.out.println("Error al crear el alumno");
+					mensaje="Error al crear el alumno";
 				}
 			} else {
 				// Error
 				System.out.println("Error, ya existe alumno");
+				mensaje="Alumno ya existe";
 			}
 		} catch (ParseException e) {
 			// TODO: handle exception
@@ -89,7 +120,14 @@ public class ControladorAlumnos extends HttpServlet {
 			//Cargar los alumnos del fichero
 			ArrayList<Alumno> alumnos = ad.obtenerAlumnos();
 			//REdireccionar a la vista de alumnos pasando los alumnos como parámetros
-			request.setAttribute("alumnos", alumnos);
+			request.setAttribute("alumnos", alumnos);			
+			//Pasar mensaje a la vista de alumnos
+			if(!mensaje.isEmpty()) {
+				request.setAttribute("mensaje", mensaje);
+			}
+			
+			
+			//Redirigir
 			request.getRequestDispatcher("alumnos.jsp").forward(request, response);
 		} catch (ServletException | IOException e) {
 			// TODO Auto-generated catch block
