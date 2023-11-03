@@ -1,5 +1,14 @@
+<%@page import="Modelo.Alumno"%>
+<%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
+<%
+//REcuperar alumnos que vienen del controlador
+ArrayList<Alumno> alumnos = (ArrayList<Alumno>) request.getAttribute("alumnos");
+if(alumnos==null){
+	alumnos = new ArrayList<>();
+}
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,6 +24,62 @@
 	</header>
 	
 	<section>
+		<div class="container mt-3 p-3 w-100 border">
+			<form action="ControladorAlumnos" class="form-inline" method="post">
+				<div class="row">
+					<div class="col">
+						<label>DNI</label>
+						<input type="text" name="dni" required="required" class="form-control form-control-sm"/>
+					</div>
+					<div class="col">
+						<label>Nombre</label>
+						<input type="text" name="nombre" required="required"  class="form-control form-control-sm"/>
+					</div>
+					<div class="col">
+						<label>NºExpediente</label>
+						<input type="number" name="exp" required="required"  class="form-control form-control-sm"/>
+					</div>
+					<div class="col">
+						<label>Fecha Nacimiento</label>
+						<input type="date" name="fecha" required="required"  class="form-control form-control-sm"/>
+					</div>
+					<div class="col">
+						<label>Estatura</label>
+						<input type="number" name="estatura"  required="required"  class="form-control form-control-sm"/>
+					</div>
+					<div class="col">
+						<br/>
+						<button type="submit" name="accion" value="crear" 
+						class="btn btn-outline-dark">Crear</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</section>
+	<section>
+		<!--  pintar alumnos en una tabla -->
+		<table>
+			<tr>
+				<th>DNI</th>
+				<th>Nombre</th>
+				<th>Fecha Nacimiento</th>
+				<th>Nº Expediente</th>
+				<th>Estatura</th>
+				<th>Activo</th>
+			</tr>
+			<%
+			for(Alumno a : alumnos){
+				out.println("<tr>");
+				out.println("<td>"+a.getDni()+"</td>");
+				out.println("<td>"+a.getNombre()+"</td>");
+				out.println("<td>"+a.getFechaN()+"</td>");
+				out.println("<td>"+a.getNumExp()+"</td>");
+				out.println("<td>"+a.getEstatura()+"</td>");
+				out.println("<td>"+a.isActivo()+"</td>");
+				out.println("</tr>");
+			}
+			%>
+		</table>
 	</section>
 	
 	<footer>
