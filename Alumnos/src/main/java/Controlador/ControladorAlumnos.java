@@ -64,7 +64,19 @@ public class ControladorAlumnos extends HttpServlet {
 
 	private void borrarAlumno(HttpServletRequest request, HttpServletResponse response, String dni) {
 		// TODO Auto-generated method stub
-		
+		Alumno a = ad.obtenerAlumno(dni);
+		if(a!=null) {
+			if(ad.borrarAlumno(a)) {
+				mensaje="Alumno borrado";
+			}
+			else {
+				mensaje="Error al borrar el alumno";
+			}
+		}
+		else {
+			mensaje="Error, el alumno no existe";
+		}
+		cargarVistaAlumno(request, response);
 	}
 
 	private void bajaAlumno(HttpServletRequest request, HttpServletResponse response, String dni) {
