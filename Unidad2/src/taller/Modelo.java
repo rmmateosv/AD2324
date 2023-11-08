@@ -44,4 +44,18 @@ public class Modelo {
 		}
 	}
 
+	public void infoBD() {
+		// TODO Auto-generated method stub
+		//Obtener metadatos del servidor
+		
+	}
+
+	public Usuario obtenerUsuario(String us, String ps) {
+		// TODO Auto-generated method stub
+		Usuario resultado = null;
+		//Crear consulta para comprobar usuario y ps
+		select * from usuarios where usuario = us and ps = ps
+		return resultado;
+	}
+
 }

@@ -4,7 +4,7 @@ use tallerDAM;
 
 create table usuarios(
 	id int auto_increment primary key,
-    usuario varchar(50) not null,
+    usuario varchar(50) not null unique,
     ps blob not null,
     perfil enum('A','M','C')
 )engine innodb;
