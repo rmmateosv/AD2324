@@ -7,6 +7,7 @@ public class Principal {
 	
 	public static Scanner t  = new Scanner(System.in);
 	public static Modelo bd = new Modelo();
+	public static Usuario u  =null;
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -28,7 +29,7 @@ public class Principal {
 		String us = t.nextLine();
 		System.out.println("Introduce contraseña");
 		String ps=t.nextLine();
-		Usuario u = bd.obtenerUsuario(us,ps);
+		u = bd.obtenerUsuario(us,ps);
 		if(u!=null) {
 			//Cargar el menú correspondiente
 			switch(u.getPerfil()) {
@@ -109,9 +110,63 @@ public class Principal {
 				case 1:
 					bd.infoBD();
 					break;
+				case 2:
+					crearUsuario();
+					break;
+				case 5:
+					cambiarPS();
+					break;
 			}
 		
 		}while(opcion!=0);
+	
+	}
+
+
+	private static void cambiarPS() {
+		// TODO Auto-generated method stub
+		System.out.println("Nueva Contraseña:");
+		String ps = t.nextLine();
+		if(bd.cambiarPS(u,ps)) {
+			System.out.println("Contraseña cambiada");
+		}
+		else {
+			System.out.println("Error al cambiar contraseña");
+		}
+		
+		
+	}
+
+
+	private static void crearUsuario() {
+		// TODO Auto-generated method stub
+		System.out.println("Introduce el dni");
+		String dni = t.nextLine();
+		//Comproba que no hay otro us con el mismo dni
+		Usuario u = bd.obtenerUsuario(dni);
+		if(u==null) {
+			u=new Usuario();
+			u.setUsuario(dni);
+			System.out.println("Perfil(A-Administrativo/M-Mecánico/C-Cliente):");
+			String perfil =t.nextLine();
+			if(!perfil.equalsIgnoreCase("A") && !perfil.equalsIgnoreCase("M")
+				&& !perfil.equalsIgnoreCase("C")){
+					System.out.println("Error, perfil incorrecto");
+			}
+			else {
+				u.setPerfil(perfil.toUpperCase());
+				if(bd.crearUsuario(u)) {
+					System.out.println("Usuario creado con id:"+u.getId());
+				}
+				else {
+					System.out.println("Error al crear el usuario");
+				}
+			}
+			
+		}
+		else {
+			System.out.println("Error, ya existe usuario con ese dni");
+		}
 	}
 
 
