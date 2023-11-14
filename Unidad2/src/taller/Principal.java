@@ -2,6 +2,7 @@ package taller;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Principal {
@@ -85,11 +86,70 @@ public class Principal {
 			
 			switch(opcion) {
 				case 1:
-					
+					insertarPiezaReparacion();
+					break;
+				case 2:
+					cambiarPS();
 					break;
 			}
 		
 		}while(opcion!=0);
+	}
+
+
+	private static void insertarPiezaReparacion() {
+		// TODO Auto-generated method stub
+		mostrarReparaciones();
+		System.out.println("Introduce código de reparación");
+		Reparacion r = bd.obtenerReparacion(t.nextInt()); t.nextLine();
+		if(r!=null) {
+			String salir="";
+			do {
+				mostrarPiezas();
+				System.out.println("Introduce código de pieza");
+				Pieza p = bd.obtenerPieza(t.nextInt()); t.nextLine();
+				if(p!=null) {
+					System.out.println("Introduce cantidad");
+					int cantidad = t.nextInt(); t.nextLine();
+					//Chequear si hay stock
+					if(p.getStock()>=cantidad) {
+						//Añadir pieza a reparación
+						PiezaReparacion pr = bd.obtenerPiezaRep(r,p);
+						if(pr==null) {
+							//insertar
+							pr = new PiezaReparacion(r.getId(), p.getId(), 
+									cantidad, p.getPrecio());
+							if(bd.insertarPiezaReparacion(pr)) {
+								System.out.println("Pieza añadida");
+							}
+							else {
+								System.out.println("Error al añadir pieza");
+							}
+						}
+						else {
+							//modificar
+							if(bd.modificarCantidad(pr,cantidad)) {
+								System.out.println("Pieza modificada");
+							}
+							else {
+								System.out.println("Error al modificar pieza");
+							}
+						}
+					}
+					else {
+						System.out.println("Error, stock insuficiente");
+					}
+				}
+				else {
+					System.out.println("Pieza no existe");
+				}
+				System.out.println("Desea introducir otra pieza(0-No-*Si)");
+				salir = t.nextLine();
+			}while(!salir.equals("0"));
+		}
+		else {
+			System.out.println("Reparación no existe");
+		}
 	}
 
 
@@ -128,12 +188,47 @@ public class Principal {
 	private static void crearReparacion() {
 		// TODO Auto-generated method stub
 		mostrarVehiculos();
+		System.out.println("Introduce matrícula:");
+		String m = t.nextLine();
+		Vehiculo v = bd.obtenerVehiculo(m);
+		boolean error = false;
+		if(v==null) {
+			//Crear el vehículo
+			System.out.println("Vehículo no existe-Introduce datos del vehículo");
+			v = new Vehiculo();
+			v.setMatricula(m);
+			System.out.println("Nombre Propietario:");
+			v.setPropietario(t.nextLine());
+			System.out.println("Teléfono:");
+			v.setTelf(t.nextLine());
+			if(bd.crearVehiculo(v)) {
+				System.out.println("Vehiculo creado");
+			}
+			else {
+				error = true;
+				System.out.println("Error al crear el vehículo");
+			}			
+		}
+		
+		if(!error) {
+			//Crear reparación
+			Reparacion r = new Reparacion(0, new Date(), v.getMatricula(), u.getId());
+			if(bd.crearReparacion(r)) {
+				System.out.println("Reparación creada");
+			}
+			else {
+				System.out.println("Error al crear la reparación");
+			}
+		}
 	}
 
 
 	private static void mostrarVehiculos() {
 		// TODO Auto-generated method stub
-		ArrayList<>
+		ArrayList<Vehiculo> v = bd.obtenerVehiculos();
+		for (Vehiculo vehiculo : v) {
+			System.out.println(v);
+		}
 	}
 
 

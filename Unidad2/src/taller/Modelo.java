@@ -2,12 +2,14 @@ package taller;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 
 
@@ -198,4 +200,83 @@ public class Modelo {
 		return resultado;
 	}
 
+	public ArrayList<Vehiculo> obtenerVehiculos() {
+		// TODO Auto-generated method stub
+		ArrayList<Vehiculo> resultado = new ArrayList<Vehiculo>();
+		Statement st;
+		try {
+			st = conexion.createStatement();
+			ResultSet datos = st.executeQuery("select * from vehiculos");
+			while(datos.next()) {
+				Vehiculo v = new Vehiculo(datos.getString(1),
+						datos.getString(2),datos.getString(3));
+				resultado.add(v);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public Vehiculo obtenerVehiculo(String m) {
+		// TODO Auto-generated method stub
+		Vehiculo resultado = null;
+		try {
+			PreparedStatement ps = conexion.prepareStatement(
+					"select * from vehiculos where matricula = ?");
+			ps.setString(1, m);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) {
+				resultado=new Vehiculo(m, rs.getString(2), rs.getString(3));
+			}
+						
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public boolean crearVehiculo(Vehiculo v) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		// TODO Auto-generated method stub
+		try {
+			PreparedStatement ps = conexion.prepareStatement(
+					"insert into vehiculos values(?,?,?)");
+			ps.setString(1, v.getMatricula());
+			ps.setString(2, v.getPropietario());
+			ps.setString(3, v.getTelf());
+			int filas = ps.executeUpdate();
+			if(filas==1) {
+				resultado =true;
+			}			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public boolean crearReparacion(Reparacion r) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		// TODO Auto-generated method stub
+		try {
+			PreparedStatement ps = conexion.prepareStatement(
+					"insert into reparacion values(default,?,?,?)");
+			ps.setDate(1, new Date(r.getFecha().getTime()));
+			ps.setString(2, r.getVehiculo());
+			ps.setInt(3, r.getUsuario());
+			int filas = ps.executeUpdate();
+			if(filas==1) {
+				resultado =true;
+			}			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
 }
