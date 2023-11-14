@@ -1,6 +1,7 @@
 package taller;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Principal {
@@ -113,6 +114,9 @@ public class Principal {
 				case 2:
 					crearUsuario();
 					break;
+				case 3:
+					crearReparacion();
+					break;
 				case 5:
 					cambiarPS();
 					break;
@@ -120,6 +124,16 @@ public class Principal {
 		
 		}while(opcion!=0);
 	
+	}
+	private static void crearReparacion() {
+		// TODO Auto-generated method stub
+		mostrarVehiculos();
+	}
+
+
+	private static void mostrarVehiculos() {
+		// TODO Auto-generated method stub
+		ArrayList<>
 	}
 
 
