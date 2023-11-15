@@ -279,4 +279,198 @@ public class Modelo {
 		}
 		return resultado;
 	}
+
+	public ArrayList<Reparacion> obtenerReparaciones() {
+		// TODO Auto-generated method stub
+		ArrayList<Reparacion> resultado = new ArrayList<Reparacion>();
+		Statement st;
+		try {
+			st = conexion.createStatement();
+			ResultSet datos = st.executeQuery("select * from reparacion");
+			while(datos.next()) {
+				Reparacion r = new Reparacion(datos.getInt(1), 
+						datos.getDate(2), datos.getString(3), datos.getInt(4));
+				resultado.add(r);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public Reparacion obtenerReparacion(int codigo) {
+		// TODO Auto-generated method stub
+		Reparacion resultado = null;
+		try {
+			PreparedStatement ps = conexion.prepareStatement(
+					"select * from reparacion where id = ?");
+			ps.setInt(1, codigo);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) {
+				resultado=new Reparacion(rs.getInt(1), 
+						rs.getDate(2), rs.getString(3), rs.getInt(4));
+			}
+						
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public ArrayList<Pieza> obtenerPiezas() {
+		// TODO Auto-generated method stub
+		ArrayList<Pieza> resultado = new ArrayList<Pieza>();
+		Statement st;
+		try {
+			st = conexion.createStatement();
+			ResultSet datos = st.executeQuery("select * from piezas");
+			while(datos.next()) {
+				Pieza p = new Pieza(datos.getInt(1), datos.getString(2), 
+						datos.getInt(3), datos.getFloat(4));
+				resultado.add(p);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public Pieza obtenerPieza(int idP) {
+		// TODO Auto-generated method stub
+		Pieza resultado = null;
+		try {
+			PreparedStatement ps = conexion.prepareStatement(
+					"select * from piezas where id = ?");
+			ps.setInt(1, idP);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) {
+				resultado=new Pieza(rs.getInt(1), rs.getString(2), 
+						rs.getInt(3), rs.getFloat(4));;
+			}
+						
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public PiezaReparacion obtenerPiezaRep(Reparacion r, Pieza p) {
+		// TODO Auto-generated method stub
+		PiezaReparacion resultado = null;
+		try {
+			PreparedStatement ps = conexion.prepareStatement(
+					"select * from piezareparacion where reparacion = ? and "
+					+ "pieza = ?");
+			ps.setInt(1, r.getId());
+			ps.setInt(2, p.getId());
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) {
+				resultado=new PiezaReparacion(rs.getInt(1), rs.getInt(2), 
+						rs.getInt(3), rs.getFloat(4));
+			}
+						
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public boolean insertarPiezaReparacion(PiezaReparacion pr) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			//Insert en piezareapacion
+			//Update en pieza para actualizar el stock
+			//=> DEBEMOS INICIAR UNA TRANSACCIÓN Y ASEGURAR QUE 
+			//O SE HACEN LAS DOS OPERACIONES O NO SE HACE NINGUNA
+			//Iniciar transacción => EQUIVALE A START_TRANSACTION
+			conexion.setAutoCommit(false);
+			PreparedStatement ps = conexion.prepareStatement(
+					"insert into piezareparacion values (?,?,?,?)");
+			ps.setInt(1, pr.getReparacion());
+			ps.setInt(2, pr.getPieza());
+			ps.setInt(3, pr.getCantidad());
+			ps.setFloat(4, pr.getPrecio());
+			int filas = ps.executeUpdate();
+			if(filas==1) {
+				ps = conexion.prepareStatement("update piezas set "
+						+ "stock = stock - ? "
+						+ "where id = ?");
+				ps.setInt(1, pr.getCantidad());
+				ps.setInt(2, pr.getPieza());
+				filas = ps.executeUpdate();
+				if(filas==1) {
+					//Todo ha ido bien
+					resultado=true;
+					conexion.commit();
+				}
+				else {
+					//Algo ha fallado
+					conexion.rollback();
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			try {
+				conexion.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public boolean modificarCantidad(PiezaReparacion pr, int cantidad) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			//Insert en piezareapacion
+			//Update en pieza para actualizar el stock
+			//=> DEBEMOS INICIAR UNA TRANSACCIÓN Y ASEGURAR QUE 
+			//O SE HACEN LAS DOS OPERACIONES O NO SE HACE NINGUNA
+			//Iniciar transacción => EQUIVALE A START_TRANSACTION
+			conexion.setAutoCommit(false);
+			PreparedStatement ps = conexion.prepareStatement(
+					"update piezareparacion set cantidad = cantidad + ? "
+					+ "where reparacion = ? and pieza = ?");
+			ps.setInt(1, cantidad);
+			ps.setInt(2, pr.getReparacion());
+			ps.setInt(3, pr.getPieza());
+			int filas = ps.executeUpdate();
+			if(filas==1) {
+				ps = conexion.prepareStatement("update piezas set "
+						+ "stock = stock - ? "
+						+ "where id = ?");
+				ps.setInt(1, cantidad);
+				ps.setInt(2, pr.getPieza());
+				filas = ps.executeUpdate();
+				if(filas==1) {
+					//Todo ha ido bien
+					resultado=true;
+					conexion.commit();
+				}
+				else {
+					//Algo ha fallado
+					conexion.rollback();
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			try {
+				conexion.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}
+		return resultado;
+	}
 }

@@ -21,6 +21,11 @@ create table piezas(
     stock int  not null,
     precio float  not null
 )engine innodb;
+insert into piezas values 
+	(default,'Rueda Michelín',100,87.5),
+    (default,'Filtro Polen',76,45.5),
+    (default,'Filtro Aceite',50,34.5),
+    (default,'Correa de distribución',30,200.5);
 create table reparacion(
 	id int auto_increment primary key,
     fecha date not null,

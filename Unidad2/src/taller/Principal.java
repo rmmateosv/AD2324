@@ -117,13 +117,18 @@ public class Principal {
 						PiezaReparacion pr = bd.obtenerPiezaRep(r,p);
 						if(pr==null) {
 							//insertar
-							pr = new PiezaReparacion(r.getId(), p.getId(), 
-									cantidad, p.getPrecio());
-							if(bd.insertarPiezaReparacion(pr)) {
-								System.out.println("Pieza añadida");
+							if(cantidad >= 0) {
+								pr = new PiezaReparacion(r.getId(), p.getId(), 
+										cantidad, p.getPrecio());
+								if(bd.insertarPiezaReparacion(pr)) {
+									System.out.println("Pieza añadida");
+								}
+								else {
+									System.out.println("Error al añadir pieza");
+								}
 							}
 							else {
-								System.out.println("Error al añadir pieza");
+								System.out.println("La cantidad no puede ser negativa");
 							}
 						}
 						else {
@@ -149,6 +154,24 @@ public class Principal {
 		}
 		else {
 			System.out.println("Reparación no existe");
+		}
+	}
+
+
+	private static void mostrarPiezas() {
+		// TODO Auto-generated method stub
+		ArrayList<Pieza> piezas = bd.obtenerPiezas();
+		for (Pieza p : piezas) {
+			System.out.println(p);
+		}
+	}
+
+
+	private static void mostrarReparaciones() {
+		// TODO Auto-generated method stub
+		ArrayList<Reparacion> r = bd.obtenerReparaciones();
+		for (Reparacion reparacion : r) {
+			System.out.println(r);
 		}
 	}
 
