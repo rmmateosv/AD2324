@@ -27,7 +27,7 @@ public class Principal {
 	
 	private static void login() {
 		// TODO Auto-generated method stub
-		System.out.println("Introduce usuariossss:");
+		System.out.println("Introduce usuario:");
 		String us = t.nextLine();
 		System.out.println("Introduce contraseña:");
 		String ps=t.nextLine();
