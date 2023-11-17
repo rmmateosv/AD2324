@@ -1,0 +1,5 @@
+1;1A;Pedro Díaz;Navalmoral;true
+2;2B;María Luque;Plasencia;true
+3;3C;Silvia Garrido;Cáceres;false
+4;4D;Miriam Abad;Navalmoral;false
+5;5E;Joana Marín;Cáceres;true
