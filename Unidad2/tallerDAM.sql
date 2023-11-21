@@ -43,3 +43,37 @@ create table piezaReparacion(
     foreign key (reparacion) references reparacion(id) on update cascade on delete restrict,
     foreign key (pieza) references piezas(id) on update cascade on delete restrict
 )engine innodb;
+
+alter table reparacion add (fechaPago date null, total float not null default 0 );
+alter table reparacion add (horas float default 0, precioH float not null default 0 );
+delimiter //
+drop function if exists pagarReparacion//
+create function pagarReparacion(pId int, pHoras float, pPrecioH float)
+returns float deterministic
+begin
+	declare vResultado boolean default false;
+    declare vTotal float default 0;
+    
+	-- Calcular el importe de las piezas
+    select sum(cantidad*precioU)
+		into vTotal
+        from piezareparacion
+        where reparacion = pId;
+	-- Añadir a total el importe de mano de obra
+    set vTotal = vTotal + (pHoras*pPrecioH);
+    
+    -- Modificar tabla reparación
+    update reparacion set fechaPago = curdate(), 
+						total = vTotal, 
+						horas = pHoras, 
+						precioH = pPrecioH 
+			where id = pId;
+	
+    return vTotal;
+    
+end//
+drop procedure if exists detalleReparacion//
+create procedure detalleReparacion(pId int)
+begin
+end//
+delimiter ;

@@ -171,7 +171,7 @@ public class Principal {
 		// TODO Auto-generated method stub
 		ArrayList<Reparacion> r = bd.obtenerReparaciones();
 		for (Reparacion reparacion : r) {
-			System.out.println(r);
+			System.out.println(reparacion);
 		}
 	}
 
@@ -200,6 +200,9 @@ public class Principal {
 				case 3:
 					crearReparacion();
 					break;
+				case 4:
+					pagarReparacion();
+					break;
 				case 5:
 					cambiarPS();
 					break;
@@ -208,6 +211,27 @@ public class Principal {
 		}while(opcion!=0);
 	
 	}
+	private static void pagarReparacion() {
+		// TODO Auto-generated method stub
+		mostrarReparaciones();
+		System.out.println("Introduce reparación a pagar");
+		Reparacion r = bd.obtenerReparacion(t.nextInt());t.nextLine();
+		if(r!=null && r.getFechaPago()==null) {
+			System.out.println("Horas invertidas");
+			float horas = t.nextFloat();t.nextLine();
+			System.out.println("Precio Hora");
+			float precio = t.nextFloat();t.nextLine();
+			
+			if(bd.pagarReparacion(r,horas,precio)) {
+				System.out.println("Reparación pagada por "+r.getTotal()+" euros");
+			}
+		}
+		else {
+			System.out.println("Reparación no existe o ya está pagada");
+		}
+	}
+
+
 	private static void crearReparacion() {
 		// TODO Auto-generated method stub
 		mostrarVehiculos();

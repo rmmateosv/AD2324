@@ -1,5 +1,6 @@
 package taller;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.Date;
@@ -8,8 +9,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.SQLType;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
+
 
 
 
@@ -265,7 +269,7 @@ public class Modelo {
 		// TODO Auto-generated method stub
 		try {
 			PreparedStatement ps = conexion.prepareStatement(
-					"insert into reparacion values(default,?,?,?)");
+					"insert into reparacion values(default,?,?,?,null,0,0,0)");
 			ps.setDate(1, new Date(r.getFecha().getTime()));
 			ps.setString(2, r.getVehiculo());
 			ps.setInt(3, r.getUsuario());
@@ -289,7 +293,9 @@ public class Modelo {
 			ResultSet datos = st.executeQuery("select * from reparacion");
 			while(datos.next()) {
 				Reparacion r = new Reparacion(datos.getInt(1), 
-						datos.getDate(2), datos.getString(3), datos.getInt(4));
+						datos.getDate(2), datos.getString(3), datos.getInt(4),
+						datos.getDate(5),datos.getFloat(6),
+						datos.getFloat(7),datos.getFloat(8));
 				resultado.add(r);
 			}
 		} catch (SQLException e) {
@@ -469,6 +475,33 @@ public class Modelo {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public boolean pagarReparacion(Reparacion r, float horas, float precio) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			
+			CallableStatement consulta = conexion.prepareCall(
+					"{? = call pagarReparacion(?,?,?)}");
+			consulta.setInt(2, r.getId());
+			consulta.setFloat(3, horas);
+			consulta.setFloat(4, precio);
+			//REgistrar el tipo del parámetro de salida
+			consulta.registerOutParameter(1, Types.FLOAT);
+			
+			//Ejecutamos la consulta
+			int ok = consulta.executeUpdate();
+			System.out.println("Salida executeUpdate de función:"+ok);
+			
+			//Recuperar el valor devuelto por la función
+			r.setTotal(consulta.getFloat(1));
+			resultado = true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return resultado;
