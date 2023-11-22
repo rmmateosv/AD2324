@@ -73,7 +73,19 @@ begin
     
 end//
 drop procedure if exists detalleReparacion//
-create procedure detalleReparacion(pId int)
+create procedure detalleReparacion(pId int, out pHoras float, out pPrecioH float)
 begin
+	-- Obtener los datos del conpecto mano de obra
+	select horas, precioH
+		into pHoras, pPrecioH
+		from reparacion
+        where id = pId;
+	-- Obtener los datos de las piezas de la reparación
+    select * 
+    from piezareparacion
+	where reparacion = pId;
 end//
 delimiter ;
+
+call detalleReparacion(1, @aa, @bb);
+select @aa,@bb;

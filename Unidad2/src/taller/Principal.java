@@ -186,7 +186,8 @@ public class Principal {
 			System.out.println("2-Crear Usuario");
 			System.out.println("3-Crear Reparación (Si no existe coche, se crea)");
 			System.out.println("4-Pagar Reparación");
-			System.out.println("5-Cambiar Contraseña");
+			System.out.println("5-Imprimir Ticket");
+			System.out.println("6-Cambiar Contraseña");
 			
 			opcion = t.nextInt();t.nextLine();
 			
@@ -204,6 +205,9 @@ public class Principal {
 					pagarReparacion();
 					break;
 				case 5:
+					imprimirTicket();
+					break;
+				case 6:
 					cambiarPS();
 					break;
 			}
@@ -211,6 +215,37 @@ public class Principal {
 		}while(opcion!=0);
 	
 	}
+	private static void imprimirTicket() {
+		// TODO Auto-generated method stub
+		mostrarReparaciones();
+		System.out.println("Introduce reparación a imprimir");
+		Reparacion r = bd.obtenerReparacion(t.nextInt());t.nextLine();
+		if(r!=null && r.getFechaPago()!=null) {
+			ArrayList<Object[]> datos = bd.obtenerTicket(r);
+			System.out.println("Nombre del cliente:"+
+			bd.obtenerVehiculo(r.getVehiculo()).getPropietario());
+			System.out.println("MAtrícula Vehículo"+
+					r.getVehiculo());
+			System.out.println("Fecha Reparación:"+
+					r.getFecha());
+			System.out.println("Concepto\tCantidad\tPreciU\tTotal");
+			//Detalle del ticket
+			for (Object[] o : datos) {
+				System.out.println(o[0]+
+						"\t"+o[1] +
+						"\t"+o[2] +
+						"\t"+((float)o[1] * (float)o[2])
+						);
+			}
+			System.out.println("Total factura:"+r.getTotal());
+			
+		}
+		else {
+			System.out.println("Reparación no existe o no está pagada");
+		}
+	}
+
+
 	private static void pagarReparacion() {
 		// TODO Auto-generated method stub
 		mostrarReparaciones();

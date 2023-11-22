@@ -506,4 +506,34 @@ public class Modelo {
 		}
 		return resultado;
 	}
+
+	public ArrayList<Object[]> obtenerTicket(Reparacion r) {
+		// TODO Auto-generated method stub
+		ArrayList<Object[]> resultado = new ArrayList<Object[]>();
+		try {
+			
+			CallableStatement consulta = conexion.prepareCall(
+					"{detalleReparacion(?,?,?)}");
+			consulta.registerOutParameter(2, Types.FLOAT);
+			consulta.registerOutParameter(3, Types.FLOAT);
+			consulta.setInt(1, r.getId());
+			
+			ResultSet filas = consulta.executeQuery();
+			//REcuperar los parámetro de salida del procedimiento
+			Float h = consulta.getFloat(2);
+			Float p = consulta.getFloat(3);
+			//Añadir a resultado el primer concepto
+			Object[] c = {"Mano de Obra", h, p};
+			resultado.add(c);
+			while(filas.next()) {
+				c = {filas.getInt(1), filas.geFloat(2), filas.getFloat(3)};
+				resultado.add(c);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
 }
