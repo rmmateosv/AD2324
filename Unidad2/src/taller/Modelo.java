@@ -315,7 +315,9 @@ public class Modelo {
 			ResultSet rs = ps.executeQuery();
 			if(rs.next()) {
 				resultado=new Reparacion(rs.getInt(1), 
-						rs.getDate(2), rs.getString(3), rs.getInt(4));
+						rs.getDate(2), rs.getString(3), rs.getInt(4),
+						rs.getDate(5),rs.getFloat(6),
+						rs.getFloat(7),rs.getFloat(8));
 			}
 						
 		} catch (SQLException e) {
@@ -513,25 +515,44 @@ public class Modelo {
 		try {
 			
 			CallableStatement consulta = conexion.prepareCall(
-					"{detalleReparacion(?,?,?)}");
+					"{call detalleReparacion(?,?,?)}");
 			consulta.registerOutParameter(2, Types.FLOAT);
 			consulta.registerOutParameter(3, Types.FLOAT);
 			consulta.setInt(1, r.getId());
 			
 			ResultSet filas = consulta.executeQuery();
 			//REcuperar los parámetro de salida del procedimiento
-			Float h = consulta.getFloat(2);
-			Float p = consulta.getFloat(3);
+			float h = consulta.getFloat(2);
+			float p = consulta.getFloat(3);
 			//Añadir a resultado el primer concepto
 			Object[] c = {"Mano de Obra", h, p};
 			resultado.add(c);
 			while(filas.next()) {
-				c = {filas.getInt(1), filas.geFloat(2), filas.getFloat(3)};
+				c = new Object[]{filas.getString(1), filas.getFloat(2), 
+						filas.getFloat(3)};
 				resultado.add(c);
 			}
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public ArrayList<Object[]> obtenerVentasMes(int nextInt) {
+		// TODO Auto-generated method stub
+		ArrayList<Object[]> resultado = new ArrayList<Object[]>();
+		try {
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			try {
+				conexion.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
 		}
 		return resultado;

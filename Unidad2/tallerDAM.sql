@@ -26,6 +26,7 @@ insert into piezas values
     (default,'Filtro Polen',76,45.5),
     (default,'Filtro Aceite',50,34.5),
     (default,'Correa de distribución',30,200.5);
+INSERT INTO `tallerdam`.`piezas` (`nombre`, `stock`, `precio`) VALUES ('frenos', '100', '23');
 create table reparacion(
 	id int auto_increment primary key,
     fecha date not null,
@@ -59,6 +60,9 @@ begin
 		into vTotal
         from piezareparacion
         where reparacion = pId;
+	if(vTotal is null) then 
+		set vTotal = 0; 
+	end if;
 	-- Añadir a total el importe de mano de obra
     set vTotal = vTotal + (pHoras*pPrecioH);
     
@@ -81,8 +85,8 @@ begin
 		from reparacion
         where id = pId;
 	-- Obtener los datos de las piezas de la reparación
-    select * 
-    from piezareparacion
+    select nombre,  cantidad, precioU
+    from piezareparacion join pieza on pieza = id
 	where reparacion = pId;
 end//
 delimiter ;

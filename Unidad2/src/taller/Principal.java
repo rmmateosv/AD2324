@@ -187,7 +187,8 @@ public class Principal {
 			System.out.println("3-Crear Reparación (Si no existe coche, se crea)");
 			System.out.println("4-Pagar Reparación");
 			System.out.println("5-Imprimir Ticket");
-			System.out.println("6-Cambiar Contraseña");
+			System.out.println("6-Mostrar Ventas del mes por pieza");
+			System.out.println("7-Cambiar Contraseña");
 			
 			opcion = t.nextInt();t.nextLine();
 			
@@ -208,6 +209,9 @@ public class Principal {
 					imprimirTicket();
 					break;
 				case 6:
+					mostrarVentasMes();
+					break;
+				case 7:
 					cambiarPS();
 					break;
 			}
@@ -215,6 +219,21 @@ public class Principal {
 		}while(opcion!=0);
 	
 	}
+	private static void mostrarVentasMes() {
+		// TODO Auto-generated method stub
+		System.out.println("Mes");
+		ArrayList<Object[]> datos = bd.obtenerVentasMes(t.nextInt());t.nextLine();
+		float totalMes=0;
+		for (Object[] o : datos) {
+			System.out.println("Código:"+o[0]+
+					"\tNombre:"+o[1]+
+					"\tCantidad:"+o[2]+
+					"\tTotalPieza"+o[3]);
+			totalMes+=(float)o[2]*(float)o[3];
+		}
+	}
+
+
 	private static void imprimirTicket() {
 		// TODO Auto-generated method stub
 		mostrarReparaciones();
@@ -228,13 +247,17 @@ public class Principal {
 					r.getVehiculo());
 			System.out.println("Fecha Reparación:"+
 					r.getFecha());
-			System.out.println("Concepto\tCantidad\tPreciU\tTotal");
+			StringBuilder texto = new StringBuilder("Concepto");
+			texto.setLength(50);
+			System.out.println(texto+"\t\tCantidad\t\tPreciU\t\tTotal");
 			//Detalle del ticket
 			for (Object[] o : datos) {
+				 texto = new StringBuilder(o[1].toString());
+				texto.setLength(50);
 				System.out.println(o[0]+
-						"\t"+o[1] +
-						"\t"+o[2] +
-						"\t"+((float)o[1] * (float)o[2])
+						"\t\t"+texto.toString() +
+						"\t\t"+o[2] +
+						"\t\t"+((float)o[1] * (float)o[2])
 						);
 			}
 			System.out.println("Total factura:"+r.getTotal());
