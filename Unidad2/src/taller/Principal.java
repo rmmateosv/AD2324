@@ -65,11 +65,60 @@ public class Principal {
 			
 			switch(opcion) {
 				case 1:
-					
+					verReparaciones();
 					break;
 			}
 		
 		}while(opcion!=0);
+	}
+
+
+	private static void verReparaciones() {
+		// TODO Auto-generated method stub
+		ArrayList<Reparacion> r = bd.obtenerReparaciones(u.getUsuario());
+		for (Reparacion re : r) {
+			System.out.println(re);
+		}
+		System.out.println("Introdce código de reparación:");
+		Reparacion re = bd.obtenerReparacion(t.nextInt()); t.nextLine();
+		//Si la reparación es del usuario logueado y está pagada, mostramos detalles
+		if(bd.obtenerVehiculo(re.getVehiculo()).getPropietario().equalsIgnoreCase(u.getUsuario())) {
+			if(re.getFechaPago()!=null) {
+				mostrarTicket(re);
+			}
+			else {
+				System.out.println("La reparación no está pagada. No se puede mostrar el detalle");
+			}
+		}
+		else {
+			System.out.println("La reparación no existe");
+		}
+	}
+
+
+	private static void mostrarTicket(Reparacion r) {
+		// TODO Auto-generated method stub
+		ArrayList<Object[]> datos = bd.obtenerTicket(r);
+		System.out.println("Nombre del cliente:"+
+		bd.obtenerVehiculo(r.getVehiculo()).getPropietario());
+		System.out.println("MAtrícula Vehículo"+
+				r.getVehiculo());
+		System.out.println("Fecha Reparación:"+
+				r.getFecha());
+		StringBuilder texto = new StringBuilder("Concepto");
+		texto.setLength(50);
+		System.out.println(texto+"\t\tCantidad\t\tPreciU\t\tTotal");
+		//Detalle del ticket
+		for (Object[] o : datos) {
+			 texto = new StringBuilder(o[1].toString());
+			texto.setLength(50);
+			System.out.println(o[0]+
+					"\t\t"+texto.toString() +
+					"\t\t"+o[2] +
+					"\t\t"+((float)o[1] * (float)o[2])
+					);
+		}
+		System.out.println("Total factura:"+r.getTotal());
 	}
 
 
@@ -227,9 +276,11 @@ public class Principal {
 		for (Object[] o : datos) {
 			System.out.println("Código:"+o[0]+
 					"\tNombre:"+o[1]+
+					"\tNº de Reparaciones:"+o[4]+
+					"\tPrecio Medio de Venta:"+o[5]+
 					"\tCantidad:"+o[2]+
-					"\tTotalPieza"+o[3]);
-			totalMes+=(float)o[2]*(float)o[3];
+					"\tTotalPieza:"+o[3]);
+			totalMes+=(int)o[2]*(float)o[3];
 		}
 		System.out.println("Total Vendido:"+totalMes);
 	}
@@ -241,27 +292,7 @@ public class Principal {
 		System.out.println("Introduce reparación a imprimir");
 		Reparacion r = bd.obtenerReparacion(t.nextInt());t.nextLine();
 		if(r!=null && r.getFechaPago()!=null) {
-			ArrayList<Object[]> datos = bd.obtenerTicket(r);
-			System.out.println("Nombre del cliente:"+
-			bd.obtenerVehiculo(r.getVehiculo()).getPropietario());
-			System.out.println("MAtrícula Vehículo"+
-					r.getVehiculo());
-			System.out.println("Fecha Reparación:"+
-					r.getFecha());
-			StringBuilder texto = new StringBuilder("Concepto");
-			texto.setLength(50);
-			System.out.println(texto+"\t\tCantidad\t\tPreciU\t\tTotal");
-			//Detalle del ticket
-			for (Object[] o : datos) {
-				 texto = new StringBuilder(o[1].toString());
-				texto.setLength(50);
-				System.out.println(o[0]+
-						"\t\t"+texto.toString() +
-						"\t\t"+o[2] +
-						"\t\t"+((float)o[1] * (float)o[2])
-						);
-			}
-			System.out.println("Total factura:"+r.getTotal());
+			mostrarTicket(r);
 			
 		}
 		else {
@@ -303,7 +334,7 @@ public class Principal {
 			System.out.println("Vehículo no existe-Introduce datos del vehículo");
 			v = new Vehiculo();
 			v.setMatricula(m);
-			System.out.println("Nombre Propietario:");
+			System.out.println("DNI Propietario:");
 			v.setPropietario(t.nextLine());
 			System.out.println("Teléfono:");
 			v.setTelf(t.nextLine());
@@ -333,7 +364,7 @@ public class Principal {
 		// TODO Auto-generated method stub
 		ArrayList<Vehiculo> v = bd.obtenerVehiculos();
 		for (Vehiculo vehiculo : v) {
-			System.out.println(v);
+			System.out.println(vehiculo);
 		}
 	}
 

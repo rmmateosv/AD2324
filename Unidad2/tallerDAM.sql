@@ -12,7 +12,8 @@ insert into usuarios values (default, 'admin',sha2('admin',512),'A');
 
 create table vehiculos(
 	matricula varchar(7) primary key,
-    propietario varchar(100) not null,
+    propietario varchar(100) not null, -- Pondremos el dni del propietario para vincularlo con el usuario
+    -- Esto es debido a que no hemos hecho un análisis y diseño correcto
     telf varchar(9)  not null
 )engine InnodB;
 create table piezas(

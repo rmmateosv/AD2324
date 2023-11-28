@@ -540,12 +540,23 @@ public class Modelo {
 		return resultado;
 	}
 
-	public ArrayList<Object[]> obtenerVentasMes(int nextInt) {
+	public ArrayList<Object[]> obtenerVentasMes(int mes) {
 		// TODO Auto-generated method stub
 		ArrayList<Object[]> resultado = new ArrayList<Object[]>();
 		try {
-			
-			
+			PreparedStatement consulta = conexion.prepareStatement("select p.id, p.nombre, "
+					+ "sum(pr.cantidad), sum(pr.cantidad*pr.precioU), count(*), avg(pr.precioU) "
+					+ " from piezas p inner join piezareparacion pr  on p.id = pr.pieza "
+					+ "					inner join reparacion r on r.id=pr.reparacion "
+					+ "					where month(r.fecha) = ? "
+					+ "					group by p.id");
+			consulta.setInt(1, mes);
+			ResultSet r = consulta.executeQuery();
+			while(r.next()) {
+				Object[] fila = new Object[] {r.getInt(1),r.getString(2),
+						r.getInt(3),r.getFloat(4),r.getInt(5),r.getFloat(6)};
+				resultado.add(fila);
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			try {
@@ -554,6 +565,31 @@ public class Modelo {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public ArrayList<Reparacion> obtenerReparaciones(String usuario) {
+		// TODO Auto-generated method stub
+		ArrayList<Reparacion> resultado = new ArrayList<Reparacion>();
+		Statement st;
+		try {
+			PreparedStatement consulta  = conexion.prepareStatement("select * from "
+					+ "reparacion r inner join "
+					+ "vehiculos v on r.vehiculo = v.matricula "
+					+ "where v.propietario = ?");
+			consulta.setString(1, usuario);
+			ResultSet datos = consulta.executeQuery();
+			while(datos.next()) {
+				Reparacion r = new Reparacion(datos.getInt(1), 
+						datos.getDate(2), datos.getString(3), datos.getInt(4),
+						datos.getDate(5),datos.getFloat(6),
+						datos.getFloat(7),datos.getFloat(8));
+				resultado.add(r);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return resultado;
