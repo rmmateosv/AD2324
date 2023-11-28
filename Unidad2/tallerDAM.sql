@@ -86,7 +86,7 @@ begin
         where id = pId;
 	-- Obtener los datos de las piezas de la reparación
     select nombre,  cantidad, precioU
-    from piezareparacion join pieza on pieza = id
+    from piezareparacion join piezas on pieza = id
 	where reparacion = pId;
 end//
 delimiter ;

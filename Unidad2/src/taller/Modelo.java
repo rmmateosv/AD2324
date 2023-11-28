@@ -545,6 +545,7 @@ public class Modelo {
 		ArrayList<Object[]> resultado = new ArrayList<Object[]>();
 		try {
 			
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			try {

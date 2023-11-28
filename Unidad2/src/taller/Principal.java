@@ -231,6 +231,7 @@ public class Principal {
 					"\tTotalPieza"+o[3]);
 			totalMes+=(float)o[2]*(float)o[3];
 		}
+		System.out.println("Total Vendido:"+totalMes);
 	}
 
 
