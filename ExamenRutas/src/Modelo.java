@@ -1,4 +1,5 @@
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -79,11 +80,42 @@ public class Modelo {
 		try {
 			PreparedStatement consulta  = conexion.prepareStatement(
 					"insert into ruta values (default,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
-			consulta.setInt(1, r.getParaje());
+			consulta.setInt(1, r.getParaje().getId());
+			consulta.setString(2, r.getColor());
+			consulta.setDate(3, new Date(r.getFecha().getTime()));
+			consulta.setInt(4, r.getDuracion());
+			if(consulta.executeUpdate()==1) {
+				resultado=true;
+				ResultSet ids = consulta.getGeneratedKeys();
+				if(ids.next()) {
+					r.setId(ids.getInt(1));
+				}				
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return resultado;
+	}
+
+	public ArrayList<Ruta> obtenerRutas() {
+		// TODO Auto-generated method stub
+		ArrayList<Ruta> resultado = new ArrayList();
+		try {
+			Statement consulta = conexion.createStatement();
+			ResultSet r = consulta.executeQuery("select * from ruta r join paraje  p on r.paraje=p.id");
+			while(r.next()) {
+				Ruta ru = new Ruta(r.getInt(1), 
+						new Paraje(r.getInt(6),r.getString(7),r.getInt(8)), 
+						r.getString(3), 
+						r.getDate(4),r.getInt(5));
+				resultado.add(ru);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return resultado;
 	}
 	

@@ -51,7 +51,7 @@ public class Principal {
 		Paraje p = bd.obtenerParaje(t.nextInt());t.nextLine();
 		if(p!=null) {
 			Ruta r = new Ruta();
-			r.setParaje(p.getId());
+			r.setParaje(p);
 			System.out.println("Color (V-Verde A-Amarilla R-Roja):");
 			String color = t.nextLine();
 			switch (color.toLowerCase()){
@@ -84,6 +84,14 @@ public class Principal {
 			System.out.println("Error, paraje no existe");
 		}
 
+	}
+
+	private static void mostraRutas() {
+		// TODO Auto-generated method stub
+		ArrayList<Ruta> rutas = bd.obtenerRutas();
+		for (Ruta r : rutas) {
+			System.out.println(r);
+		}
 	}
 
 	private static void mostrarParajes() {
