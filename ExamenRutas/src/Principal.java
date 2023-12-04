@@ -27,7 +27,7 @@ public class Principal {
 					crearRuta();
 					break;
 				case 2:
-
+					crearLugarEnRuta();
 					break;
 				case 3:
 
@@ -40,6 +40,51 @@ public class Principal {
 			} while (opcion != 0);
 		} else {
 			System.out.println("Error, no hay conexión con la BD");
+		}
+	}
+
+	private static void crearLugarEnRuta() {
+		// TODO Auto-generated method stub
+		mostraRutas();
+		System.out.println("Introduce id de ruta");
+		Ruta r = bd.obtenerRuta(t.nextInt()); t.nextLine();
+		if(r!=null) {
+			String opcion = "0";
+			ArrayList<Lugar> lugares = new ArrayList();
+			do {
+				mostrarLugares(r.getParaje());
+				System.out.println("Introduce id de lugar");
+				Lugar l = bd.obtenerLugar(t.nextInt());t.nextLine();
+				if(l!=null && l.getParaje().getId()==r.getParaje().getId()) {
+					lugares.add(l);
+				}
+				else {
+					System.out.println("Error, lugar no existe en el paraje de la ruta");
+				}
+				System.out.println("Introducir más lugares? (0-No/*-Sí");
+				opcion=t.nextLine();
+			}while(!opcion.equals("0"));
+			if(!lugares.isEmpty()) {
+				if(bd.crearLugaresRuta(r,lugares)) {
+					System.out.println("Lugares añadidio a ruta");
+				}
+				else {
+					System.out.println("Error al añadir lugares a ruta");
+				}
+			}
+			
+			
+		}
+		else {
+			System.out.println("Error, ruta no existe");
+		}
+	}
+
+	private static void mostrarLugares(Paraje paraje) {
+		// TODO Auto-generated method stub
+		ArrayList<Lugar> lugares = bd.obtenerLugares(paraje);
+		for (Lugar l : lugares) {
+			System.out.println(l);
 		}
 	}
 

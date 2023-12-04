@@ -103,7 +103,8 @@ public class Modelo {
 		ArrayList<Ruta> resultado = new ArrayList();
 		try {
 			Statement consulta = conexion.createStatement();
-			ResultSet r = consulta.executeQuery("select * from ruta r join paraje  p on r.paraje=p.id");
+			ResultSet r = consulta.executeQuery("select * from ruta r join paraje  p "
+					+ "                            on r.paraje=p.id");
 			while(r.next()) {
 				Ruta ru = new Ruta(r.getInt(1), 
 						new Paraje(r.getInt(6),r.getString(7),r.getInt(8)), 
@@ -116,6 +117,104 @@ public class Modelo {
 			e.printStackTrace();
 		}
 		
+		return resultado;
+	}
+
+	public Ruta obtenerRuta(int idR) {
+		// TODO Auto-generated method stub
+		Ruta resultado = null;
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"select * from ruta r join paraje  p"
+					+ " on r.paraje=p.id  where id = ?");
+			consulta.setInt(1, idR);
+			ResultSet r = consulta.executeQuery();
+			if(r.next()) {
+				resultado = new Ruta(r.getInt(1), 
+						new Paraje(r.getInt(6),r.getString(7),r.getInt(8)), 
+						r.getString(3), 
+						r.getDate(4),r.getInt(5));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	public ArrayList<Lugar> obtenerLugares(Paraje paraje) {
+		// TODO Auto-generated method stub
+		ArrayList<Lugar> resultado = new ArrayList();
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"select * from lugar l join paraje p on l.paraje = p.id "
+					+ "join municipio m on l.municipio = m.id "
+					+ "where l.paraje = ?");
+			consulta.setInt(1, paraje.getId());
+			ResultSet r = consulta.executeQuery();
+			while(r.next()) {
+				Lugar l = new Lugar(r.getInt(1), r.getString(2), 
+						new Paraje(r.getInt(5), r.getString(6), r.getInt(7)), 
+						new Municipio(r.getInt(8), r.getString(9), r.getString(10)));
+				resultado.add(l);
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public Lugar obtenerLugar(int idLugar) {
+		// TODO Auto-generated method stub
+		Lugar resultado = null;
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"select * from lugar l join paraje p on l.paraje = p.id "
+					+ "join municipio m on l.municipio = m.id "
+					+ "where l.id = ?");
+			consulta.setInt(1, idLugar);
+			ResultSet r = consulta.executeQuery();
+			if(r.next()) {
+				resultado = new Lugar(r.getInt(1), r.getString(2), 
+						new Paraje(r.getInt(5), r.getString(6), r.getInt(7)), 
+						new Municipio(r.getInt(8), r.getString(9), r.getString(10)));				
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public boolean crearLugaresRuta(Ruta r, ArrayList<Lugar> lugares) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		
+		try {
+			//Iniciar transacción
+			conexion.setAutoCommit(false);
+			for (Lugar l : lugares) {
+				//Comprobar si el lugar no está ya en la ruta
+				if(!existeLugarEnRuta(r,l)){
+					PreparedStatement consulta = conexion.prepareStatement(
+							"insert into ruta_lugar values (?,?)");
+					consulta.setInt(1, r.getId());
+					consulta.setInt(2, l.getId());
+					int filas = 
+					
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			conexion.rollback();
+			e.printStackTrace();
+		}
 		return resultado;
 	}
 	
