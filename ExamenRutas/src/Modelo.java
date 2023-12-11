@@ -1,10 +1,13 @@
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLType;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 
 public class Modelo {
@@ -249,6 +252,144 @@ public class Modelo {
 			e.printStackTrace();
 		}
 		return resultado;
+	}
+
+	public boolean modificarRuta(Ruta r, int d) {
+		// TODO Auto-generated method stub
+		boolean resultado=false;
+		
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"update ruta set duracion = ? where id = ?");
+			consulta.setInt(1, d);
+			consulta.setInt(2, r.getId());
+			int filas = consulta.executeUpdate();
+			if(filas==1) {
+				resultado=true;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public ArrayList<Municipio> obtenerMunicipios() {
+		// TODO Auto-generated method stub
+		ArrayList<Municipio> resultado = new ArrayList();
+		try {
+			Statement consulta = conexion.createStatement();
+			ResultSet r = consulta.executeQuery("select * from municipio");
+			while(r.next()) {
+				Municipio m = new Municipio(r.getInt(1),r.getString(2),r.getString(3));
+				resultado.add(m);
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public Municipio obtenerMunicipio(int idM) {
+		// TODO Auto-generated method stub
+		Municipio resultado = null;
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"select * from municipio where id = ?");
+			consulta.setInt(1, idM);
+			ResultSet r = consulta.executeQuery();
+			if(r.next()) {
+				resultado = new Municipio(r.getInt(1),r.getString(2),r.getString(3));				
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public int crearLugar(int p, int m, String nombre) {
+		// TODO Auto-generated method stub
+		int resultado = 0;
+		try {
+			CallableStatement consulta = conexion.prepareCall(
+					"{? = call crear_lugar(?,?, ?)}");
+			consulta.setString(2, nombre);
+			consulta.setInt(3, p);
+			consulta.setInt(4, m);
+			
+			consulta.registerOutParameter(1, Types.INTEGER);
+			
+			consulta.executeUpdate();
+			//Recuperar el valor de retorno de la función
+			return consulta.getInt(1);
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public ArrayList<Lugar> obtenerLugares() {
+		// TODO Auto-generated method stub
+		ArrayList<Lugar> resultado = new ArrayList();
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"select * from lugar l join paraje p on l.paraje = p.id "
+					+ "join municipio m on l.municipio = m.id ");
+			ResultSet r = consulta.executeQuery();
+			while(r.next()) {
+				Lugar l = new Lugar(r.getInt(1), r.getString(2), 
+						new Paraje(r.getInt(5), r.getString(6), r.getInt(7)), 
+						new Municipio(r.getInt(8), r.getString(9), r.getString(10)));
+				resultado.add(l);
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public ArrayList<Ruta> obtenerRutas(Lugar l) {
+		// TODO Auto-generated method stub
+		ArrayList<Ruta> resultado = new ArrayList();
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"select * from ruta r join paraje  p "
+					+ "  on r.paraje=p.id "
+					+ "inner join ruta_lugar rl on rl.ruta =r.id "
+					+ "where rl.lugar = ?");
+			
+			consulta.setInt(1, l.getId());
+			ResultSet r = consulta.executeQuery();
+			while(r.next()) {
+				Ruta ru = new Ruta(r.getInt(1), 
+						new Paraje(r.getInt(6),r.getString(7),r.getInt(8)), 
+						r.getString(3), 
+						r.getDate(4),r.getInt(5));
+				resultado.add(ru);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	public boolean borrarLugar(Lugar l, ArrayList<Ruta> rutas) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

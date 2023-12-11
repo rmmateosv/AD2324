@@ -449,12 +449,15 @@ delimiter //
 -- el id del lugar creado si no se produce ningún error
 -- -1 si el paraje no existe
 -- -2 si el municipio no existe
-create function crear_lugar(nombre varchar(100),p_paraje int, p_municipio int)
+-- -3 si el lugar ya existe en el paraje y municipio
+create function crear_lugar(p_nombre varchar(100),p_paraje int, p_municipio int)
 	returns int deterministic
     begin
     -- Chequear paraje
     declare vParaje int default null;
     declare vMunicipio int default null;
+    declare vParaje2 int default null;
+    
     select id into vParaje from paraje where id=p_paraje;
     if(vParaje is null) then 
 		return -1;
@@ -464,9 +467,15 @@ create function crear_lugar(nombre varchar(100),p_paraje int, p_municipio int)
     if(vMunicipio is null) then 
 		return -2;
 	end if;
+    -- Chequar que no existe el lugar
+    select id into vParaje2 from lugar where nombre = p_nombre and paraje = p_paraje and 
+		municipio = p_municipio;
+	if(vParaje2 is not null) then
+		return -3;
+	end if;
     -- Crear el lugar
-    insert into lugar values (null,nombre,p_paraje, p_municipio);
+    insert into lugar values (null,p_nombre,p_paraje, p_municipio);
     return last_insert_id();
     end//
 
-select crear_lugar('rosa',1,100);
+
