@@ -126,7 +126,7 @@ public class Modelo {
 		try {
 			PreparedStatement consulta = conexion.prepareStatement(
 					"select * from ruta r join paraje  p"
-					+ " on r.paraje=p.id  where id = ?");
+					+ " on r.paraje=p.id  where r.id = ?");
 			consulta.setInt(1, idR);
 			ResultSet r = consulta.executeQuery();
 			if(r.next()) {
@@ -206,13 +206,46 @@ public class Modelo {
 							"insert into ruta_lugar values (?,?)");
 					consulta.setInt(1, r.getId());
 					consulta.setInt(2, l.getId());
-					int filas = 
-					
+					int filas = consulta.executeUpdate();
+					if(filas==0) {
+						conexion.rollback();
+						return false;
+					}					
 				}
+				else {
+					System.out.println("Lugar "+l.getId()+"ya se ha añadido, se ignora");
+				}
+			}
+			conexion.commit();
+			resultado=true;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			try {
+				conexion.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	private boolean existeLugarEnRuta(Ruta r, Lugar l) {
+		// TODO Auto-generated method stub
+		boolean resultado  = false;
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"SELECT * from ruta_lugar where ruta = ? and lugar = ?");
+			consulta.setInt(1, r.getId());
+			consulta.setInt(2, l.getId());
+			ResultSet rs = consulta.executeQuery();
+			if(rs.next()) {
+				resultado = true;
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			conexion.rollback();
 			e.printStackTrace();
 		}
 		return resultado;
