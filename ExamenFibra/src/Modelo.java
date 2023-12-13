@@ -112,4 +112,68 @@ public class Modelo {
 		
 		return resultado;
 	}
+
+	public ServicioContratado obtenerServicioContratado(Cliente c, Servicio s) {
+		// TODO Auto-generated method stub
+		ServicioContratado resultado=null;
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"select *  from servicioContratado "
+					+ "where cliente = ? and servicio = ?");
+			consulta.setInt(1, c.getIdC());
+			consulta.setInt(2, s.getIdS());
+			ResultSet r = consulta.executeQuery();
+			if(r.next()) {
+				resultado = new ServicioContratado(c, 
+						s, r.getDate(3), r.getDate(4));
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	public boolean crearServicioContratado(Cliente c, Servicio s) {
+		// TODO Auto-generated method stub
+		boolean resultado=false;
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"insert into servicioContratado values (?,?,curdate(),null)");
+			consulta.setInt(1, c.getIdC());
+			consulta.setInt(2, s.getIdS());
+			int filas = consulta.executeUpdate();
+			if(filas==1) {
+				resultado=true;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	public boolean modificarServicioContratado(Cliente c, Servicio s) {
+		// TODO Auto-generated method stub
+		boolean resultado=false;
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"update servicioContratado set fechaAlta=curdate(), fechaBaja=null "
+					+ "where cliente = ? and servicio = ?");
+			consulta.setInt(1, c.getIdC());
+			consulta.setInt(2, s.getIdS());
+			int filas = consulta.executeUpdate();
+			if(filas==1) {
+				resultado=true;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
 }

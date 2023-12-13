@@ -56,7 +56,25 @@ public class Principal {
 					encontrado = true;
 					//Contratar servicio
 					//Comprobar si está en serv contratado pero dado de baja
-					bd.obtenerServicioContratado
+					ServicioContratado sc = bd.obtenerServicioContratado(c,s);
+					if(sc==null) {
+						//HAcer insert
+						if(bd.crearServicioContratado(c,s)) {
+							System.out.println("Servicio Contratado");
+						}
+						else {
+							System.out.println("Error al contratar el servicio");
+						}
+					}
+					else {
+						//update
+						if(bd.modificarServicioContratado(c,s)) {
+							System.out.println("Servicio Contratado");
+						}
+						else {
+							System.out.println("Error al contratar el servicio");
+						}
+					}
 					
 					
 				}
