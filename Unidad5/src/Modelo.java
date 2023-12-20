@@ -1,5 +1,6 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class Modelo {
@@ -28,6 +29,35 @@ public class Modelo {
 
 	public void setConexion(Connection conexion) {
 		this.conexion = conexion;
+	}
+
+	public boolean crearPaciente(Paciente pa) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"insert into paciente values(default,?,(?,?),?,null)");
+			consulta.setString(1, pa.getNombre());
+			consulta.setString(2, pa.getContacto().getTelefono());
+			consulta.setString(3, pa.getContacto().getEmail());
+			consulta.setInt(4, pa.getNss());
+			int filas = consulta.executeUpdate();
+			if(filas==1) {
+				resultado=true;
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public Paciente obtenerPaciente(int nss) {
+		// TODO Auto-generated method stub
+		Paciente resultado = null;
+		PreparedStatement consulta = conexion.prepareStatement(ps);
+		return resultado;
 	}
 	
 	

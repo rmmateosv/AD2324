@@ -22,7 +22,7 @@ public class Principal {
 				t.nextLine();
 				switch (opcion) {
 				case 1:
-					crearPaciente();
+					crearPersona();
 					break;
 				}
 
@@ -32,9 +32,40 @@ public class Principal {
 		}
 	}
 
-	private static void crearPaciente() {
+	private static void crearPersona() {
 		// TODO Auto-generated method stub
-		System.out.println();
+		Persona p = new Persona();
+		System.out.println("Nombre");
+		p.setNombre(t.nextLine());
+		System.out.println("Teléfono");
+		p.setContacto(new Contacto());
+		p.getContacto().setTelefono(t.nextLine());
+		System.out.println("Email");
+		p.getContacto().setEmail(t.nextLine());
+		System.out.println("¿Paciente(p) o Médico(*)?");
+		String opcion = t.nextLine();
+		if(opcion.equalsIgnoreCase("p")) {			
+			System.out.println("NSS");
+			int nss = t.nextInt();
+			Paciente pa = bd.obtenerPaciente(nss); t.nextLine();
+			if(pa==null) {
+				pa = new Paciente(0, p.getNombre(), 
+						p.getContacto(), nss, new ArrayList() );
+				if(bd.crearPaciente(pa)) {
+					System.out.println("Paciente creado");
+				}
+				else {
+					System.out.println("Error al crear el paciente");
+				}
+			}
+			else {
+				System.out.println("Error, paciente ya existe");
+			}
+			
+		}
+		else {
+			
+		}
 	}
 
 }

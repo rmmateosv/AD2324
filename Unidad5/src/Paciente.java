@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class Paciente extends Persona{
 	private int nss;
-	ArrayList<String[]> historia;
+	ArrayList<String[]> historia = new ArrayList();
 	
 	public Paciente() {
 		// TODO Auto-generated constructor stub

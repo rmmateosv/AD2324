@@ -6,6 +6,7 @@ public class Persona {
 	
 	public Persona() {
 		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Persona(int id, String nombre, Contacto contacto) {
