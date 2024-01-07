@@ -64,7 +64,23 @@ public class Principal {
 			
 		}
 		else {
-			
+			System.out.println("Nº de colegiado");
+			int nc = t.nextInt();
+			Medico m = bd.obtenerMedico(nc);
+			if(m==null) {
+				System.out.println("Especialidad:");
+				m = new Medico(0, p.getNombre(), 
+						p.getContacto(), nc, t.nextLine() );
+				if(bd.crearMedico(m)) {
+					System.out.println("Paciente creado");
+				}
+				else {
+					System.out.println("Error al crear el médico");
+				}
+			}
+			else {
+				System.out.println("Error, médico ya existe");
+			}
 		}
 	}
 

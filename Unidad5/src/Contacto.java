@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class Contacto {
+public class Contacto implements Serializable{
 	private String telefono;
 	private String email;
 	

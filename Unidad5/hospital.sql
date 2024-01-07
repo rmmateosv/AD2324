@@ -1,4 +1,4 @@
--- Definir un tipo de datos complejo
+c-- Definir un tipo de datos complejo
 create type contacto as(
 	telefono varchar(9),
 	email varchar(100)
@@ -41,6 +41,5 @@ create table consulta(
 	foreign key(paciente) references paciente(nss) on update cascade on delete restrict,
 	foreign key(medico) references medico(colegiado) on update cascade on delete restrict
 );
-
 
 
