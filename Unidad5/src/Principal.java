@@ -24,11 +24,46 @@ public class Principal {
 				case 1:
 					crearPersona();
 					break;
+				case 2:
+					modificarContacto();
+					break;
 				}
 
 			} while (opcion != 0);
 		} else {
 			System.out.println("Error de conexión");
+		}
+	}
+
+	private static void modificarContacto() {
+		// TODO Auto-generated method stub
+		mostrarPersonas();
+		System.out.println("Introduce id");
+		Persona p = bd.obtenerPersona(t.nextInt()); t.nextLine();
+		if(p!=null) {
+			System.out.println("Nuevo telefono");
+			p.getContacto().setTelefono(t.nextLine());
+			System.out.println("Nuevo email");
+			p.getContacto().setEmail(t.nextLine());
+			if(bd.modificarContacto(p)) {
+				System.out.println("Contacto modificado");
+			}
+			else{
+				System.out.println("Error, al modificar el contacto");
+			}
+			
+		}
+		else {
+			System.out.println("Error, persona no existe");
+		}
+		
+	}
+
+	private static void mostrarPersonas() {
+		// TODO Auto-generated method stub
+		ArrayList<Persona> p = bd.obtenerPersonas();
+		for (Persona persona : p) {
+			System.out.println(persona);
 		}
 	}
 
@@ -66,7 +101,7 @@ public class Principal {
 		else {
 			System.out.println("Nº de colegiado");
 			int nc = t.nextInt();
-			Medico m = bd.obtenerMedico(nc);
+			Medico m = bd.obtenerMedico(nc);t.nextLine();
 			if(m==null) {
 				System.out.println("Especialidad:");
 				m = new Medico(0, p.getNombre(), 

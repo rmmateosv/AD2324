@@ -74,12 +74,13 @@ public class Modelo {
 				//REcuperar un array de un campo de la bd
 				//y convertirlo a un ArrayList
 				Array historia = r.getArray(5);
-				String[][] h = (String[][] ) historia.getArray();
 				ArrayList<String[]> lista = new ArrayList();
-				for(int i=0;i<h.length;i++) {
-					lista.add(h[i]);
+				if(historia!=null) {
+					String[][] h = (String[][] ) historia.getArray();					
+					for(int i=0;i<h.length;i++) {
+						lista.add(h[i]);
+					}
 				}
-				
 				resultado=new Paciente(r.getInt(1), r.getString(2), 
 						new Contacto(r.getString(3),r.getString(4)), 
 						nss, lista);
@@ -119,12 +120,87 @@ public class Modelo {
 		// TODO Auto-generated method stub
 		Medico resultado = null;
 		try {
-			
+			PreparedStatement consulta = conexion.prepareStatement(
+					"select id, nombre, "
+					+ "(datos).telefono, (datos).email, especialidad "
+					+ " from medico where colegiado = ?");
+			consulta.setInt(1, nc);
+			ResultSet r = consulta.executeQuery();
+			if(r.next()) {			
+				resultado=new Medico(r.getInt(1), r.getString(2), 
+						new Contacto(r.getString(3),r.getString(4)), 
+						nc, r.getString(5));
+			}
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
 
+		return resultado;
+	}
+
+	public ArrayList<Persona> obtenerPersonas() {
+		// TODO Auto-generated method stub
+		ArrayList<Persona> resultado =new ArrayList();
+		PreparedStatement consulta;
+		try {
+			consulta = conexion.prepareStatement(
+					"select id, nombre, "
+					+ "(datos).telefono, (datos).email "
+					+ " from persona");
+			ResultSet r = consulta.executeQuery();
+			while(r.next()) {			
+				resultado.add(new Persona(r.getInt(1), r.getString(2), 
+						new Contacto(r.getString(3),r.getString(4))));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public Persona obtenerPersona(int id) {
+		// TODO Auto-generated method stub
+		Persona resultado =null;
+		
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"select id, nombre, "
+					+ "(datos).telefono, (datos).email "
+					+ " from persona where id=?");
+			consulta.setInt(1, id);
+			ResultSet r = consulta.executeQuery();
+			while(r.next()) {			
+				resultado = new Persona(r.getInt(1), r.getString(2), 
+						new Contacto(r.getString(3),r.getString(4)));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public boolean modificarContacto(Persona p) {
+		// TODO Auto-generated method stub
+		boolean resultado =false;
+		
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"update persona set datos=(?,?) "
+					+ "where id = ?");
+			consulta.setString(1, p.getContacto().getTelefono());
+			consulta.setString(2, p.getContacto().getEmail());
+			consulta.setInt(3, p.getId());
+			int r = consulta.executeUpdate();
+			if(r==1) {
+				resultado=true;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return resultado;
 	}
 }
