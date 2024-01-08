@@ -13,7 +13,7 @@ import java.util.Map;
 public class Modelo {
 	private final String url = "jdbc:postgresql://localhost:5432/hospital";
 	private final String us = "postgres";
-	private final String ps = "admin";
+	private final String ps = "postgres";
 
 	private Connection conexion = null;
 
@@ -64,6 +64,26 @@ public class Modelo {
 		// TODO Auto-generated method stub
 		Paciente resultado = null;
 		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"select id, nombre, "
+					+ "(datos).telefono, (datos).email, historia "
+					+ " from paciente where nss = ?");
+			consulta.setInt(1, nss);
+			ResultSet r = consulta.executeQuery();
+			if(r.next()) {
+				//REcuperar un array de un campo de la bd
+				//y convertirlo a un ArrayList
+				Array historia = r.getArray(5);
+				String[][] h = (String[][] ) historia.getArray();
+				ArrayList<String[]> lista = new ArrayList();
+				for(int i=0;i<h.length;i++) {
+					lista.add(h[i]);
+				}
+				
+				resultado=new Paciente(r.getInt(1), r.getString(2), 
+						new Contacto(r.getString(3),r.getString(4)), 
+						nss, lista);
+			}
 			
 		} catch (Exception e) {
 			// TODO: handle exception
