@@ -1,10 +1,12 @@
 
 import java.sql.Array;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Struct;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -199,6 +201,212 @@ public class Modelo {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public ArrayList<Medico> obtenerMedicos() {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		ArrayList<Medico> resultado = new ArrayList();
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"select id, nombre, "
+					+ "(datos).telefono, (datos).email, colegiado, especialidad "
+					+ " from medico");
+			ResultSet r = consulta.executeQuery();
+			while(r.next()) {			
+				resultado.add(new Medico(r.getInt(1), r.getString(2), 
+						new Contacto(r.getString(3),r.getString(4)), 
+						r.getInt(5),r.getString(6)));
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+
+		return resultado;
+	}
+
+	public ArrayList<Paciente> obtenerPacientes() {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		ArrayList<Paciente> resultado = new ArrayList();
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"select id, nombre, "
+					+ "(datos).telefono, (datos).email, nss, historia "
+					+ " from paciente");
+			ResultSet r = consulta.executeQuery();
+			while(r.next()) {
+				//REcuperar un array de un campo de la bd
+				//y convertirlo a un ArrayList
+				Array historia = r.getArray(6);
+				ArrayList<String[]> lista = new ArrayList();
+				if(historia!=null) {
+					String[][] h = (String[][] ) historia.getArray();					
+					for(int i=0;i<h.length;i++) {
+						lista.add(h[i]);
+					}
+				}
+				resultado.add(new Paciente(r.getInt(1), r.getString(2), 
+						new Contacto(r.getString(3),r.getString(4)), 
+						r.getInt(5), lista));
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public boolean crearConsulta(Consulta c) {
+		// TODO Auto-generated method stub
+		boolean resultado=false;
+		try {
+			PreparedStatement consulta = conexion.prepareStatement(
+					"insert into consulta values (default, ?,?,?,null)",Statement.RETURN_GENERATED_KEYS);
+			consulta.setInt(1, c.getPaciente().getNss());
+			consulta.setInt(2, c.getMedico().getColegiado());
+			consulta.setDate(3, new Date(c.getFecha().getTime()));
+			int r = consulta.executeUpdate();
+			if(r==1) {
+				ResultSet ids = consulta.getGeneratedKeys();
+				if(ids.next()) {
+					c.setId(ids.getInt(1));
+				}
+				resultado = true;
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public ArrayList<Consulta> obtenerConsultas() {
+		// TODO Auto-generated method stub
+		ArrayList<Consulta> resultado = new ArrayList();
+		try {
+			//CAMBIAR ESTE SELECT POR UN JOIN DE 3 TABLAS
+			//INEFICIENTE PORQUE EJECUTAMOS 3 CONSULTAS EN VEZ DE 1 CON LOS JOIN
+			PreparedStatement consulta = conexion.prepareStatement(
+					"select * "
+					+ " from consulta ");
+			ResultSet r = consulta.executeQuery();
+			while(r.next()) {
+				//CAMBIAR - CON JOIN SOBRA ESTAS DOS LÍNEAS
+				Paciente p = obtenerPaciente(r.getInt(2));
+				Medico m = obtenerMedico(r.getInt(3));
+				//-----
+				resultado.add(new Consulta(r.getInt(1), 
+						m, 
+						p, 
+						r.getDate(4), 
+						r.getString(5)));
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public Consulta obtenerConsulta(int id) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		Consulta resultado = null;
+		try {
+			//CAMBIAR ESTE SELECT POR UN JOIN DE 3 TABLAS
+			//INEFICIENTE PORQUE EJECUTAMOS 3 CONSULTAS EN VEZ DE 1 CON LOS JOIN
+			PreparedStatement consulta = conexion.prepareStatement(
+					"select * "
+					+ " from consulta where  id = ?");
+			consulta.setInt(1, id);
+			ResultSet r = consulta.executeQuery();
+			if(r.next()) {
+				//CAMBIAR - CON JOIN SOBRA ESTAS DOS LÍNEAS
+				Paciente p = obtenerPaciente(r.getInt(2));
+				Medico m = obtenerMedico(r.getInt(3));
+				//-----
+				resultado = new Consulta(r.getInt(1), 
+						m, 
+						p, 
+						r.getDate(4), 
+						r.getString(5));
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public boolean registrarDiagnostico(Consulta c) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;		
+		try {
+			conexion.setAutoCommit(false);
+			PreparedStatement consulta = conexion.prepareStatement(
+					"update consulta set diagnostico = ? where id = ?");
+			consulta.setString(1, c.getDiagnostico());
+			consulta.setInt(2, c.getId());
+			int r = consulta.executeUpdate();
+			if(r==1) {
+				//Actualizar el array del paciente
+				//Si el paciente no tiene historial, acutalizamos el campo
+				//historia con un nuevo array de un elemento
+				if(c.getPaciente().getHistoria().isEmpty()) {
+					consulta = conexion.prepareStatement(
+							"update paciente set historia = array[array[?,?]] where id = ?");
+					consulta.setString(1, new java.util.Date().toString());
+					consulta.setString(2, c.getDiagnostico());
+					consulta.setInt(3, c.getPaciente().getId());
+					r = consulta.executeUpdate();
+					if(r==1) {
+						conexion.commit();
+					}
+					else {
+						conexion.rollback();
+					}
+				}
+				else {
+					//Si el paciente tiene historial, acutalizamos el campo
+					//historia concatenando al array un nuevo elemento
+					consulta = conexion.prepareStatement(
+							"update paciente set historia = "
+							+ "array_cat(historia,array[?,?]::text[][]) where id = ?");
+					consulta.setString(1, new java.util.Date().toString());
+					consulta.setString(2, c.getDiagnostico());
+					consulta.setInt(3, c.getPaciente().getId());
+					r = consulta.executeUpdate();
+					if(r==1) {
+						conexion.commit();
+					}
+					else {
+						conexion.rollback();
+					}
+				}
+				
+				
+			}
+			else {
+				conexion.rollback();
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			try {
+				conexion.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
 		}
 		return resultado;

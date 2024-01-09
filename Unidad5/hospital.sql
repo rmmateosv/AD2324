@@ -1,4 +1,4 @@
-c-- Definir un tipo de datos complejo
+-- Definir un tipo de datos complejo
 create type contacto as(
 	telefono varchar(9),
 	email varchar(100)
@@ -34,12 +34,14 @@ insert into medico values
 (default,'Laura',('655555555','laura@gmail.com'),34,'Endocrionología');
 
 create table consulta(
+	id serial primary key,
 	paciente int not null,
 	medico int not null,
-	fecha date not null,
+	fecha timestamp not null,
 	diagnostico varchar(255) null,
 	foreign key(paciente) references paciente(nss) on update cascade on delete restrict,
 	foreign key(medico) references medico(colegiado) on update cascade on delete restrict
 );
+
 
 
