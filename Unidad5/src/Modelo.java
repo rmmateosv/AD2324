@@ -62,20 +62,30 @@ public class Modelo {
 		return resultado;
 	}
 
-	public Paciente obtenerPaciente(int nss) {
+	public Paciente obtenerPaciente(int numero, boolean nss) {
 		// TODO Auto-generated method stub
 		Paciente resultado = null;
 		try {
-			PreparedStatement consulta = conexion.prepareStatement(
-					"select id, nombre, "
-					+ "(datos).telefono, (datos).email, historia "
-					+ " from paciente where nss = ?");
-			consulta.setInt(1, nss);
+			PreparedStatement consulta = null;
+			if(nss) {
+				consulta = conexion.prepareStatement(
+						"select id, nombre, "
+						+ "(datos).telefono, (datos).email, nss, historia "
+						+ " from paciente where nss = ?");
+			}
+			else {
+				consulta = conexion.prepareStatement(
+						"select id, nombre, "
+						+ "(datos).telefono, (datos).email, nss, historia "
+						+ " from paciente where id = ?");
+			}
+			
+			consulta.setInt(1, numero);
 			ResultSet r = consulta.executeQuery();
 			if(r.next()) {
 				//REcuperar un array de un campo de la bd
 				//y convertirlo a un ArrayList
-				Array historia = r.getArray(5);
+				Array historia = r.getArray(6);
 				ArrayList<String[]> lista = new ArrayList();
 				if(historia!=null) {
 					String[][] h = (String[][] ) historia.getArray();					
@@ -85,7 +95,7 @@ public class Modelo {
 				}
 				resultado=new Paciente(r.getInt(1), r.getString(2), 
 						new Contacto(r.getString(3),r.getString(4)), 
-						nss, lista);
+						r.getInt(5), lista);
 			}
 			
 		} catch (Exception e) {
@@ -118,20 +128,32 @@ public class Modelo {
 		return resultado;
 	}
 
-	public Medico obtenerMedico(int nc) {
+	public Medico obtenerMedico(int numero, boolean colegiado) {
+		//Si el parámetro colegiado es true, número es un nº de colegiado
+		//Si no, número es el id
+		
 		// TODO Auto-generated method stub
 		Medico resultado = null;
 		try {
-			PreparedStatement consulta = conexion.prepareStatement(
+			PreparedStatement consulta = null;
+			if(colegiado) {
+				consulta = conexion.prepareStatement(
 					"select id, nombre, "
-					+ "(datos).telefono, (datos).email, especialidad "
+					+ "(datos).telefono, (datos).email, colegiado, especialidad "
 					+ " from medico where colegiado = ?");
-			consulta.setInt(1, nc);
+			}
+			else {
+				consulta = conexion.prepareStatement(
+						"select id, nombre, "
+						+ "(datos).telefono, (datos).email, colegiado, especialidad "
+						+ " from medico where id = ?");
+			}
+			consulta.setInt(1, numero);
 			ResultSet r = consulta.executeQuery();
 			if(r.next()) {			
 				resultado=new Medico(r.getInt(1), r.getString(2), 
 						new Contacto(r.getString(3),r.getString(4)), 
-						nc, r.getString(5));
+						r.getInt(5), r.getString(6));
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -299,8 +321,8 @@ public class Modelo {
 			ResultSet r = consulta.executeQuery();
 			while(r.next()) {
 				//CAMBIAR - CON JOIN SOBRA ESTAS DOS LÍNEAS
-				Paciente p = obtenerPaciente(r.getInt(2));
-				Medico m = obtenerMedico(r.getInt(3));
+				Paciente p = obtenerPaciente(r.getInt(2),true);
+				Medico m = obtenerMedico(r.getInt(3),true);
 				//-----
 				resultado.add(new Consulta(r.getInt(1), 
 						m, 
@@ -330,8 +352,8 @@ public class Modelo {
 			ResultSet r = consulta.executeQuery();
 			if(r.next()) {
 				//CAMBIAR - CON JOIN SOBRA ESTAS DOS LÍNEAS
-				Paciente p = obtenerPaciente(r.getInt(2));
-				Medico m = obtenerMedico(r.getInt(3));
+				Paciente p = obtenerPaciente(r.getInt(2),true);
+				Medico m = obtenerMedico(r.getInt(3),true);
 				//-----
 				resultado = new Consulta(r.getInt(1), 
 						m, 
@@ -411,4 +433,51 @@ public class Modelo {
 		}
 		return resultado;
 	}
+
+	public boolean borrarPersona(Persona p, Medico m, Paciente pa) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+
+			try {
+				conexion.setAutoCommit(false);
+				//Borrar consultas
+				PreparedStatement consulta = null;
+				if(m!=null) {
+					consulta = conexion.prepareStatement(
+							"delete from consulta where "
+							+ "medico = ?");
+					consulta.setInt(1, m.getColegiado());
+				}
+				else {
+					consulta = conexion.prepareStatement(
+							"delete from consulta where "
+							+ "paciente = ?");
+					consulta.setInt(1, pa.getNss());
+				}
+				consulta.executeUpdate();
+											
+				//Al haber herencia, se borra de la tabla padre e hija
+				consulta = conexion.prepareStatement(
+						"delete from persona where id =?");
+				consulta.setInt(1, p.getId());
+				int r = consulta.executeUpdate();
+				if(r==1) {
+					conexion.commit();
+					resultado=true;
+				}
+			} catch (SQLException e) {
+				try {
+					conexion.rollback();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+		return resultado;
+	}
+
+	
 }

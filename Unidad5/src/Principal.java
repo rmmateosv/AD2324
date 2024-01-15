@@ -35,11 +35,40 @@ public class Principal {
 					break;
 				case 4:
 					atenderPaciente();
+					break;
+				case 5:
+					borrarPersona();
+					break;
 				}
 
 			} while (opcion != 0);
 		} else {
 			System.out.println("Error de conexión");
+		}
+	}
+
+	private static void borrarPersona() {
+		// TODO Auto-generated method stub
+		mostrarPersonas();
+		System.out.println("Id persona a borrar");
+		Persona p = bd.obtenerPersona(t.nextInt());t.nextLine();
+		if(p!=null) {
+			//Chequear si tiene consultas
+			Medico m = bd.obtenerMedico(p.getId(),false);
+			Paciente pa = null;
+			if(m==null) {
+				pa = bd.obtenerPaciente(p.getId(),false);
+			}
+			if(bd.borrarPersona(p,m,pa)) {
+				System.out.println("Persona borrada");
+			}
+			else {
+				System.out.println("Error, no se ha borrado la persona");
+			}
+			
+		}
+		else {
+			System.out.println("Error, persona no existe");
 		}
 	}
 
@@ -53,7 +82,7 @@ public class Principal {
 			c.setDiagnostico(t.nextLine());
 			if(bd.registrarDiagnostico(c)) {
 				System.out.println("Historial actualizado");
-				Paciente p = bd.obtenerPaciente(c.getPaciente().getNss());
+				Paciente p = bd.obtenerPaciente(c.getPaciente().getNss(),true);
 				System.out.println(p);
 			}
 		}
@@ -77,11 +106,11 @@ public class Principal {
 		try {
 			mostraPacientes();
 			System.out.println("Nss:");
-			Paciente p = bd.obtenerPaciente(t.nextInt());t.nextLine();
+			Paciente p = bd.obtenerPaciente(t.nextInt(),true);t.nextLine();
 			if(p!=null) {
 				mostrarMedicos();
 				System.out.println("Nº Colegiado:");
-				Medico m = bd.obtenerMedico(t.nextInt());t.nextLine();
+				Medico m = bd.obtenerMedico(t.nextInt(),true);t.nextLine();
 				if(m!=null) {
 					Consulta c = new Consulta();
 					c.setPaciente(p);
@@ -175,7 +204,7 @@ public class Principal {
 		if(opcion.equalsIgnoreCase("p")) {			
 			System.out.println("NSS");
 			int nss = t.nextInt();
-			Paciente pa = bd.obtenerPaciente(nss); t.nextLine();
+			Paciente pa = bd.obtenerPaciente(nss,true); t.nextLine();
 			if(pa==null) {
 				pa = new Paciente(0, p.getNombre(), 
 						p.getContacto(), nss, new ArrayList() );
@@ -194,7 +223,7 @@ public class Principal {
 		else {
 			System.out.println("Nº de colegiado");
 			int nc = t.nextInt();
-			Medico m = bd.obtenerMedico(nc);t.nextLine();
+			Medico m = bd.obtenerMedico(nc,true);t.nextLine();
 			if(m==null) {
 				System.out.println("Especialidad:");
 				m = new Medico(0, p.getNombre(), 

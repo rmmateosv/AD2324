@@ -10,7 +10,7 @@
     <servlet-name>ControladorAlumnos</servlet-name>
     <url-pattern>/ControladorAlumnos</url-pattern>
   </servlet-mapping>
-  <display-name>Alumnos</display-name>
+  <display-name>U1_JEE_Alumnos</display-name>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
     <welcome-file>index.htm</welcome-file>
