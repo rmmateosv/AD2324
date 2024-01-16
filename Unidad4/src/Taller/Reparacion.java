@@ -1,8 +1,11 @@
 package Taller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -24,11 +28,11 @@ public class Reparacion {
 	private Date fecha;
 	@ManyToOne
 	//Indicar el campo de Vehículo que es la PK
-	@JoinColumn(referencedColumnName = "matricula")
+	@JoinColumn(name="vehiculo", referencedColumnName = "matricula")
 	private Vehiculo vehiculo;
 	@ManyToOne
 	//Indicar el campo de Usuario que es la PK
-	@JoinColumn(referencedColumnName = "id")
+	@JoinColumn(name="usuario", referencedColumnName = "id")
 	private Usuario usuario;
 	@Column(nullable = true)
 	@Temporal(TemporalType.DATE)
@@ -39,6 +43,12 @@ public class Reparacion {
 	private float horas;
 	@Column(nullable = false)
 	private float precioH;
+	@Column(nullable = false)
+	private float borrar;
+	
+	
+	@OneToMany(cascade = CascadeType.ALL,mappedBy = "clave.reparacion")
+	List<PiezaReparacion> piezasR = new ArrayList<PiezaReparacion>();
 	
 	public Reparacion() {
 		
@@ -147,6 +157,16 @@ public class Reparacion {
 
 	public void setPrecioH(float precioH) {
 		this.precioH = precioH;
+	}
+
+
+	public List<PiezaReparacion> getPiezasR() {
+		return piezasR;
+	}
+
+
+	public void setPiezasR(List<PiezaReparacion> piezasR) {
+		this.piezasR = piezasR;
 	}
 
 	

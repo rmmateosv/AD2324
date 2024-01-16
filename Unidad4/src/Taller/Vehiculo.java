@@ -63,6 +63,14 @@ public class Vehiculo {
 	public String toString() {
 		return "Vehiculo [matricula=" + matricula + ", propietario=" + propietario + ", telf=" + telf + "]";
 	}
+
+	public List<Reparacion> getReparaciones() {
+		return reparaciones;
+	}
+
+	public void setReparaciones(List<Reparacion> reparaciones) {
+		this.reparaciones = reparaciones;
+	}
 	
 	
 }
