@@ -69,6 +69,14 @@ public class Usuario {
 	public void setReparaciones(List<Reparacion> reparaciones) {
 		this.reparaciones = reparaciones;
 	}
+
+	public String getPs() {
+		return ps;
+	}
+
+	public void setPs(String ps) {
+		this.ps = ps;
+	}
 	
 	
 }

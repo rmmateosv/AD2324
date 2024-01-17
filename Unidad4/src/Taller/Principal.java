@@ -1,6 +1,11 @@
 package Taller;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
+
+import org.apache.commons.codec.cli.Digest;
+import org.apache.commons.codec.digest.DigestUtils;
 
 public class Principal {
 
@@ -240,7 +245,7 @@ public class Principal {
 			
 			switch(opcion) {
 				case 1:
-					bd.infoBD();
+					System.out.println("No implementado");
 					break;
 				case 2:
 					crearUsuario();
@@ -346,20 +351,20 @@ public class Principal {
 		
 		if(!error) {
 			//Crear reparación
-			Reparacion r = new Reparacion(0, new Date(), v.getMatricula(), u.getId());
+			/*Reparacion r = new Reparacion(0, new Date(), null, u.getId());
 			if(bd.crearReparacion(r)) {
 				System.out.println("Reparación creada");
 			}
 			else {
 				System.out.println("Error al crear la reparación");
-			}
+			}*/
 		}
 	}
 
 
 	private static void mostrarVehiculos() {
 		// TODO Auto-generated method stub
-		ArrayList<Vehiculo> v = bd.obtenerVehiculos();
+		ArrayList<Vehiculo> v = (ArrayList<Vehiculo>) bd.obtenerVehiculos();
 		for (Vehiculo vehiculo : v) {
 			System.out.println(vehiculo);
 		}
@@ -398,6 +403,7 @@ public class Principal {
 			}
 			else {
 				u.setPerfil(perfil.toUpperCase());
+				u.setPs(DigestUtils.sha512Hex(u.getUsuario()));
 				if(bd.crearUsuario(u)) {
 					System.out.println("Usuario creado con id:"+u.getId());
 				}
