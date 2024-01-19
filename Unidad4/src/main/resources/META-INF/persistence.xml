@@ -11,7 +11,8 @@ version="2.0">
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
 			<!-- The JDBC URL to the database instance -->
 			<property name="jakarta.persistence.jdbc.url"
-			value="jdbc:mysql://servidordam.crjbea6rbpvt.us-east-1.rds.amazonaws.com:3306/tallerDAM?serverTimezone=Europe/Madrid"/>
+			
+			value="jdbc:mysql://servidordam.crjbea6rbpvt.us-east-1.rds.amazonaws.com:3306/tallerDAM?serverTimezone=Europe/Madrid"/> 
 			<!-- The database username -->
 			<property name="jakarta.persistence.jdbc.user" value="admindam"/>
 			
@@ -19,5 +20,36 @@ version="2.0">
 			<property name="jakarta.persistence.jdbc.password" value="admindam"/>
 			<property name="hibernate.hbm2ddl.auto" value="validate"/>
 		</properties>
+	</persistence-unit>
+	<persistence-unit name="Taller2" transaction-type="RESOURCE_LOCAL">
+
+		<!-- Persistence provider -->
+
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+		<properties>
+
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
+
+			<!-- The JDBC URL to the database instance -->
+
+			<property name="jakarta.persistence.jdbc.url"
+
+			value="jdbc:mysql://servidordam.ciffjlql7jtm.us-east-1.rds.amazonaws.com:3306/tallerDAM?serverTimezone=Europe/Madrid"/>
+
+			<!-- The database username -->
+
+			<property name="jakarta.persistence.jdbc.user" value="admindam"/>
+
+			
+
+			<!-- The database password -->
+
+			<property name="jakarta.persistence.jdbc.password" value="admindam"/>
+
+			<property name="hibernate.hbm2ddl.auto" value="validate"/>
+
+		</properties>
+
 	</persistence-unit>
 </persistence>

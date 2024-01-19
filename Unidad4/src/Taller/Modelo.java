@@ -1,6 +1,7 @@
 package Taller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.EntityManager;
@@ -21,6 +22,7 @@ public class Modelo {
 			
 		} catch (Exception e) {
 			// TODO: handle exception
+			e.printStackTrace();
 		}
 		
 	}
@@ -114,8 +116,7 @@ public class Modelo {
 			Query consulta = conexion.createQuery(
 					"from Vehiculo");
 			resultado = consulta.getResultList();
-			
-			
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -147,7 +148,6 @@ public class Modelo {
 			t =  conexion.getTransaction();
 			t.begin();
 			conexion.persist(v);
-			v.setPropietario("P_"+v.getPropietario());
 			t.commit();
 			resultado=true;
 			
@@ -161,7 +161,78 @@ public class Modelo {
 
 	public boolean crearReparacion(Reparacion r) {
 		// TODO Auto-generated method stub
-		return false;
+		boolean resultado=false;
+		EntityTransaction t = null;
+		try {
+			t =  conexion.getTransaction();
+			t.begin();
+			conexion.persist(r);			
+			t.commit();
+			resultado=true;
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			t.rollback();
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public List<Reparacion> obtenerReparaciones() {
+		// TODO Auto-generated method stub
+		List<Reparacion> resultado = new ArrayList<Reparacion>();
+		try {
+			
+			Query consulta = conexion.createQuery(
+					"from Reparacion");
+			resultado =  consulta.getResultList();
+						
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public Reparacion obtenerReparacion(int idR) {
+		// TODO Auto-generated method stub
+		Reparacion resultado = null;
+		try {		
+			resultado = conexion.find(Reparacion.class,idR);
+			//RESULTADO ESTÁ EN ESTADO MANAGED
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public boolean pagarReparacion(Reparacion r) {
+		// TODO Auto-generated method stub
+		boolean resultado=false;
+		EntityTransaction t = null;
+		try {
+			t =  conexion.getTransaction();
+			t.begin();
+			//Como r ESTÁ EN ESTADO MANAGED => PERSIST HACE UN UPDATE NO UN INSERT
+			//conexion.persist(r);	
+			//Calcular el total
+			//Mano de obra
+			r.setTotal(r.getHoras()*r.getPrecioH());
+			//Añado el imprte de cada pieza de la reparación
+			for (PiezaReparacion pr : r.getPiezasR()) {
+				r.setTotal(r.getTotal()+pr.getCantidad()*pr.getPrecio());
+			}			
+			r.setFechaPago(new Date());
+			t.commit();
+			resultado=true;
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			t.rollback();
+			e.printStackTrace();
+		}
+		return resultado;
 	}
 
 }

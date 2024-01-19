@@ -2,6 +2,7 @@ package Taller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 import org.apache.commons.codec.cli.Digest;
@@ -100,24 +101,30 @@ public class Principal {
 
 	private static void mostrarTicket(Reparacion r) {
 		// TODO Auto-generated method stub
-		ArrayList<Object[]> datos = bd.obtenerTicket(r);
 		System.out.println("Nombre del cliente:"+
-		bd.obtenerVehiculo(r.getVehiculo()).getPropietario());
+		r.getVehiculo().getPropietario());
 		System.out.println("MAtrícula Vehículo"+
-				r.getVehiculo());
+				r.getVehiculo().getMatricula());
 		System.out.println("Fecha Reparación:"+
 				r.getFecha());
 		StringBuilder texto = new StringBuilder("Concepto");
 		texto.setLength(50);
 		System.out.println(texto+"\t\tCantidad\t\tPreciU\t\tTotal");
 		//Detalle del ticket
-		for (Object[] o : datos) {
-			 texto = new StringBuilder(o[1].toString());
+		texto = new StringBuilder("Mano de obra");
+		texto.setLength(50);
+		System.out.println(texto+
+				"\t\t"+ r.getHoras()+
+				"\t\t"+r.getPrecioH() +
+				"\t\t"+(r.getTotal())
+				);
+		for (PiezaReparacion pr: r.getPiezasR()) {
+			texto = new StringBuilder(pr.getClave().getPieza().getNombre());
 			texto.setLength(50);
-			System.out.println(o[0]+
-					"\t\t"+texto.toString() +
-					"\t\t"+o[2] +
-					"\t\t"+((float)o[1] * (float)o[2])
+			System.out.println(texto.toString()+
+					"\t\t"+ pr.getCantidad()+
+					"\t\t"+ pr.getPrecio()+
+					"\t\t"+((pr.getCantidad() * pr.getPrecio()))
 					);
 		}
 		System.out.println("Total factura:"+r.getTotal());
@@ -220,7 +227,7 @@ public class Principal {
 
 	private static void mostrarReparaciones() {
 		// TODO Auto-generated method stub
-		ArrayList<Reparacion> r = bd.obtenerReparaciones();
+		List<Reparacion> r = bd.obtenerReparaciones();
 		for (Reparacion reparacion : r) {
 			System.out.println(reparacion);
 		}
@@ -307,15 +314,17 @@ public class Principal {
 		// TODO Auto-generated method stub
 		mostrarReparaciones();
 		System.out.println("Introduce reparación a pagar");
+		
 		Reparacion r = bd.obtenerReparacion(t.nextInt());t.nextLine();
 		if(r!=null && r.getFechaPago()==null) {
+			//Recuperamos r de la bd => r ESTÁ EN ESTADO MANAGED
 			System.out.println("Horas invertidas");
-			float horas = t.nextFloat();t.nextLine();
+			r.setHoras(t.nextFloat());t.nextLine();
 			System.out.println("Precio Hora");
-			float precio = t.nextFloat();t.nextLine();
-			
-			if(bd.pagarReparacion(r,horas,precio)) {
+			r.setPrecioH(t.nextFloat());t.nextLine();			
+			if(bd.pagarReparacion(r)) {
 				System.out.println("Reparación pagada por "+r.getTotal()+" euros");
+				mostrarReparaciones();
 			}
 		}
 		else {
@@ -351,13 +360,13 @@ public class Principal {
 		
 		if(!error) {
 			//Crear reparación
-			/*Reparacion r = new Reparacion(0, new Date(), null, u.getId());
+			Reparacion r = new Reparacion(0, new Date(), v, u);
 			if(bd.crearReparacion(r)) {
 				System.out.println("Reparación creada");
 			}
 			else {
 				System.out.println("Error al crear la reparación");
-			}*/
+			}
 		}
 	}
 
