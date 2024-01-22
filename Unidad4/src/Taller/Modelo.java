@@ -235,4 +235,65 @@ public class Modelo {
 		return resultado;
 	}
 
+	
+	public List<Pieza> obtenerPiezas() {
+		// TODO Auto-generated method stub
+		List<Pieza> resultado = new ArrayList<Pieza>();
+		try {
+			Query q = conexion.createQuery("from Pieza");
+			resultado = q.getResultList();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public Pieza obtenerPieza(int idPieza) {
+		// TODO Auto-generated method stub
+		Pieza resultado = null;
+		try {
+			resultado = conexion.find(Pieza.class, idPieza);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public boolean modificar() {
+		// TODO Auto-generated method stub
+		boolean resultado=false;
+		EntityTransaction t = null;
+		try {
+			t =  conexion.getTransaction();
+			t.begin();			
+			t.commit();
+			resultado=true;
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			t.rollback();
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public List<Reparacion> obtenerReparaciones(String usuario) {
+		// TODO Auto-generated method stub
+		List<Reparacion> resultado = new ArrayList<Reparacion>();
+		try {
+			Query q = conexion.createQuery(
+					"from Reparacion where vehiculo.propietario = ?1");
+			q.setParameter(1, usuario);
+			resultado = q.getResultList();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	
+
 }

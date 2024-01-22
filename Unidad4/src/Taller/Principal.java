@@ -78,24 +78,19 @@ public class Principal {
 
 	private static void verReparaciones() {
 		// TODO Auto-generated method stub
-		ArrayList<Reparacion> r = bd.obtenerReparaciones(u.getUsuario());
+		List<Reparacion> r = bd.obtenerReparaciones(u.getUsuario());
 		for (Reparacion re : r) {
 			System.out.println(re);
 		}
-		System.out.println("Introdce código de reparación:");
-		Reparacion re = bd.obtenerReparacion(t.nextInt()); t.nextLine();
-		//Si la reparación es del usuario logueado y está pagada, mostramos detalles
-		if(bd.obtenerVehiculo(re.getVehiculo()).getPropietario().equalsIgnoreCase(u.getUsuario())) {
-			if(re.getFechaPago()!=null) {
-				mostrarTicket(re);
-			}
-			else {
-				System.out.println("La reparación no está pagada. No se puede mostrar el detalle");
+		System.out.println("Introduce código de reparación:");
+		int idR = t.nextInt(); t.nextLine();
+		for (Reparacion reparacion : r) {
+			if(reparacion.getId()==idR && reparacion.getFechaPago()!=null) {
+				mostrarTicket(reparacion);
+				break;
 			}
 		}
-		else {
-			System.out.println("La reparación no existe");
-		}
+	
 	}
 
 
@@ -116,7 +111,7 @@ public class Principal {
 		System.out.println(texto+
 				"\t\t"+ r.getHoras()+
 				"\t\t"+r.getPrecioH() +
-				"\t\t"+(r.getTotal())
+				"\t\t"+(r.getHoras()*r.getPrecioH())
 				);
 		for (PiezaReparacion pr: r.getPiezasR()) {
 			texto = new StringBuilder(pr.getClave().getPieza().getNombre());
@@ -160,7 +155,7 @@ public class Principal {
 		mostrarReparaciones();
 		System.out.println("Introduce código de reparación");
 		Reparacion r = bd.obtenerReparacion(t.nextInt()); t.nextLine();
-		if(r!=null) {
+		if(r!=null && r.getFechaPago()==null) {
 			String salir="";
 			do {
 				mostrarPiezas();
@@ -172,31 +167,31 @@ public class Principal {
 					//Chequear si hay stock
 					if(p.getStock()>=cantidad) {
 						//Añadir pieza a reparación
-						PiezaReparacion pr = bd.obtenerPiezaRep(r,p);
-						if(pr==null) {
-							//insertar
-							if(cantidad >= 0) {
-								pr = new PiezaReparacion(r.getId(), p.getId(), 
-										cantidad, p.getPrecio());
-								if(bd.insertarPiezaReparacion(pr)) {
-									System.out.println("Pieza añadida");
-								}
-								else {
-									System.out.println("Error al añadir pieza");
-								}
-							}
-							else {
-								System.out.println("La cantidad no puede ser negativa");
+						//Buscar en el arraylist  pr de reparación
+						//y si la pieza existe, se añade cantidad y
+						// si no se añade un pr al arraylist
+						boolean existe = false;
+						for (PiezaReparacion pr : r.getPiezasR()) {
+							if(pr.getClave().getPieza()==p) {
+								existe=true;
+								pr.setCantidad(pr.getCantidad()+cantidad);
+								pr.getClave().getPieza().setStock(
+										pr.getClave().getPieza().getStock()-cantidad
+								);
+								break;
 							}
 						}
+						if(!existe) {
+							//Añadir pr al arraylist de pr en reparacion
+							r.getPiezasR().add(
+									new PiezaReparacion(new ClavePR(r, p), cantidad, p.getPrecio()));
+						}
+						if(bd.modificar()) {
+							System.out.println("Reparación modificada");
+							mostrarReparaciones();
+						}
 						else {
-							//modificar
-							if(bd.modificarCantidad(pr,cantidad)) {
-								System.out.println("Pieza modificada");
-							}
-							else {
-								System.out.println("Error al modificar pieza");
-							}
+							System.out.println("Error al modificar la reparación");
 						}
 					}
 					else {
@@ -211,14 +206,14 @@ public class Principal {
 			}while(!salir.equals("0"));
 		}
 		else {
-			System.out.println("Reparación no existe");
+			System.out.println("Reparación no existe o está pagada");
 		}
 	}
 
 
 	private static void mostrarPiezas() {
 		// TODO Auto-generated method stub
-		ArrayList<Pieza> piezas = bd.obtenerPiezas();
+		List<Pieza> piezas = bd.obtenerPiezas();
 		for (Pieza p : piezas) {
 			System.out.println(p);
 		}
@@ -283,8 +278,8 @@ public class Principal {
 		ArrayList<Object[]> datos = bd.obtenerVentasMes(t.nextInt());t.nextLine();
 		float totalMes=0;
 		for (Object[] o : datos) {
-			System.out.println("Código:"+o[0]+
-					"\tNombre:"+o[1]+
+			System.out.println("Código:"+o[0]+ //Código de pieza
+					"\tNombre:"+o[1]+ //Nombre de pieza
 					"\tNº de Reparaciones:"+o[4]+
 					"\tPrecio Medio de Venta:"+o[5]+
 					"\tCantidad:"+o[2]+
@@ -384,7 +379,8 @@ public class Principal {
 		// TODO Auto-generated method stub
 		System.out.println("Nueva Contraseña:");
 		String ps = t.nextLine();
-		if(bd.cambiarPS(u,ps)) {
+		u.setPs(DigestUtils.sha512Hex(ps));
+		if(bd.modificar()) {
 			System.out.println("Contraseña cambiada");
 		}
 		else {
