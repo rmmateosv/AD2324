@@ -313,6 +313,122 @@ public class Modelo {
 		return resultado;
 	}
 
+	public boolean crearPieza(Pieza p) {
+		// TODO Auto-generated method stub
+		boolean resultado=false;
+		EntityTransaction t = null;
+		try {
+			t =  conexion.getTransaction();
+			t.begin();		
+			conexion.persist(p);
+			t.commit();
+			resultado=true;
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			t.rollback();
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public boolean modificarPieza(Pieza p) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			conexion.getTransaction().begin();
+			Query q = conexion.createQuery(
+					"update Pieza set stock=?1, precio=?2 "
+					+ "where id = ?3");
+			q.setParameter(1, p.getStock());
+			q.setParameter(2, p.getPrecio());
+			q.setParameter(3, p.getId());
+			int filas = q.executeUpdate();
+			if(filas == 1) {
+				resultado=true;
+				conexion.getTransaction().commit();
+				conexion.clear();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			conexion.getTransaction().rollback();
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public boolean borrarPR(Pieza p) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			EntityTransaction t = conexion.getTransaction();
+			t.begin();
+			boolean error = false;
+			//Si la pieza tiene pr
+			if(!p.getPr().isEmpty()) {
+				Query q = conexion.createQuery(
+						"delete from PiezaReparacion "
+						+ "where clave.pieza = ?1");
+				q.setParameter(1, p);
+				int filas = q.executeUpdate();
+				if(filas != p.getPr().size()) {
+					t.rollback();
+					error=true;
+				}
+				else {
+					conexion.clear();
+				}
+			}
+			if(!error) {
+				//Borrar pieza
+				//p=obtenerPieza(p.getId());
+				conexion.remove(p);
+				System.out.println("!!!!" + p);
+				t.commit();
+				conexion.clear();
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			conexion.getTransaction().rollback();
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public boolean borrarPR2(Pieza p) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			EntityTransaction t = conexion.getTransaction();
+			t.begin();
+			
+			//Si la pieza tiene pr
+			if(!p.getPr().isEmpty()) {
+				for (int i=0;i<p.getPr().size();i++) {
+					//p.getPr().remove(i);
+					//p.getPr().get(i).setCantidad(100);
+				}
+				p.setPr(null);
+				t.commit();
+			}
+	
+			//Borrar pieza
+			//p=obtenerPieza(p.getId());
+			//conexion.remove(p);
+			//System.out.println("!!!!" + p);
+			//t.commit();
+			//conexion.clear();
+		
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			conexion.getTransaction().rollback();
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
 	
 
 }

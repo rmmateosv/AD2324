@@ -134,6 +134,10 @@ public class Principal {
 			System.out.println("0-Salir");
 			System.out.println("1-Añadir Pieza a reparación");
 			System.out.println("2-Cambiar Contraseña");
+			System.out.println("3-Crear Pieza");
+			System.out.println("4-Modificar Pieza - update");
+			System.out.println("5-Borrar Pieza - delete");
+			System.out.println("6-Borrar Pieza - sin delete");
 			
 			opcion = t.nextInt();t.nextLine();
 			
@@ -144,9 +148,97 @@ public class Principal {
 				case 2:
 					cambiarPS();
 					break;
+				case 3:
+					insertarPieza();
+					break;
+				case 4:
+					modificarPieza();
+					break;
+				case 5:
+					borrarPieza();
+					break;
+				case 6:
+					borrarPieza2();
+					break;
 			}
 		
 		}while(opcion!=0);
+	}
+
+
+	private static void borrarPieza2() {
+		// TODO Auto-generated method stub
+		mostrarPiezas();
+		System.out.println("Codigo pieza:");
+		Pieza p = bd.obtenerPieza(t.nextInt());t.nextLine();
+		if(p!=null) {
+			if(bd.borrarPR2(p)) {
+				System.out.println("Pieza Borrada");
+			}
+			else {
+				System.out.println("Error al borrar la pieza");
+			}
+			
+		}
+	}
+
+
+	private static void insertarPieza() {
+		// TODO Auto-generated method stub
+		Pieza p = new Pieza();
+		System.out.println("Introduce nombre:");
+		p.setNombre(t.nextLine());
+		System.out.println("Introduce stock:");
+		p.setStock(t.nextInt()); t.nextLine();
+		System.out.println("Introduce precio:");
+		p.setPrecio(t.nextFloat()); t.nextLine();
+		if(bd.crearPieza(p)) {
+			mostrarPiezas();
+		}
+		else {
+			System.out.println("Error al crear la pieza");
+		}
+	}
+
+
+	private static void borrarPieza() {
+		// TODO Auto-generated method stub
+		mostrarPiezas();
+		System.out.println("Codigo pieza:");
+		Pieza p = bd.obtenerPieza(t.nextInt());t.nextLine();
+		if(p!=null) {
+			if(bd.borrarPR(p)) {
+				System.out.println("Pieza Borrada");
+			}
+			else {
+				System.out.println("Error al borrar la pieza");
+			}
+			
+		}
+	}
+
+
+	private static void modificarPieza() {
+		// TODO Auto-generated method stub
+		mostrarPiezas();
+		System.out.println("Codigo pieza:");
+		Pieza p = bd.obtenerPieza(t.nextInt());t.nextLine();
+		if(p!=null) {
+			System.out.println("Nueva cantidad");
+			p.setStock(t.nextInt());t.nextLine();
+			System.out.println("Nuevo Precio");
+			p.setPrecio(t.nextFloat());t.nextLine();
+			if(bd.modificarPieza(p)) {
+				System.out.println("Pieza modficada");
+				mostrarPiezas();
+			}
+			else {
+				System.out.println("Error al modificar la pieza");
+			}
+		}
+		else {
+			System.out.println("Error, no existe");
+		}
 	}
 
 
@@ -165,7 +257,7 @@ public class Principal {
 					System.out.println("Introduce cantidad");
 					int cantidad = t.nextInt(); t.nextLine();
 					//Chequear si hay stock
-					if(p.getStock()>=cantidad) {
+					if(p.getStock()>=cantidad && cantidad>0) {
 						//Añadir pieza a reparación
 						//Buscar en el arraylist  pr de reparación
 						//y si la pieza existe, se añade cantidad y
@@ -174,10 +266,7 @@ public class Principal {
 						for (PiezaReparacion pr : r.getPiezasR()) {
 							if(pr.getClave().getPieza()==p) {
 								existe=true;
-								pr.setCantidad(pr.getCantidad()+cantidad);
-								pr.getClave().getPieza().setStock(
-										pr.getClave().getPieza().getStock()-cantidad
-								);
+								pr.setCantidad(pr.getCantidad()+cantidad);								
 								break;
 							}
 						}
@@ -185,7 +274,10 @@ public class Principal {
 							//Añadir pr al arraylist de pr en reparacion
 							r.getPiezasR().add(
 									new PiezaReparacion(new ClavePR(r, p), cantidad, p.getPrecio()));
+							
 						}
+						//Actualizar el stock de la pieza
+						p.setStock(p.getStock()-cantidad);
 						if(bd.modificar()) {
 							System.out.println("Reparación modificada");
 							mostrarReparaciones();
