@@ -275,16 +275,15 @@ public class Principal {
 	private static void mostrarVentasMes() {
 		// TODO Auto-generated method stub
 		System.out.println("Mes");
-		ArrayList<Object[]> datos = bd.obtenerVentasMes(t.nextInt());t.nextLine();
-		float totalMes=0;
+		List<Object[]> datos = bd.obtenerVentasMes(t.nextInt());t.nextLine();
+		double totalMes=0;
 		for (Object[] o : datos) {
-			System.out.println("Código:"+o[0]+ //Código de pieza
+			System.out.println("Código Pieza:"+o[0]+ //Código de pieza
 					"\tNombre:"+o[1]+ //Nombre de pieza
-					"\tNº de Reparaciones:"+o[4]+
-					"\tPrecio Medio de Venta:"+o[5]+
-					"\tCantidad:"+o[2]+
-					"\tTotalPieza:"+o[3]);
-			totalMes+=(int)o[2]*(float)o[3];
+					"\tNº de Reparaciones:"+o[2]+
+					"\tCantidad Media Vendida:"+o[3]+
+					"\tTotalPieza:"+o[4]);
+			totalMes+=(double)o[4];
 		}
 		System.out.println("Total Vendido:"+totalMes);
 	}

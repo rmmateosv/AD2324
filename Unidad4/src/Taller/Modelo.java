@@ -294,6 +294,25 @@ public class Modelo {
 		return resultado;
 	}
 
+	public List<Object[]> obtenerVentasMes(int mes) {
+		// TODO Auto-generated method stub
+		List<Object[]> resultado = new ArrayList<>();
+		try {
+			Query q = conexion.createQuery(
+					"select  clave.pieza.id, clave.pieza.nombre, "
+					+ "count(*), avg(cantidad), sum(cantidad*precio) "
+					+ "from PiezaReparacion "
+					+ "where month(clave.reparacion.fecha)=?1 "
+					+ "group by clave.pieza");
+			q.setParameter(1, mes);
+			resultado = q.getResultList();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
 	
 
 }
