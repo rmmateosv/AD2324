@@ -1,6 +1,9 @@
 
 
+
+
 import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -24,10 +27,10 @@ public class Jugador {
 	private String nombre;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "claveJP.jugador")
 	//Qué atributo de Jugador_Partido, tiene el Jugador
-	private ArrayList<Jugador_Partido> jugados = new ArrayList<>();
+	private List<Jugador_Partido> jugados = new ArrayList<>();
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "ganador")
 	//Qué atributo de Partido, tiene el jugador
-	private ArrayList<Partido> ganados = new ArrayList<>();
+	private List<Partido> ganados = new ArrayList<>();
 	
 	public Jugador(int id, String nombre) {
 		super();
@@ -49,22 +52,23 @@ public class Jugador {
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-	public ArrayList<Jugador_Partido> getJugados() {
+	public List<Jugador_Partido> getJugados() {
 		return jugados;
 	}
-	public void setJugados(ArrayList<Jugador_Partido> jugados) {
+	public void setJugados(List<Jugador_Partido> jugados) {
 		this.jugados = jugados;
 	}
-	public ArrayList<Partido> getGanados() {
+	public List<Partido> getGanados() {
 		return ganados;
 	}
-	public void setGanados(ArrayList<Partido> ganados) {
+	public void setGanados(List<Partido> ganados) {
 		this.ganados = ganados;
 	}
 	
 	@Override
 	public String toString() {
-		return "Jugador [id=" + id + ", nombre=" + nombre + ", jugados=" + jugados + ", ganados=" + ganados + "]";
+		return "Jugador [id=" + id + ", nombre=" + nombre + ", "
+				+ "jugados=" + jugados + ", ganados=" + ganados + "]";
 	}
-	
+
 }

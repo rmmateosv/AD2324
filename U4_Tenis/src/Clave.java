@@ -33,7 +33,7 @@ public class Clave {
 	}
 	@Override
 	public String toString() {
-		return "Clave [partido=" + partido + ", jugador=" + jugador + "]";
+		return "Clave [partido=" + partido.getCodigo() + ", jugador=" + jugador.getNombre() + "]";
 	}
 	
 }

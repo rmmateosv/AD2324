@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -30,7 +31,7 @@ public class Partido {
 	private Jugador ganador;
 	
 	@OneToMany(cascade = CascadeType.ALL,mappedBy = "claveJP.partido")
-	ArrayList<Jugador_Partido> jugadores = new ArrayList();
+	List<Jugador_Partido> jugadores = new ArrayList();
 
 	public Partido(int codigo, Date fecha, int numSets, Jugador ganador, ArrayList<Jugador_Partido> jugadores) {
 		super();
@@ -77,18 +78,24 @@ public class Partido {
 		this.ganador = ganador;
 	}
 
-	public ArrayList<Jugador_Partido> getJugadores() {
+	public List<Jugador_Partido> getJugadores() {
 		return jugadores;
 	}
 
-	public void setJugadores(ArrayList<Jugador_Partido> jugadores) {
+	public void setJugadores(List<Jugador_Partido> jugadores) {
 		this.jugadores = jugadores;
 	}
 
 	@Override
 	public String toString() {
-		return "Partido [codigo=" + codigo + ", fecha=" + fecha + ", numSets=" + numSets + ", ganador=" + ganador
-				+ ", jugadores=" + jugadores + "]";
+		String r= "Partido [codigo=" + codigo + ", fecha=" + fecha + ", numSets=" + numSets + ", "
+				+ "ganador=" + ((ganador==null)?"":ganador.getNombre());
+		r+="[ ";
+		for (Jugador_Partido jp : jugadores) {
+			r+=jp.getClaveJP().getJugador().getNombre()+" ";
+		}
+		r+=" ]";
+		return r;
 	}
 	
 	
