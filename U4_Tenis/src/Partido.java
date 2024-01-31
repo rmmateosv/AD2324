@@ -1,0 +1,95 @@
+import java.util.ArrayList;
+import java.util.Date;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+
+@Entity
+@Table
+public class Partido {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int codigo;
+	@Column(nullable = false)
+	@Temporal(TemporalType.DATE)
+	private  Date fecha;
+	@Column(nullable = false)
+	private int numSets;
+	@ManyToOne
+	@JoinColumn(name = "ganador", referencedColumnName = "codigo", nullable = true)
+	private Jugador ganador;
+	
+	@OneToMany(cascade = CascadeType.ALL,mappedBy = "claveJP.partido")
+	ArrayList<Jugador_Partido> jugadores = new ArrayList();
+
+	public Partido(int codigo, Date fecha, int numSets, Jugador ganador, ArrayList<Jugador_Partido> jugadores) {
+		super();
+		this.codigo = codigo;
+		this.fecha = fecha;
+		this.numSets = numSets;
+		this.ganador = ganador;
+		this.jugadores = jugadores;
+	}
+
+	public Partido() {
+		super();
+	}
+
+	public int getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(int codigo) {
+		this.codigo = codigo;
+	}
+
+	public Date getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
+
+	public int getNumSets() {
+		return numSets;
+	}
+
+	public void setNumSets(int numSets) {
+		this.numSets = numSets;
+	}
+
+	public Jugador getGanador() {
+		return ganador;
+	}
+
+	public void setGanador(Jugador ganador) {
+		this.ganador = ganador;
+	}
+
+	public ArrayList<Jugador_Partido> getJugadores() {
+		return jugadores;
+	}
+
+	public void setJugadores(ArrayList<Jugador_Partido> jugadores) {
+		this.jugadores = jugadores;
+	}
+
+	@Override
+	public String toString() {
+		return "Partido [codigo=" + codigo + ", fecha=" + fecha + ", numSets=" + numSets + ", ganador=" + ganador
+				+ ", jugadores=" + jugadores + "]";
+	}
+	
+	
+}
