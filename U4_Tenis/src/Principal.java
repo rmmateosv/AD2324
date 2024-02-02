@@ -16,8 +16,8 @@ public class Principal {
 				System.out.println("0-Salir");
 				System.out.println("1-Crear Partido");
 				System.out.println("2-Mostrar datos partido");
-				System.out.println("2-Registrar datos partido");
-				System.out.println("2-Borrar partido");
+				System.out.println("3-Registrar datos partido");
+				System.out.println("4-Borrar partido");
 				opcion = t.nextInt();
 				t.nextLine();
 
@@ -29,10 +29,10 @@ public class Principal {
 					mostrarPartido();
 					break;
 				case 3:
-
+					registrarResutlados();
 					break;
 				case 4:
-
+					borrarPArtido();
 					break;
 				}
 
@@ -40,6 +40,67 @@ public class Principal {
 			bd.cerrar();
 		} else {
 			System.out.println("Error no hay conexión");
+		}
+	}
+
+	private static void borrarPArtido() {
+		// TODO Auto-generated method stub
+		mostrarPartidos();
+		System.out.println("Código Partido");
+		Partido p = bd.obtenerPartido(t.nextInt());t.nextLine();
+		if(p!=null) {
+			if(bd.borrarPartido(p)) {
+				System.out.println("Partido borrado");
+			}
+			else {
+				System.out.println("Error, no se ha borrado el partido");
+			}
+		}
+		else {
+			System.out.println("Error, partido no existe");
+		}
+		
+	}
+
+	private static void registrarResutlados() {
+		// TODO Auto-generated method stub
+		mostrarPartidos();
+		System.out.println("Código Partido");
+		Partido p = bd.obtenerPartido(t.nextInt());t.nextLine();
+		if(p!=null) {
+			for(Jugador_Partido jp:p.getJugadores()) {
+				jp.setResultado("");
+				//Introducir el resultado del jugador en cada set
+				for (int i = 1; i <= p.getNumSets(); i++) {
+					System.out.println("Puntos de "+jp.getClaveJP().getJugador().getNombre() +
+							" en el set "+i+":");
+					jp.setResultado(jp.getResultado()+"Set "+i+":"+t.nextInt()+" ");
+					t.nextLine();
+				}
+				//Introducir si el judador ha ganado el partido
+				if(p.getGanador()==null) {
+					System.out.println("¿Ganador "+jp.getClaveJP().getJugador().getNombre() +
+							"?(v/f)");
+					String ganador = t.nextLine();
+					if(ganador.equalsIgnoreCase("V")) {
+						p.setGanador(jp.getClaveJP().getJugador());
+					}
+				}
+			}
+			if(p.getGanador()==null) {
+				System.out.println("Error, no has seleccionado ganador");
+			}
+			else {
+				if(bd.guardarDatos()) {
+					System.out.println(p);
+				}
+				else {
+					System.out.println("Error al guardar el partido");
+				}
+			}
+		}
+		else {
+			System.out.println("Error, partido no existe");
 		}
 	}
 
@@ -52,11 +113,19 @@ public class Principal {
 			System.out.println("Partido:"+p.getCodigo()+
 					"\tFecha:"+p.getFecha()+
 					"\tNumSet:"+p.getNumSets()+
-					"\tGanador:"+p.getGanador().getNombre());
+					"\tGanador:"+(p.getGanador()==null?"Pendiente ":p.getGanador().getNombre()));
 			for (Jugador_Partido jp : p.getJugadores()) {
 				System.out.println("Nombre:"+jp.getClaveJP().getJugador().getNombre()+
 						"\tResultado:"+jp.getResultado());
 			}
+		}
+	}
+
+	private static void mostrarPartidos() {
+		// TODO Auto-generated method stub
+		ArrayList<Partido> partidos = bd.obtenerPartidos();
+		for (Partido p : partidos) {
+			System.out.println(p);
 		}
 	}
 

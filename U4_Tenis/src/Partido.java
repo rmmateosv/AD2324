@@ -88,11 +88,12 @@ public class Partido {
 
 	@Override
 	public String toString() {
-		String r= "Partido [codigo=" + codigo + ", fecha=" + fecha + ", numSets=" + numSets + ", "
-				+ "ganador=" + ((ganador==null)?"":ganador.getNombre());
-		r+="[ ";
+		String r= "Partido [codigo=" + codigo + ", fecha=" + fecha + ", numSets=" + 
+	              numSets + ", "
+				+ "ganador=" + ((ganador==null)?"Pendiente ":ganador.getNombre());
+		r+=" jugadores = [ ";
 		for (Jugador_Partido jp : jugadores) {
-			r+=jp.getClaveJP().getJugador().getNombre()+" ";
+			r+=jp.getClaveJP().getJugador().getNombre()+"/";
 		}
 		r+=" ]";
 		return r;
