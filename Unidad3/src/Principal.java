@@ -21,13 +21,15 @@ public class Principal {
 				System.out.println("5-Borrar Jugador de Equipo");
 				System.out.println("6-Crear Partido");
 				System.out.println("7-Añadir gol a partido");
-				System.out.println("8-Finalizar partido");
+				System.out.println("9-Modificar gol a partido");
+				System.out.println("10'-Borrar gol a partido");
+				System.out.println("11-Finalizar partido");
 				
 				opcion = t.nextInt();
 				t.nextLine();
 				switch (opcion) {
 				case 1:
-					
+					crearEquipo();
 					break;
 				
 				}
@@ -37,5 +39,34 @@ public class Principal {
 			System.out.println("Error de conexión");
 		}
 	}
+
+	private static void crearEquipo() {
+		// TODO Auto-generated method stub
+		System.out.println("Nombre");
+		Equipo e= bd.obtenerEquipo(t.nextLine());
+		if(e==null) {
+			e= new Equipo();
+			int opcion;
+			int i=0;
+			//Pedir jugadores
+			do {
+				i++;
+				System.out.println("Nombre jugador"+i+":");
+				e.getJugadores().add(t.nextLine());				
+				System.out.println("Desea añadir otro jugador?(0-No)");
+				opcion = t.nextInt();t.nextLine();
+			}while(opcion!=0);
+			
+			if(bd.crearEquipo(e)) {
+				System.out.println("Equipo creado");
+			}
+			else {
+				System.out.println("Error al crear el equipo");
+			}
+		}
+		else {
+			System.out.println("Error, ya existe el equipo");
+		}
+	}	
 
 }
