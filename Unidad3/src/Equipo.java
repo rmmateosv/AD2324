@@ -3,7 +3,7 @@ import java.util.Arrays;
 
 public class Equipo {
 	private String nombre;
-	private int[] estadistica = {0,0,0,0};
+	private Estadistica estadistica = new Estadistica();
 	private ArrayList<String> jugadores = new ArrayList();
 	private int puntos;
 	
@@ -22,10 +22,10 @@ public class Equipo {
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-	public int[] getEstadistica() {
+	public Estadistica getEstadistica() {
 		return estadistica;
 	}
-	public void setEstadistica(int[] estadistica) {
+	public void setEstadistica(Estadistica estadistica) {
 		this.estadistica = estadistica;
 	}
 	public int getPuntos() {
@@ -45,7 +45,7 @@ public class Equipo {
 
 	@Override
 	public String toString() {
-		return "Equipo [nombre=" + nombre + ", estadistica=" + Arrays.toString(estadistica) + ", jugadores=" + jugadores
+		return "Equipo [nombre=" + nombre + ", estadistica=" + estadistica + ", jugadores=" + jugadores
 				+ ", puntos=" + puntos + "]";
 	}
 

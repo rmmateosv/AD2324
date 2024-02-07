@@ -1,4 +1,5 @@
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Principal {
@@ -31,6 +32,9 @@ public class Principal {
 				case 1:
 					crearEquipo();
 					break;
+				case 2:
+					mostrarEquipos();
+					break;
 				
 				}
 
@@ -40,12 +44,31 @@ public class Principal {
 		}
 	}
 
+	private static void mostrarEquipos() {
+		// TODO Auto-generated method stub
+		System.out.println("Introduce el nombre equipo(1-Todos)");
+		String nombre = t.nextLine();
+		if(nombre.equals("1")) {
+			ArrayList<Equipo> equipos = bd.obtenerEquipos();
+			for (Equipo e : equipos) {
+				System.out.println(e);
+			}
+		}
+		else {
+			Equipo e = bd.obtenerEquipo(nombre);
+			System.out.println(e);
+		}
+		
+	}
+
 	private static void crearEquipo() {
 		// TODO Auto-generated method stub
 		System.out.println("Nombre");
-		Equipo e= bd.obtenerEquipo(t.nextLine());
+		String nombre = t.nextLine();
+		Equipo e= bd.obtenerEquipo(nombre);
 		if(e==null) {
 			e= new Equipo();
+			e.setNombre(nombre);
 			int opcion;
 			int i=0;
 			//Pedir jugadores
