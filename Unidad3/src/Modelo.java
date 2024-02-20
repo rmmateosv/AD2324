@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-
+import java.util.Arrays;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -9,9 +9,14 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
+import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.result.UpdateResult;
 
 
 public class Modelo {
@@ -188,14 +193,143 @@ public class Modelo {
 			
 			//Filtro
 			Bson filtro = Filters.in("jugadores",jugador);
+			//Recuperar solamente el campo nombre
+			Bson campos = Projections.fields(Projections.include("nombre"),
+					Projections.exclude("_id"));
 			
-			Document d = col.find(filtro).first();
+			Document d = col.find(filtro).projection(campos).first();
 			if(d!=null) {
+				System.out.println(d);
 				resultado= d.getString("nombre");
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
+		return resultado;
+	}
+
+	public boolean insertarJugador(Equipo eq, String jugador) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			MongoCollection<Document> col = bd.getCollection("Equipo");
+			
+			//Filtro
+			Bson filtro = Filters.eq("nombre",eq.getNombre());
+			//Indicar que modificaciones se hacen
+			Bson modif = Updates.addToSet("jugadores", jugador);
+			//Modificar
+			UpdateResult r = col.updateOne(filtro, modif);
+			if(r.getModifiedCount()==1) {
+				resultado= true;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return resultado;
+	}
+
+	public boolean cambiarEquipo(Equipo eq, String jugador, String eActual) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			MongoCollection<Document> col = bd.getCollection("Equipo");
+			//Quitar el jugador del equipo antiguo
+			//Filtro
+			Bson filtro = Filters.eq("nombre",eActual);
+			//Indicar que modificaciones se hacen
+			Bson modif = Updates.pull("jugadores", jugador);
+			//Modificar
+			UpdateResult r = col.updateOne(filtro, modif);
+			if(r.getModifiedCount()==1) {
+				//Añadir el jugador al equipo nuevo
+				//Filtro
+				filtro = Filters.eq("nombre",eq.getNombre());
+				//Indicar que modificaciones se hacen
+				modif = Updates.addToSet("jugadores", jugador);
+				//Modificar
+				r = col.updateOne(filtro, modif);
+				if(r.getModifiedCount()==1) {
+					resultado = true;
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return resultado;
+	}
+
+	public boolean crearPartido(Partido p) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			MongoCollection<Document> col = bd.getCollection("Partido");
+			InsertOneResult r =  col.insertOne(
+					new Document().append("codigo",obtenerCodigoP())
+					.append("equipoL", p.getEquipoL())
+					.append("equipoV", p.getEquipoV())
+					.append("fecha", p.getFecha())
+					.append("goles", p.getGoles())
+					.append("fin", p.isFinalizado())
+					);
+			if(r.getInsertedId()!=null) {
+				resultado=true;
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	private int obtenerCodigoP() {
+		// TODO Auto-generated method stub
+		int resultado = 0;
+		
+		try {
+			MongoCollection<Document> col = bd.getCollection("Partido");
+			
+			Document r = col.aggregate(Arrays.asList(
+					Aggregates.group("codigo", 
+							Accumulators.max("ultimo", "$codigo")))).first();
+			if(r!=null) {
+				System.out.println(r);
+				resultado=r.getInteger("ultimo", 0);
+			}
+			resultado = resultado+1;
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	public ArrayList<Partido> obtenerPartidos() {
+		// TODO Auto-generated method stub
+		ArrayList<Partido> resultado = new ArrayList();
+		try {
+			MongoCollection<Document> col = bd.getCollection("Partido");
+			
+			MongoCursor<Document> r = col.find().iterator();
+			while(r.hasNext()) {
+				Document d = r.next();
+				Partido p = new Partido(d.getString("equipoL"), 
+						d.getString("equipoV"), d.getDate("fecha"));
+				p.setFinalizado(d.getBoolean("fin", false));
+				p.setGoles((ArrayList<Gol>) d.get("goles"));
+				resultado.add(p);
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
 		return resultado;
 	}
 	

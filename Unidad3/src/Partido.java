@@ -2,18 +2,19 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Partido {
+	private int codigo;
 	private String equipoL;
 	private String equipoV;
 	private Date fecha;
 	private ArrayList<Gol> goles= new ArrayList<>();
 	private boolean finalizado;
 	
-	public Partido(String equipoL, String equipoV, Date fecha, ArrayList<Gol> goles) {
+	public Partido(String equipoL, String equipoV, Date fecha) {
 		super();
 		this.equipoL = equipoL;
 		this.equipoV = equipoV;
 		this.fecha = fecha;
-		this.goles = goles;
+		
 	}
 	public Partido() {
 		super();
@@ -49,9 +50,16 @@ public class Partido {
 	public void setFinalizado(boolean finalizado) {
 		this.finalizado = finalizado;
 	}
+	
+	public int getCodigo() {
+		return codigo;
+	}
+	public void setCodigo(int codigo) {
+		this.codigo = codigo;
+	}
 	@Override
 	public String toString() {
-		return "Partido [equipoL=" + equipoL + ", equipoV=" + equipoV + ", fecha=" + fecha + ", goles=" + goles
+		return "Partido [codigo="+codigo+"equipoL=" + equipoL + ", equipoV=" + equipoV + ", fecha=" + fecha + ", goles=" + goles
 				+ ", finalizado=" + finalizado + "]";
 	}
 	
