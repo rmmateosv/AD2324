@@ -18,6 +18,7 @@ public class Principal {
 				System.out.println("1-Crear Equipo");
 				System.out.println("2-Mostrar Equipo/s");
 				System.out.println("3-Borrar Equipo");
+				System.out.println("32-Borrar Equipo si solamente tiene 1 jugador");
 				System.out.println("4-Añadir Jugador a Equipo");
 				System.out.println("5-Borrar Jugador de Equipo");
 				System.out.println("6-Crear Partido");
@@ -35,6 +36,15 @@ public class Principal {
 				case 2:
 					mostrarEquipos();
 					break;
+				case 3:
+					borrarEquipo();
+					break;
+				case 32:
+					borrarEquipo1J();
+					break;
+				case 4:
+					insertarJuador();
+					break;
 				
 				}
 
@@ -44,19 +54,94 @@ public class Principal {
 		}
 	}
 
+	private static void insertarJuador() {
+		// TODO Auto-generated method stub
+		mostrarEquipos();
+		Equipo e = bd.obtenerEquipo(t.nextLine());
+		if(e!=null) {
+			System.out.println("Nombre del jugador");
+			String jugador = t.nextLine();
+			
+			//Null si no existe y nombre equipo actual si existe
+			String eActual = bd.existeJugador(jugador); 
+			if(eActual==null) {
+				if(bd.insertarJugador(e,jugador)) {
+					System.out.println("Jugador creado");
+				}
+				else {
+					System.out.println("Error al crear el jugador");
+				}
+			}
+			else {
+				System.out.println("Error, jugador existe en equipo "+ eActual);
+				//Preguntar si cambiar cuando los equipos no coincidan
+				if(!e.getNombre().equalsIgnoreCase(eActual)) {
+					System.out.println("Desea cambiar de equipo al jugador?(y-Sí)");
+					String respuesta = t.nextLine();
+					if(respuesta.equalsIgnoreCase("Y")) {
+						if(bd.cambiarEquipo(e,jugador,eActual)) {
+							System.out.println("Jugador cambiado de equipo");
+						}
+					}
+				}
+			}
+		}
+		else {
+			System.out.println("Error, no existe el equipo");
+		}
+		
+	}
+
+	private static void borrarEquipo1J() {
+		// TODO Auto-generated method stub
+		mostrarEquipos();
+		System.out.println("Nombre del equipo a borrar");
+		Equipo e = bd.obtenerEquipo(t.nextLine());
+		if(e!=null) {
+			if(bd.borrarEquipo1J(e)) {
+				System.out.println("Equipo borrado");
+			}
+			else {
+				System.err.println("Error al borrar el equipo");
+			}
+		}
+	}
+
+	private static void borrarEquipo() {
+		// TODO Auto-generated method stub
+		mostrarEquipos();
+		System.out.println("Nombre del equipo a borrar");
+		Equipo e = bd.obtenerEquipo(t.nextLine());
+		if(e!=null) {
+			if(bd.borrarEquipo(e)) {
+				System.out.println("Equipo borrado");
+			}
+			else {
+				System.err.println("Error al borrar el equipo");
+			}
+		}
+	}
+
 	private static void mostrarEquipos() {
 		// TODO Auto-generated method stub
 		System.out.println("Introduce el nombre equipo(1-Todos)");
 		String nombre = t.nextLine();
 		if(nombre.equals("1")) {
 			ArrayList<Equipo> equipos = bd.obtenerEquipos();
-			for (Equipo e : equipos) {
-				System.out.println(e);
+			if(equipos.isEmpty())
+				{System.out.println("No hay equipos");}
+			else {
+				for (Equipo e : equipos) {
+					System.out.println(e);
+				}
 			}
 		}
 		else {
 			Equipo e = bd.obtenerEquipo(nombre);
-			System.out.println(e);
+			if(e!=null)
+				System.out.println(e);
+			else
+				System.out.println("Equipo no existe");
 		}
 		
 	}

@@ -2,13 +2,17 @@ import java.util.ArrayList;
 
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
+
 
 public class Modelo {
 	private MongoClient conexion = null;
@@ -43,9 +47,31 @@ public class Modelo {
 		
 	}
 
-	public Equipo obtenerEquipo(String nextLine) {
+	public Equipo obtenerEquipo(String nombre) {
 		// TODO Auto-generated method stub
-		return null;
+		Equipo resultado=null;
+		//Seleccionamos la colección
+		MongoCollection<Document> col = bd.getCollection("Equipo");
+		//Filtro para comparar el nombre del equipo
+		Bson filtro = Filters.eq("nombre",nombre);
+		//Recuperar el primer documento que cumpla con el filtro
+		Document d = col.find(filtro).first();
+		if(d!=null) {
+			//System.out.println(d.toJson());
+			//Creamos el resultado
+			resultado = new Equipo();
+			resultado.setNombre(d.getString("nombre"));
+			resultado.setPuntos(d.getInteger("puntos", 0));
+			resultado.setJugadores((ArrayList<String>) d.get("jugadores"));
+			//Obtener el doc estadística
+			Document e = (Document) d.get("estadistica");
+			resultado.setEstadistica(new Estadistica(
+					e.getInteger("jugados", 0), 
+					e.getInteger("ganados", 0), 
+					e.getInteger("perdidos", 0), 
+					e.getInteger("empatados", 0)));
+		}
+		return resultado;
 	}
 
 	public boolean crearEquipo(Equipo eq) {
@@ -111,6 +137,64 @@ public class Modelo {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public boolean borrarEquipo(Equipo eq) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			MongoCollection<Document> col = bd.getCollection("Equipo");
+			
+			//Filtro
+			Bson filtro = Filters.eq("nombre",eq.getNombre());
+			
+			DeleteResult r = col.deleteOne(filtro);
+			if(r.getDeletedCount()==1) {
+				resultado=true;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return resultado;
+	}
+
+	public boolean borrarEquipo1J(Equipo eq) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			MongoCollection<Document> col = bd.getCollection("Equipo");
+			
+			//Filtro
+			Bson filtro = Filters.and(Filters.eq("nombre",eq.getNombre()),
+					Filters.size("jugadores", 1));
+			
+			DeleteResult r = col.deleteOne(filtro);
+			if(r.getDeletedCount()==1) {
+				resultado=true;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return resultado;
+	}
+
+	public String existeJugador(String jugador) {
+		// TODO Auto-generated method stub
+		String resultado = null;
+		try {
+			MongoCollection<Document> col = bd.getCollection("Equipo");
+			
+			//Filtro
+			Bson filtro = Filters.in("jugadores",jugador);
+			
+			Document d = col.find(filtro).first();
+			if(d!=null) {
+				resultado= d.getString("nombre");
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		return resultado;
 	}
