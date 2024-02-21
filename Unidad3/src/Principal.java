@@ -66,7 +66,14 @@ public class Principal {
 	private static void crearGol() {
 		// TODO Auto-generated method stub
 		mostrarPartidos();
-		System.out.println();
+		System.out.println("Introduce id");
+		Partido p = bd.obtenerPartido(t.nextInt()); t.nextLine();
+		if(p!=null) {
+			
+		}
+		else {
+			System.out.println("Error, no existe el partido");
+		}
 	}
 
 	private static void crearPartido() {

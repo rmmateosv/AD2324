@@ -292,7 +292,7 @@ public class Modelo {
 			MongoCollection<Document> col = bd.getCollection("Partido");
 			
 			Document r = col.aggregate(Arrays.asList(
-					Aggregates.group("codigo", 
+					Aggregates.group("$codigo", 
 							Accumulators.max("ultimo", "$codigo")))).first();
 			if(r!=null) {
 				System.out.println(r);
@@ -320,6 +320,7 @@ public class Modelo {
 				Document d = r.next();
 				Partido p = new Partido(d.getString("equipoL"), 
 						d.getString("equipoV"), d.getDate("fecha"));
+				p.setCodigo(d.getInteger("codigo", 0));
 				p.setFinalizado(d.getBoolean("fin", false));
 				p.setGoles((ArrayList<Gol>) d.get("goles"));
 				resultado.add(p);
@@ -332,5 +333,31 @@ public class Modelo {
 		
 		return resultado;
 	}
+
+	public Partido obtenerPartido(int codigo) {
+		// TODO Auto-generated method stub
+		Partido resultado = null;
+		try {
+			MongoCollection<Document> col = bd.getCollection("Partido");
+			
+			Bson filtro = Filters.eq("codigo",codigo);
+			Document d = col.find(filtro).first();
+			
+			if(d!=null) {
+				Partido p = new Partido(d.getString("equipoL"), 
+						d.getString("equipoV"), d.getDate("fecha"));
+				p.setCodigo(d.getInteger("codigo", 0));
+				p.setFinalizado(d.getBoolean("fin", false));
+				p.setGoles((ArrayList<Gol>) d.get("goles"));
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+	
 	
 }
