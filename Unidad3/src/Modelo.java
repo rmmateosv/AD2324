@@ -344,12 +344,29 @@ public class Modelo {
 			Document d = col.find(filtro).first();
 			
 			if(d!=null) {
-				Partido p = new Partido(d.getString("equipoL"), 
+				resultado = new Partido(d.getString("equipoL"), 
 						d.getString("equipoV"), d.getDate("fecha"));
-				p.setCodigo(d.getInteger("codigo", 0));
-				p.setFinalizado(d.getBoolean("fin", false));
-				p.setGoles((ArrayList<Gol>) d.get("goles"));
+				resultado.setCodigo(d.getInteger("codigo", 0));
+				resultado.setFinalizado(d.getBoolean("fin", false));
+				resultado.setGoles((ArrayList<Gol>) d.get("goles"));
 			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	public boolean crearGol(Partido p, Gol g) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			MongoCollection<Document> col = bd.getCollection("Partido");
+			
+			Bson filtro = Filters.eq("codigo",p.getCodigo());
+			Bson modif
 			
 		} catch (Exception e) {
 			// TODO: handle exception

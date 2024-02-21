@@ -69,7 +69,18 @@ public class Principal {
 		System.out.println("Introduce id");
 		Partido p = bd.obtenerPartido(t.nextInt()); t.nextLine();
 		if(p!=null) {
-			
+			System.out.println("Equipo (L:"+p.getEquipoL()+"/*:"+p.getEquipoV());
+			String e = t.nextLine();
+			System.out.println("Minuto:");
+			int minuto = t.nextInt(); t.nextLine();
+			Gol g = new Gol(minuto, 
+					(e.equalsIgnoreCase("L")?p.getEquipoL():p.getEquipoV()), false);
+			if(bd.crearGol(p,g)) {
+				System.out.println("Gol creado");
+			}
+			else {
+				System.out.println("Error al crear el gol");
+			}
 		}
 		else {
 			System.out.println("Error, no existe el partido");
