@@ -13,6 +13,7 @@ import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
+import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
@@ -349,6 +350,8 @@ public class Modelo {
 				resultado.setCodigo(d.getInteger("codigo", 0));
 				resultado.setFinalizado(d.getBoolean("fin", false));
 				resultado.setGoles((ArrayList<Gol>) d.get("goles"));
+				//Esto no va a funcionar ya que se van a modicar todos los goles
+				//Hay que poner un filtro al update de los documentos Gol
 			}
 			
 		} catch (Exception e) {
@@ -366,7 +369,80 @@ public class Modelo {
 			MongoCollection<Document> col = bd.getCollection("Partido");
 			
 			Bson filtro = Filters.eq("codigo",p.getCodigo());
-			Bson modif
+			//Crear el documento gol
+			Document gol = new Document().append("minuto", g.getMinuto())
+					.append("equipo", g.getEquipo())
+					.append("anulado", g.isAnulado());
+			Bson modif = Updates.addToSet("goles", gol);
+			UpdateResult r = col.updateOne(filtro, modif);
+			if(r.getModifiedCount()==1) {
+				resultado=true;
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	public ArrayList<Gol> obtenerGoles(String nombre) {
+		// TODO Auto-generated method stub
+		ArrayList<Gol> resultado = new ArrayList();
+		try {
+			MongoCollection<Document> col = bd.getCollection("Partido");
+			
+			Bson filtro = Filters.eq("goles.equipo",nombre);
+			Bson campos = Projections.fields(
+					Projections.excludeId(),
+					Projections.include("codigo","goles"));
+			/* No podemos hacerlo así porque se devuelven todos
+			 * los goles de los partidos en los que al menos
+			 * hay un gol del equipo buscado 
+			 * MongoCursor<Document> r= col.find(filtro).
+				projection(campos).
+				sort(Sorts.descending("fecha"))
+				.iterator();*/
+			MongoCursor<Document> r = col.aggregate(Arrays.asList(
+					Aggregates.match(filtro), //filtrar partidos donde haya un gol del equipo buscado
+					Aggregates.sort(Sorts.descending("fecha")), //Ordena por fecha desc
+					Aggregates.unwind("$goles"), //Desagrupa array goles
+					Aggregates.match(filtro), //Vuelve a aplicar el filtro para el
+					Aggregates.project(campos)
+					
+					)).iterator();
+			while(r.hasNext()){
+				Document gol = (Document) r.next().get("goles");
+				//Crear gol
+				Gol g = new Gol(gol.getInteger("minuto",0), 
+						gol.getString("equipo"), gol.getBoolean("anulado", false));
+				resultado.add(g);
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	public boolean anularGol(Partido p, int minuto) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			MongoCollection<Document> col = bd.getCollection("Partido");
+			
+			Bson filtro = Filters.and(Filters.eq("codigo",p.getCodigo()),
+					Filters.eq("goles.minuto",minuto),
+					Filters.eq("goles.anulado",false));
+			Bson modif = Updates.set("goles.anulado", true);
+			UpdateResult r= col.updateOne(filtro, modif);
+			if(r.getModifiedCount()==1) {
+				resultado=true;
+			}
+			
 			
 		} catch (Exception e) {
 			// TODO: handle exception

@@ -24,10 +24,12 @@ public class Principal {
 				System.out.println("4-Añadir Jugador a Equipo");
 				System.out.println("5-Borrar Jugador de Equipo");
 				System.out.println("6-Crear Partido");
-				System.out.println("7-Añadir gol a partido");
-				System.out.println("9-Modificar gol a partido");
-				System.out.println("10'-Borrar gol a partido");
+				System.out.println("7-Añadir gol a partido (Insert-Array)");
+				System.out.println("8-Mostar goles de un equipo ordendos por fecha partido desc (Select-Array)");
+				System.out.println("9-Anular gol a partido (Update-Array)");
+				System.out.println("10-Borrar gol a partido (Delete-Array)");
 				System.out.println("11-Finalizar partido");
+				System.out.println("12-Mostrar Clasificación");
 				
 				opcion = t.nextInt();
 				t.nextLine();
@@ -54,12 +56,58 @@ public class Principal {
 				case 7:
 					crearGol();
 					break;
+				case 8:
+					mostrarGoles();
+					break;
+				case 9:
+					anularGol();
+					break;
 				
 				}
 
 			} while (opcion != 0);
 		} else {
 			System.out.println("Error de conexión");
+		}
+	}
+
+	private static void anularGol() {
+		// TODO Auto-generated method stub
+		mostrarPartidos();
+		System.out.println("Id partido");
+		Partido p = bd.obtenerPartido(t.nextInt());t.nextLine();
+		if(p!=null) {
+			for (Gol g : p.getGoles()) {
+				System.out.println(g);
+			}
+			System.out.println("Minuto:");
+			int minuto = t.nextInt();t.nextLine();
+			if(bd.anularGol(p,minuto)) {
+				System.out.println("Gol anulado");
+				mostrarPartidos();
+			}
+			else {
+				System.out.println("Error al anular el gol");
+			}
+		}	
+		else {
+			System.out.println("Error, partido no existe");
+		}
+	}
+
+	private static void mostrarGoles() {
+		// TODO Auto-generated method stub
+		mostrarEquipos();
+		System.out.println("Introduce nombre equipo");
+		Equipo e = bd.obtenerEquipo(t.nextLine());
+		if(e!=null) {
+			ArrayList<Gol> goles = bd.obtenerGoles(e.getNombre());
+			for (Gol g : goles) {
+				System.out.println(g);
+			}
+		}
+		else {
+			System.out.println("Error, equpipo no existe");
 		}
 	}
 
