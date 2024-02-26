@@ -62,12 +62,74 @@ public class Principal {
 				case 9:
 					anularGol();
 					break;
+				case 10:
+					borrarGol();
+					break;
+				case 11:
+					finalizarPartido();
+					break;
 				
 				}
 
 			} while (opcion != 0);
 		} else {
 			System.out.println("Error de conexión");
+		}
+	}
+
+	private static void finalizarPartido() {
+		// TODO Auto-generated method stub
+		mostrarPartidos();
+		System.out.println("Id partido");
+		Partido p = bd.obtenerPartido(t.nextInt());t.nextLine();
+		if(p!=null && !p.isFinalizado()) {			
+			if(bd.finalizar(p)) {
+				System.out.println("Partido Finalizado");
+				ArrayList<Object[]> datos= bd.obtenerDatosPartidosConDatosEquipos(p);
+				if(datos.size()==3) {
+					//Información del partido
+					System.out.println("Id Partido:"+(String)datos.get(0)[0]+
+							"\tLocal:"+datos.get(0)[1]+
+							"\tLocal:"+datos.get(0)[2]);
+					//Estadística del equipo Local
+					System.out.println("Estadísticas Local"+(Estadistica)datos.get(1)[0]);
+					//Estadística del equipo Visitante
+					System.out.println("Estadísticas Visitante"+
+							(Estadistica)datos.get(2)[0]);				
+					}				
+			}
+			else {
+				System.out.println("Error al anular el gol");
+			}
+		}	
+		else {
+			System.out.println("Error, partido no existe");
+		}
+	}
+
+	
+
+	private static void borrarGol() {
+		// TODO Auto-generated method stub
+		mostrarPartidos();
+		System.out.println("Id partido");
+		Partido p = bd.obtenerPartido(t.nextInt());t.nextLine();
+		if(p!=null) {
+			for (Gol g : p.getGoles()) {
+				System.out.println(g);
+			}
+			System.out.println("Minuto:");
+			int minuto = t.nextInt();t.nextLine();
+			if(bd.borrarGol(p,minuto)) {
+				System.out.println("Gol borrado");
+				mostrarPartidos();
+			}
+			else {
+				System.out.println("Error al anular el gol");
+			}
+		}	
+		else {
+			System.out.println("Error, partido no existe");
 		}
 	}
 

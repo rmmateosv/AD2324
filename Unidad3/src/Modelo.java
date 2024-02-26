@@ -14,6 +14,7 @@ import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
+import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
@@ -293,11 +294,12 @@ public class Modelo {
 			MongoCollection<Document> col = bd.getCollection("Partido");
 			
 			Document r = col.aggregate(Arrays.asList(
-					Aggregates.group("$codigo", 
+					Aggregates.group(null, 
 							Accumulators.max("ultimo", "$codigo")))).first();
 			if(r!=null) {
 				System.out.println(r);
 				resultado=r.getInteger("ultimo", 0);
+				System.out.println(resultado);
 			}
 			resultado = resultado+1;
 			
@@ -322,7 +324,7 @@ public class Modelo {
 				Partido p = new Partido(d.getString("equipoL"), 
 						d.getString("equipoV"), d.getDate("fecha"));
 				p.setCodigo(d.getInteger("codigo", 0));
-				p.setFinalizado(d.getBoolean("fin", false));
+				p.setFinalizado(d.getBoolean("finalizado", false));
 				p.setGoles((ArrayList<Gol>) d.get("goles"));
 				resultado.add(p);
 			}
@@ -349,9 +351,15 @@ public class Modelo {
 						d.getString("equipoV"), d.getDate("fecha"));
 				resultado.setCodigo(d.getInteger("codigo", 0));
 				resultado.setFinalizado(d.getBoolean("fin", false));
-				resultado.setGoles((ArrayList<Gol>) d.get("goles"));
-				//Esto no va a funcionar ya que se van a modicar todos los goles
-				//Hay que poner un filtro al update de los documentos Gol
+				ArrayList<Document> goles  = (ArrayList<Document>) d.get("goles");
+				for (Document dGol : goles) {
+					Gol g = new Gol(dGol.getInteger("minuto", 0),
+							dGol.getString("equipo"),
+							dGol.getBoolean("anulado", false)
+							);
+					resultado.getGoles().add(g);
+				}
+				
 			}
 			
 		} catch (Exception e) {
@@ -433,21 +441,187 @@ public class Modelo {
 		boolean resultado = false;
 		try {
 			MongoCollection<Document> col = bd.getCollection("Partido");
-			
+			//Filtro que selecciona el partido si existe el gol en el array
+			//de goles
 			Bson filtro = Filters.and(Filters.eq("codigo",p.getCodigo()),
 					Filters.eq("goles.minuto",minuto),
 					Filters.eq("goles.anulado",false));
-			Bson modif = Updates.set("goles.anulado", true);
-			UpdateResult r= col.updateOne(filtro, modif);
+			Bson modif = Updates.set("goles.$[golSeleccionado].anulado", true);
+			//Creamos un filtro que selecciona el gol a modificar
+			UpdateOptions golAModificar = new UpdateOptions().
+					arrayFilters(Arrays.asList(
+							Filters.eq("golSeleccionado.minuto",minuto)));
+			UpdateResult r= col.updateOne(filtro, modif,golAModificar);
 			if(r.getModifiedCount()==1) {
 				resultado=true;
 			}
-			
-			
+						
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
+		
+		return resultado;
+	}
+
+	public boolean borrarGol(Partido p, int minuto) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			MongoCollection<Document> col = bd.getCollection("Partido");
+			//Filtro que selecciona el partido si existe el gol en el array
+			//de goles
+			Bson filtro = Filters.and(Filters.eq("codigo",p.getCodigo()),
+					Filters.eq("goles.minuto",minuto));
+			Bson modif = Updates.pull("goles", 
+					new Document().append("minuto", minuto));
+			
+			UpdateResult r= col.updateOne(filtro, modif);
+			if(r.getModifiedCount()>=1) {
+				resultado=true;
+			}
+						
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	public boolean finalizar(Partido p) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			MongoCollection<Document> col = bd.getCollection("Partido");
+			//Filtro que selecciona el partido si existe el gol en el array
+			//de goles
+			Bson filtro = Filters.eq("codigo",p.getCodigo());
+			Bson modif = Updates.set("finalizado", true);
+			
+			UpdateResult r= col.updateOne(filtro, modif);
+			if(r.getModifiedCount()==1) {
+				//Obtener goles equipo local
+				int golesL=obtenerNumGoles(p.getCodigo(),p.getEquipoL());
+				int golesV=obtenerNumGoles(p.getCodigo(),p.getEquipoV());
+				
+				if(golesL==golesV) {
+					modificarEquipo(p.getEquipoL(),'e');
+					modificarEquipo(p.getEquipoV(),'e');
+				}
+				if(golesL>golesV) {
+					modificarEquipo(p.getEquipoL(),'g');
+					modificarEquipo(p.getEquipoV(),'p');
+				}
+				else {
+					modificarEquipo(p.getEquipoL(),'p');
+					modificarEquipo(p.getEquipoV(),'g');
+				}
+				
+				resultado = true;
+				
+			}
+						
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	private int obtenerNumGoles(int codigoP, String equipo) {
+		// TODO Auto-generated method stub
+		int resultado = 0;
+		try {
+			MongoCollection<Document> col = bd.getCollection("Partido");
+			//Filtro que selecciona el partido si existe el gol en el array
+			//de goles
+			Document r = col.aggregate(Arrays.asList(
+					Aggregates.match(Filters.eq("codigo",codigoP)),
+					Aggregates.unwind("$goles"),
+					Aggregates.match(Filters.and(Filters.eq("goles.equipo",equipo),
+							Filters.eq("anulado",false))),
+					Aggregates.count("goles")					
+					)).first();
+			if(r!=null) {
+				resultado=r.getInteger("goles");
+			}
+									
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		
+		return resultado;
+	}
+
+	private boolean modificarEquipo(String equipo, char tipo) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			MongoCollection<Document> col = bd.getCollection("Equipo");
+			Bson filtro= Filters.eq("nombre",equipo);
+			Bson modif = null;
+			switch (tipo) {
+				case 'e': 
+					modif=Updates.combine(
+							Updates.inc("estadistica.jugados", 1),
+							Updates.inc("estadistica.empatados", 1)
+							);
+					break;
+				
+				case 'g': 
+					modif=Updates.combine(
+							Updates.inc("estadistica.jugados", 1),
+							Updates.inc("estadistica.ganados", 1)
+							);
+					break;
+				
+				case 'p': 
+					modif=Updates.combine(
+							Updates.inc("estadistica.jugados", 1),
+							Updates.inc("estadistica.perdidos", 1)
+							);
+					break;				
+			}
+			UpdateResult r = col.updateOne(filtro, modif);
+			if(r.getModifiedCount()==1) {
+				resultado=true;
+			}
+			
+									
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		
+		return resultado;
+	}
+
+	public ArrayList<Object[]> obtenerDatosPartidosConDatosEquipos(Partido p) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		ArrayList<Object[]> resultado = new ArrayList();
+		try {
+			MongoCollection<Document> col = bd.getCollection("Partido");
+			Document r = col.aggregate(Arrays.asList(
+					Aggregates.match(Filters.eq("codigo",p.getCodigo())),
+					Aggregates.lookup("Equipo", "equipoL", "nombre","eL"),
+					Aggregates.lookup("Equipo", "equipoV", "nombre","eV")
+					)).first();
+			if(r!=null) {
+				System.out.println(r.toJson());
+			}
+					
+									
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
 		
 		return resultado;
 	}
