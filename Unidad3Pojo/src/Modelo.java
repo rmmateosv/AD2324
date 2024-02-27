@@ -2,7 +2,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.bson.Document;
+import org.bson.codecs.configuration.CodecProvider;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
+
+import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -28,8 +36,11 @@ public class Modelo {
 	
 	public Modelo() {
 		try {
+			CodecProvider cp = PojoCodecProvider.builder().automatic(true).build();
+			CodecRegistry cr = fromRegistries(getDefaultCodecRegistry(),
+					fromProviders(cp));				
 			conexion= MongoClients.create("mongodb://localhost:27017");
-			bd = conexion.getDatabase("liga");
+			bd = conexion.getDatabase("liga").withCodecRegistry(cr);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -83,24 +94,17 @@ public class Modelo {
 	}
 
 	public boolean crearEquipo(Equipo eq) {
+		
 		boolean resultado = false;
 		// TODO Auto-generated method stub
 		try {
 			//Seleccionamos la colección
-			MongoCollection<Document> col = bd.getCollection("Equipo");
+			MongoCollection<Equipo> col = bd.getCollection("Equipo",Equipo.class);
 			
-			Document estadistica = new Document()
-					.append("jugados",eq.getEstadistica().getJugados())
-					.append("ganados", eq.getEstadistica().getGanados())
-					.append("perdidos",eq.getEstadistica().getPerdidos())
-					.append("empatados",eq.getEstadistica().getEmpatados()) ;
 			
-			InsertOneResult r = col.insertOne(
-					new Document().append("nombre", eq.getNombre())
-					.append("estadistica", estadistica)
-					.append("jugadores", eq.getJugadores())
-					.append("puntos",eq.getPuntos())
-					);
+			
+			InsertOneResult r = col.insertOne(eq)
+					;
 			if(r.getInsertedId()!=null) {
 				resultado=true;
 			}
@@ -111,8 +115,7 @@ public class Modelo {
 		}
 		
 		return resultado;
-
-		
+				
 	}
 
 	public ArrayList<Equipo> obtenerEquipos() {
@@ -148,6 +151,7 @@ public class Modelo {
 			e.printStackTrace();
 		}
 		return resultado;
+		
 	}
 
 	public boolean borrarEquipo(Equipo eq) {
