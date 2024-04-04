@@ -1,0 +1,18 @@
+<mcBurger>
+	<año>2023</año>
+	<mes>10</mes>
+	<listaProductos>
+		<producto id="1" precio="7.67">
+			<nombre>Hamburguesa Bacon/queso</nombre>
+		</producto>
+		<producto id="2" precio="6.67">
+			<nombre>Hamburguesa Pollo</nombre>
+		</producto>
+		<producto id="3" precio="10.00">
+			<nombre>Hamburguesa Angus</nombre>
+		</producto>
+		<producto id="1" precio="8.10">
+			<nombre>Hamburguesa 100%  Vegana</nombre>
+		</producto>
+	</listaProductos>
+</mcBurger>

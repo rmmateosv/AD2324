@@ -1,0 +1,5 @@
+1;11111111A;Pedro Díaz;Navalmoral;true
+2;22222222B;María Luque;Plasencia;true
+3;33333333C;Silvia Garrido;Cáceres;false
+4;44444444D;Miriam Abad;Navalmoral;false
+5;55555555E;Joana Marín;Cáceres;true
