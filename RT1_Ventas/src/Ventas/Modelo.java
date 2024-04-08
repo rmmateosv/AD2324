@@ -10,12 +10,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class Modelo {
-
+	
+	final String FBIN = "stock.bin";
 	final String FTXT = "ventas.txt";
 	final String FOBJ = "ventas.obj";
 	final String FTMP = "ventas.tmp";
@@ -235,5 +237,73 @@ public class Modelo {
 		}
 		return resultado;
 	}
+
+	public boolean crearProducto(Producto p) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		RandomAccessFile rd = null;
+		try {
+			rd = new RandomAccessFile(FBIN, "rw");
+			// Si abromos para escritura hay que mover el cursor del fichero al final
+			rd.seek(rd.getFilePointer());
+			rd.writeInt(p.getIdproducto());
+			// Hacemos que el nombre tenga un tamaño fijo
+			StringBuffer nombre = new StringBuffer(p.getNombre());
+			nombre.setLength(30);
+			rd.writeChars(nombre.toString());
+			rd.writeInt(p.getStock());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (rd != null) {
+				try {
+					rd.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return resultado;
+	}
+
+	public ArrayList<Producto> obtenerProductos() {
+		// TODO Auto-generated method stub
+		ArrayList<Producto> resultado = null;
+		RandomAccessFile productoS = null;
+		try {
+			productoS = new RandomAccessFile(FBIN, "r");
+			while (true) {
+				Producto p = new Producto();
+				p.setIdproducto(productoS.readInt());
+				p.setNombre(FBIN);
+			}
+		} catch (EOFException e) {
+			// TODO: handle exception
+		}
+		catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (productoS != null) {
+				try {
+					productoS.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return resultado;
+	}
+
+	
 
 }

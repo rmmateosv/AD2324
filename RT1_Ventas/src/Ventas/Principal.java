@@ -26,7 +26,7 @@ public class Principal {
 			switch(opc){
 			case 1: ejercico1();
 			break;
-			case 2:;
+			case 2: ejercicio2();
 			break;
 			case 3:;
 			break;
@@ -35,6 +35,30 @@ public class Principal {
 			}
 		}
 		while(opc != 0);
+	}
+
+	private static void ejercicio2() {
+		// TODO Auto-generated method stub
+		ArrayList<VentasObj> vObj = mod.obtenerVentasObj();
+		for (VentasObj ventasObj : vObj) {
+			Producto p = new Producto();
+			p.setIdproducto(ventasObj.getProducto());
+			System.out.println("Introduce el nombre del producto" +ventasObj.getProducto());
+			p.setNombre(tec.nextLine());
+			System.out.println("Introduce el stock del producto" +p.getIdproducto());
+			p.setStock(tec.nextInt());tec.nextLine();
+			if (mod.crearProducto(p)) {
+				System.out.println("Producto creado");
+			}else {
+				System.err.println("Error al crear el producto");
+			}
+		}
+		mostrarStock();
+	}
+
+	private static void mostrarStock() {
+		// TODO Auto-generated method stub
+		ArrayList<Producto> pstock = mod.obtenerProductos();
 	}
 
 	private static void ejercico1() {
