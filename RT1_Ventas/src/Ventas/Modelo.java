@@ -20,26 +20,27 @@ public class Modelo {
 	final String FOBJ = "ventas.obj";
 	final String FTMP = "ventas.tmp";
 	private SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
-	
-	public Modelo() {}
+
+	public Modelo() {
+	}
 
 	public ArrayList<VentasTxt> obtenerVentasTxt() {
-		
-		ArrayList<VentasTxt> resultado= new ArrayList<VentasTxt>();
+
+		ArrayList<VentasTxt> resultado = new ArrayList<VentasTxt>();
 		BufferedReader lector = null;
-		
+
 		try {
 			lector = new BufferedReader(new FileReader(FTXT));
-			
-			String linea="";
-			while ((linea = lector.readLine())!= null) {
-				String[] campos =  linea.split(";");
-				
-				VentasTxt v = new VentasTxt(Integer.parseInt(campos[0]), Integer.parseInt(campos[2]), formatoFecha.parse(campos[1]), Float.parseFloat(campos[3]));
+
+			String linea = "";
+			while ((linea = lector.readLine()) != null) {
+				String[] campos = linea.split(";");
+
+				VentasTxt v = new VentasTxt(Integer.parseInt(campos[0]), Integer.parseInt(campos[2]),
+						formatoFecha.parse(campos[1]), Float.parseFloat(campos[3]));
 				resultado.add(v);
 			}
-						
-			
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (NumberFormatException e) {
@@ -50,9 +51,8 @@ public class Modelo {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		finally{
-			if(lector != null) {
+		} finally {
+			if (lector != null) {
 				try {
 					lector.close();
 				} catch (IOException e) {
@@ -61,20 +61,20 @@ public class Modelo {
 				}
 			}
 		}
-		
+
 		return resultado;
 	}
 
 	public VentasObj obtenerVentaObj(int producto) {
 		VentasObj resultado = null;
 		ObjectInputStream ois = null;
-		
+
 		try {
 			ois = new ObjectInputStream(new FileInputStream(FOBJ));
-			
+
 			while (true) {
 				VentasObj v = (VentasObj) ois.readObject();
-				
+
 				if (v.getProducto() == producto) {
 					return v;
 				}
@@ -99,23 +99,24 @@ public class Modelo {
 				}
 			}
 		}
-		
+
 		return resultado;
 	}
 
 	public boolean crearVenta(VentasObj vObj) {
 		boolean resultado = false;
 		ObjectOutputStream oos = null;
-		
+
 		try {
 			if (new File(FOBJ).exists()) {
 				oos = new miObjectOutputStream(new FileOutputStream(FOBJ, true));
 			} else {
 				oos = new ObjectOutputStream(new FileOutputStream(FOBJ, true));
 			}
-			
+
 			oos.writeObject(vObj);
-			
+			resultado = true;
+
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -132,7 +133,7 @@ public class Modelo {
 				}
 			}
 		}
-		
+
 		return resultado;
 	}
 
@@ -140,15 +141,20 @@ public class Modelo {
 		boolean resultado = false;
 		ObjectInputStream fOriginal = null;
 		ObjectOutputStream fTemporal = null;
-		
+
 		try {
 			fOriginal = new ObjectInputStream(new FileInputStream(FOBJ));
 			fTemporal = new ObjectOutputStream(new FileOutputStream(FTMP, false));
-			
+
 			while (true) {
 				VentasObj v = (VentasObj) fOriginal.readObject();
+				if (v.getProducto() == vObj.getProducto()) {
+					fTemporal.writeObject(vObj);
+				} else {
+					fTemporal.writeObject(v);
+				}
 			}
-			
+
 		} catch (EOFException e) {
 			// TODO: handle exception
 		} catch (FileNotFoundException e) {
@@ -177,9 +183,57 @@ public class Modelo {
 					e.printStackTrace();
 				}
 			}
+
 		}
-		
+		File fo = new File(FOBJ);
+		File ft = new File(FTMP);
+		if (fo.delete()) {
+			if (ft.renameTo(fo)) {
+				resultado = true;
+			} else {
+				System.err.println("Error al renombrar");
+			}
+		} else {
+			System.err.println("Error al borrar");
+		}
+
 		return resultado;
 	}
-	
+
+	public ArrayList<VentasObj> obtenerVentasObj() {
+		// TODO Auto-generated method stub
+		ArrayList<VentasObj> resultado = new ArrayList<VentasObj>();
+		ObjectInputStream fventas = null;
+		try {
+			fventas = new ObjectInputStream(new FileInputStream(FOBJ));
+			while (true) {
+				resultado.add((VentasObj) fventas.readObject()); 
+				
+			}
+			
+		}catch (EOFException e) {
+			// TODO: handle exception
+		}
+		catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (fventas != null) {
+				try {
+					fventas.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return resultado;
+	}
+
 }

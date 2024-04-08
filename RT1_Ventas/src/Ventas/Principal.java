@@ -65,7 +65,16 @@ public class Principal {
 				}
 			}
 		}
+		mostrarventasOBJ();
 		
+	}
+
+	private static void mostrarventasOBJ() {
+		// TODO Auto-generated method stub
+		ArrayList<VentasObj> ventas = mod.obtenerVentasObj();
+		for (VentasObj v : ventas) {
+			System.out.println(v);
+		}
 	}
 
 	
