@@ -59,6 +59,9 @@ public class Principal {
 	private static void mostrarStock() {
 		// TODO Auto-generated method stub
 		ArrayList<Producto> pstock = mod.obtenerProductos();
+		for (Producto producto : pstock) {
+			System.out.println(producto);
+		}
 	}
 
 	private static void ejercico1() {

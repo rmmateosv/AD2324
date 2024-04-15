@@ -280,7 +280,14 @@ public class Modelo {
 			while (true) {
 				Producto p = new Producto();
 				p.setIdproducto(productoS.readInt());
-				p.setNombre(FBIN);
+				p.setNombre("");
+				
+				for(int i =0; i < 30;i++) {
+					
+					productoS.readChar();
+					
+				}
+				
 			}
 		} catch (EOFException e) {
 			// TODO: handle exception
