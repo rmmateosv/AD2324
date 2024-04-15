@@ -27,14 +27,88 @@ public class Principal {
 			case 1: ejercico1();
 			break;
 			case 2: ejercicio2();
+			break; 
+			case 3:ejercicio3();;
 			break;
-			case 3:;
-			break;
-			case 4:;
+			case 4:ejercicio4();
 			break;
 			}
 		}
 		while(opc != 0);
+	}
+
+	private static void ejercicio4() {
+		
+		mostrarStock();
+		
+		System.out.println("Introduce un codigo de producto a generar xml..");
+		
+		Producto p = mod.obtenerProducto(tec.nextInt());tec.nextLine();
+		
+		if(p != null) {
+			
+			Info i = new Info();
+			
+			i.setId(p.getIdproducto());
+			
+			i.setNombre(p.getNombre());
+			
+			i.setStock(p.getStock());
+			
+			VentasObj v = mod.obtenerVentaObj(p.getIdproducto());
+			
+			i.setVendido(v.getCantidad());
+			
+			i.setRecaudado(v.getImporte());
+			
+			if(mod.marsal(i)) {
+				
+			System.out.println("Fichero creado con exito");	
+			
+				
+			}
+			
+		}else {
+			
+			System.out.println("Error, Producto no existe");
+			
+		}
+	}
+
+	private static void ejercicio3() {
+		
+		mostrarStock();
+		
+		System.out.println("Introduce un codigo de producto a modificar..");
+		
+		Producto p = mod.obtenerProducto(tec.nextInt());tec.nextLine();
+		
+		if(p != null) {
+			
+			System.out.println(p);
+			
+			System.out.println("Introduce el nuevo stock");
+			
+			p.setStock(tec.nextInt());tec.nextLine();
+			
+			if(mod.modificarProducto(p)) {
+				
+				System.out.println("Stock modificado");
+				
+				mostrarStock();
+				
+			}else {
+				
+				System.out.println("Error al modificar el stock");
+				
+			}
+			
+		}else {
+			
+			System.out.println("Error, Producto no existe");
+			
+		}
+		
 	}
 
 	private static void ejercicio2() {
