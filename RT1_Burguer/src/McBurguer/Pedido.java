@@ -76,7 +76,7 @@ public class Pedido {
 	@Override
 	public String toString() {
 		return "Pedido [codigo=" + codigo + ", fecha=" + fecha + ", codEmp=" + codEmp + ", codProd=" + codProd
-				+ ", cantidad=" + cantidad + ", precio=" + precio + "]";
+				+ ", cantidad=" + cantidad + ", precio=" + precio + "TOTAL: "+(cantidad*precio)+"]";
 	}
 
 }

@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -68,8 +69,8 @@ public class Modelo {
 		}catch(EOFException eof) {
 			
 		}catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Aun no hay pedidos");
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -127,7 +128,7 @@ public class Modelo {
 	public boolean registrarPedido(Pedido p) {
 		boolean resultado=false;
 		
-		RandomAccessFile lector;
+		RandomAccessFile lector=null;
 		
 		try {
 			lector = new RandomAccessFile(FBIN,"rw");
@@ -135,9 +136,10 @@ public class Modelo {
 			lector.writeInt(p.getCodigo());
 			lector.writeLong(p.getFecha().getTime());
 			lector.writeInt(p.getCodEmp());
+			lector.writeInt(p.getCodProd());
 			lector.writeInt(p.getCantidad());
 			lector.writeFloat(p.getPrecio());
-			
+			resultado = true;
 			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -145,7 +147,58 @@ public class Modelo {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			if(lector != null) {
+				try {
+					lector.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
+		
+		return resultado;
+	}
+
+	public ArrayList<Pedido> obtenerPedido(int codigo) {
+		ArrayList<Pedido> resultado = new ArrayList();
+		RandomAccessFile lector = null;
+		
+		try {
+			lector = new RandomAccessFile(FBIN,"r");
+			
+			while(true) {
+				int codLeido = lector.readInt();
+				if(codLeido == codigo) {
+					Pedido p = new Pedido(codigo, new Date(lector.readLong()), lector.readInt(), lector.readInt(),
+							lector.readInt(), lector.readFloat());
+					resultado.add(p);
+				}
+				else {
+					lector.seek(lector.getFilePointer()+24);
+				}
+			}
+			
+			
+		} catch(EOFException e) {}
+		catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			if(lector != null) {
+				try {
+					lector.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		
 		return resultado;
 	}
