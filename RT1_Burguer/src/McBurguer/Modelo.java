@@ -103,4 +103,51 @@ public class Modelo {
 		return resultado;
 	}
 
+	public Producto obtenerProducto(int codigoProducto) {
+		Producto resultado = null;
+		
+		try {
+			Unmarshaller um = JAXBContext.newInstance(McBurgerXML.class).createUnmarshaller();
+			McBurgerXML productos = (McBurgerXML) um.unmarshal(new File(FXML));
+			
+			for (Producto p : productos.getListaProductos()) {
+				if(p.getId() == codigoProducto) {
+					return p;
+				}
+			}
+			
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	public boolean registrarPedido(Pedido p) {
+		boolean resultado=false;
+		
+		RandomAccessFile lector;
+		
+		try {
+			lector = new RandomAccessFile(FBIN,"rw");
+			lector.seek(lector.length());
+			lector.writeInt(p.getCodigo());
+			lector.writeLong(p.getFecha().getTime());
+			lector.writeInt(p.getCodEmp());
+			lector.writeInt(p.getCantidad());
+			lector.writeFloat(p.getPrecio());
+			
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
 }
