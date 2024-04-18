@@ -38,45 +38,92 @@ public class Principal {
 				;
 				break;
 			case 4:
-
+				ejercicio4();
 				break;
 			}
 		} while (opc != 0);
 
 	}
 
-	private static void ejercicio3() {
+	private static void ejercicio4() {
 		
 		if(e != null) {
-			
+			CajaEmpleado c = modelo.obtenerCajaEmpleado(e.getDni());
+			if(c != null) {
+				System.out.println("ERROR - Caja ya cerrada.");
+			}
+			else {
+				c = new CajaEmpleado();
+				c.setDni(e.getDni());
+				c.setNombre(e.getNombre());
+				c.setTienda(e.getCodTienda());
+				c.setFecha(new Date());
+				
+				ArrayList<Pedido> listaPedidos = modelo.obtenerPedidosEmpleado(e.getCodEmpleado());
+				for (Pedido pedido : listaPedidos) {
+					c.setNumProd(c.getNumProd()+pedido.getCantidad());
+					c.setImporte(c.getImporte()+(pedido.getPrecio()*pedido.getCantidad()));
+				}
+				if(modelo.CerrarCaja(c)){
+					System.out.println("Caja cerrada con exito.");
+					
+				}
+				else {System.out.println("!ERROR - Al cerrar caja...!");}
+				
+			}
+		}
+		else {System.out.println("!No hay empleado logueado..!");}
+		ArrayList<CajaEmpleado> listaCaja =  modelo.obtenerCaja();
+		for (CajaEmpleado cajaEmpleado : listaCaja) {
+			System.out.println(cajaEmpleado);
+		}
+	}
+
+	private static void ejercicio3() {
+
+		if (e != null) {
+
 			ArrayList<Pedido> listaPedidos = modelo.obtenerPedidosEmpleado(e.getCodEmpleado());
-			
+
 			for (Pedido pedido : listaPedidos) {
 				System.out.println(pedido.toString());
 			}
 			System.out.println("Selecciona el pedido que quiere modificar: ");
-			int codPed = tec.nextInt(); tec.nextLine();
+			int codPed = tec.nextInt();
+			tec.nextLine();
 			System.out.println("Introduce el codigo del producto que quieres modificar: ");
-			int codPro = tec.nextInt(); tec.nextLine();
-			
+			int codPro = tec.nextInt();
+			tec.nextLine();
+
 			ArrayList<Pedido> pedido = modelo.obtenerPedido(codPed);
-			
+
 			for (Pedido p : pedido) {
-				if(p.getCodProd() == codPro && e.getCodEmpleado() == p.getCodEmp()) {
+				if (p.getCodProd() == codPro && e.getCodEmpleado() == p.getCodEmp()) {
 					System.out.println("Introduce la nueva cantidad: ");
-					p.setCantidad(tec.nextInt());tec.nextLine();
-					
+					p.setCantidad(tec.nextInt());
+					tec.nextLine();
+					if (modelo.modificarCantidadPedido(p)) {
+						System.out.println("Pedido modificado correctamente.");
+						ArrayList<Pedido> pedidoActual = modelo.obtenerPedido(p.getCodigo());
+						for (Pedido pa : pedidoActual) {
+							System.out.println(pa);
+						}
+					} else {
+						System.out.println("ERROR- Modificar Cantidad del pedido.");
+					}
+
 				}
 			}
-			
+
+		} else {
+			System.out.println("Error. No hay empleado logueado.");
 		}
-		else {System.out.println("Error. No hay empleado logueado.");}
-		
+
 	}
 
 	private static void ejercicio2() {
 		// TODO Auto-generated method stub
-		if(e != null) {
+		if (e != null) {
 			Pedido p = new Pedido();
 			p.setCodigo(modelo.obtenerCodPedido());
 			p.setFecha(new Date());
@@ -85,31 +132,34 @@ public class Principal {
 			do {
 				mostrarProductos();
 				System.out.println("Introduce código del producto: ");
-				Producto prod = modelo.obtenerProducto(tec.nextInt());tec.nextLine();
-				if(prod != null) {
+				Producto prod = modelo.obtenerProducto(tec.nextInt());
+				tec.nextLine();
+				if (prod != null) {
 					System.out.println("Introduce cantidad");
-					p.setCantidad(tec.nextInt());tec.nextLine();
+					p.setCantidad(tec.nextInt());
+					tec.nextLine();
 					p.setCodProd(prod.getId());
 					p.setPrecio(prod.getPrecio());
-					if(modelo.registrarPedido(p)) {
+					if (modelo.registrarPedido(p)) {
 						System.out.println("Producto añadido al pedido.");
-					}else {
+					} else {
 						System.out.println("Error. No se ha añadido el producto al pedido.");
 					}
-				}else {
+				} else {
 					System.out.println("Error. El producto no existe.");
 				}
-				
+
 				System.out.println("¿Más productos? - 0-No / 1-Sí");
-				opcion = tec.nextInt();tec.nextLine();
-			}while(opcion != 0);
-			
+				opcion = tec.nextInt();
+				tec.nextLine();
+			} while (opcion != 0);
+
 			ArrayList<Pedido> pedidoActual = modelo.obtenerPedido(p.getCodigo());
 			for (Pedido pa : pedidoActual) {
 				System.out.println(pa);
 			}
-			
-		}else {
+
+		} else {
 			System.out.println("No hay empleado logueado.");
 		}
 	}
@@ -125,13 +175,14 @@ public class Principal {
 	private static void ejercicio1() {
 		// TODO Auto-generated method stub
 		System.out.println("Introduzca código de empleado: ");
-		int codEmp = tec.nextInt(); tec.nextLine();
+		int codEmp = tec.nextInt();
+		tec.nextLine();
 		System.out.println("Introduzca la contraseña");
 		String ps = tec.nextLine();
 		e = modelo.obtenerEmpleado(codEmp, ps);
-		if(e == null) {
+		if (e == null) {
 			System.out.println("Error, el usuario no existe.");
-		}else {
+		} else {
 			System.out.println("Empleado logueado exitosamente.");
 		}
 	}
