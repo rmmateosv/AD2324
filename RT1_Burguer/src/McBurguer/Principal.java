@@ -34,7 +34,7 @@ public class Principal {
 				ejercicio2();
 				break;
 			case 3:
-
+				ejercicio3();
 				;
 				break;
 			case 4:
@@ -43,6 +43,35 @@ public class Principal {
 			}
 		} while (opc != 0);
 
+	}
+
+	private static void ejercicio3() {
+		
+		if(e != null) {
+			
+			ArrayList<Pedido> listaPedidos = modelo.obtenerPedidosEmpleado(e.getCodEmpleado());
+			
+			for (Pedido pedido : listaPedidos) {
+				System.out.println(pedido.toString());
+			}
+			System.out.println("Selecciona el pedido que quiere modificar: ");
+			int codPed = tec.nextInt(); tec.nextLine();
+			System.out.println("Introduce el codigo del producto que quieres modificar: ");
+			int codPro = tec.nextInt(); tec.nextLine();
+			
+			ArrayList<Pedido> pedido = modelo.obtenerPedido(codPed);
+			
+			for (Pedido p : pedido) {
+				if(p.getCodProd() == codPro && e.getCodEmpleado() == p.getCodEmp()) {
+					System.out.println("Introduce la nueva cantidad: ");
+					p.setCantidad(tec.nextInt());tec.nextLine();
+					
+				}
+			}
+			
+		}
+		else {System.out.println("Error. No hay empleado logueado.");}
+		
 	}
 
 	private static void ejercicio2() {
