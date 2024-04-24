@@ -133,4 +133,59 @@ public class Modelo {
 		return resultado;
 	}
 
+	public boolean crearPedido(Pedido p, ArrayList<Detalle> detalle) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		try {
+			conexion.setAutoCommit(false);
+			PreparedStatement pS = conexion.prepareStatement("Insert into Pedido values (default, curdate(), ?, ?)", Statement.RETURN_GENERATED_KEYS);
+			pS.setInt(1, p.getCodEmpleado());
+			pS.setInt(2, p.getTienda());
+			int num = pS.executeUpdate();
+			if (num == 1) {
+				ResultSet codPedidos = pS.getGeneratedKeys();
+				if (codPedidos.next()) {
+					p.setCodigo(codPedidos.getInt(1));
+					for (Detalle d : detalle) {
+						d.setPedido(p.getCodigo());
+						Detalle existe = obtenerDetalle(d.getPedido(), d.getProducto());
+						if (existe != null) {
+							// Update
+						} else {
+							// Insert
+						}
+					}
+				} 
+			} 
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			try {
+				conexion.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	private Detalle obtenerDetalle(int pedido, int producto) {
+		// TODO Auto-generated method stub
+		Detalle resultado = null;
+		try {
+			PreparedStatement pS = conexion.prepareStatement("Select * from Detalle where pedido = ? and producto = ?");
+			pS.setInt(1, pedido);
+			pS.setInt(2, producto);
+			ResultSet r = pS.executeQuery();
+			if (r.next()) {
+				resultado = new Detalle(r.getInt(1), r.getInt(2), r.getInt(3), r.getFloat(4));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
 }

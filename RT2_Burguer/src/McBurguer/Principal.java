@@ -83,7 +83,12 @@ public class Principal {
 				tec.nextLine();
 				
 				if (prod != null) {
-					
+					Detalle d = new Detalle();
+					d.setProducto(prod.getCodigo());
+					d.setPrecioUnitario(prod.getPrecio());
+					System.out.println("Cuanta cantidad quieres del producto?");
+					d.setCantidad(tec.nextInt());tec.nextLine();
+					detalle.add(d);
 				} else {
 					System.err.println("Error, el producto no exite.");
 				}
@@ -94,6 +99,11 @@ public class Principal {
 				
 			} while (opcion != 0);
 			
+			if (modelo.crearPedido(p, detalle)) {
+				System.out.println("Pedido creado " +p.getCodigo());
+			} else {
+				System.err.println("Error, no se ha podido crear el pedido");
+			}
 		} else {
 			System.err.println("No has iniciado sesión.");
 		}
