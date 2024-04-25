@@ -50,6 +50,20 @@ public class Principal {
 	private static void ejercicio4() {
 		if (e != null) {
 
+			System.out.println("Ventas del empleado Nº "+e.getCodEmpleado()+"-"+e.getNombre());
+			
+			ArrayList<Object[]> informe = modelo.ObtenerInforme(e.getCodEmpleado()); 
+			
+			float total=0f;
+			
+			for (Object[] o : informe) {
+			
+				total += (Float)o[2];
+				
+				System.out.println("Producto: "+ o[0]+ "\t Cantidad: "+ o[1]+"\t Importe: "+o[2]);
+				
+			}
+			
 		} else {
 			System.err.println("No has iniciado sesión.");
 		}
@@ -59,6 +73,46 @@ public class Principal {
 	private static void ejercicio3() {
 		if (e != null) {
 
+			ArrayList<Pedido> pedidos = modelo.ObtenerPedidos(e.getCodEmpleado());
+			
+			for (Pedido pe : pedidos) {
+			
+				System.out.println(pe);
+				
+			}
+			
+			System.out.println("Introduce un codigo de pedido");
+			
+			int codigo = tec.nextInt();tec.nextLine();
+			
+			Pedido p = modelo.ObtenerPedido(codigo);
+			
+			if(p != null && p.getCodEmpleado() == e.getCodEmpleado()) {
+				
+				if(modelo.BorrarPedido(codigo)) {
+					
+					System.out.println("Pedido "+p.getCodigo()+" borrado");
+					
+					 pedidos = modelo.ObtenerPedidos(e.getCodEmpleado());
+					
+					for (Pedido pe : pedidos) {
+					
+						System.out.println(pe);
+						
+					}
+					
+				}else {
+					
+					System.out.println("Se ha producido un error al borrar el pedido");
+					
+				}
+				
+			}else {
+				
+				System.out.println("Pedido no existe");
+				
+			}
+			
 		} else {
 			System.err.println("No has iniciado sesión.");
 		}
@@ -101,6 +155,15 @@ public class Principal {
 			
 			if (modelo.crearPedido(p, detalle)) {
 				System.out.println("Pedido creado " +p.getCodigo());
+				
+				ArrayList<Pedido> pedidos = modelo.ObtenerPedidos(p.getCodEmpleado());
+				
+				for (Pedido pe : pedidos) {
+				
+					System.out.println(pe);
+					
+				}
+				
 			} else {
 				System.err.println("Error, no se ha podido crear el pedido");
 			}

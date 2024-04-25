@@ -151,10 +151,67 @@ public class Modelo {
 						Detalle existe = obtenerDetalle(d.getPedido(), d.getProducto());
 						if (existe != null) {
 							// Update
+							
+							pS = conexion.prepareStatement("update detalle set cantidad = cantidad + ? where pedido = ? and producto = ?");
+							
+							pS.setInt(1, d.getCantidad());
+							pS.setInt(2, d.getPedido());
+							pS.setInt(3, d.getProducto());
+							
+							num = pS.executeUpdate();
+							
+							if(num != 1) {
+								
+								conexion.rollback();
+								
+								return false;
+								
+							}
+							
 						} else {
 							// Insert
+							
+							pS = conexion.prepareStatement("insert into detalle values(?,?,?,?)");
+							
+							pS.setInt(1, d.getPedido());
+							pS.setInt(2, d.getProducto());
+							pS.setInt(3, d.getCantidad());
+							pS.setFloat(4, d.getPrecioUnitario());
+							
+							num = pS.executeUpdate();
+							
+							if(num != 1) {
+								
+								conexion.rollback();
+								
+								return false;
+								
+							}
+							
+							
 						}
 					}
+					
+					pS = conexion.prepareStatement("update empleado set valoracion = valoracion + 1 where codigo = ?");
+					
+					pS.setInt(1, p.getCodEmpleado());
+					
+					num = pS.executeUpdate();
+					
+					if(num != 1) {
+						
+						conexion.rollback();
+						
+						
+						
+					}else {
+						
+						conexion.commit();
+						
+						return true;
+						
+					}
+					
 				} 
 			} 
 		} catch (SQLException e) {
@@ -166,6 +223,17 @@ public class Modelo {
 				e1.printStackTrace();
 			}
 			e.printStackTrace();
+		}finally {
+			
+			try {
+				
+				conexion.setAutoCommit(true);
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 		return resultado;
 	}
@@ -185,6 +253,137 @@ public class Modelo {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return resultado;
+	}
+
+	public ArrayList<Pedido> ObtenerPedidos(int codEmpleado) {
+		
+		ArrayList<Pedido> resultado =  new ArrayList();
+		
+		try {
+			
+			PreparedStatement pS = conexion.prepareStatement("select * from pedido where empleado = ? order by fecha desc");
+			
+			pS.setInt(1, codEmpleado);
+			
+			ResultSet r = pS.executeQuery();
+			
+			while(r.next()) {
+				
+				resultado.add(new Pedido(r.getInt(1), r.getDate(2), r.getInt(3), r.getInt(4)));
+				
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	public Pedido ObtenerPedido(int codigo) {
+		
+		Pedido resultado = null;
+		
+		try {
+			
+			PreparedStatement p = conexion.prepareStatement("select * from pedido where codigo = ?");
+			
+			p.setInt(1, codigo);
+			
+			ResultSet r = p.executeQuery();
+			
+			if(r.next()) {
+				
+				resultado = new Pedido(r.getInt(1), r.getDate(2), r.getInt(3), r.getInt(4));
+				
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	public boolean BorrarPedido(int codigo) {
+		
+		boolean resultado = false;
+		
+		try {
+			
+			conexion.setAutoCommit(false);
+			
+			PreparedStatement p = conexion.prepareStatement("delete from detalle where pedido = ?");
+			
+			p.setInt(1, codigo);
+			
+			int n = p.executeUpdate();
+			
+			if(n >= 1) {
+				
+				p = conexion.prepareStatement("delete from pedido where codigo = ?");
+				
+				p.setInt(1, codigo);
+				
+				n = p.executeUpdate();
+				
+				if(n == 1) {
+					
+					conexion.commit();
+					
+					resultado = true;
+					
+				}else {
+					
+					conexion.rollback();
+					
+				}
+				
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				
+				conexion.setAutoCommit(true);
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return resultado;
+	}
+
+	public ArrayList<Object[]> ObtenerInforme(int codEmpleado) {
+		
+		ArrayList<Object[]> resultado = new ArrayList<Object[]>();
+		
+		try {
+			PreparedStatement p = conexion.prepareStatement("select producto, sum(cantidad),sum(cantidad*precioU) from pedido inner join detalle "
+					+ "on codigo = pedido where empleado = ? group by producto");
+			p.setInt(1, codEmpleado);
+			
+			ResultSet r = p.executeQuery();
+			
+			while(r.next()) {
+				
+				resultado.add(new Object[] {r.getInt(1),r.getInt(2),r.getFloat(3)});
+				
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return resultado;
 	}
 
