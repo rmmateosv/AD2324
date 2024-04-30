@@ -63,6 +63,9 @@ public class Principal {
 				// Crear modalidad
 				
 			}
+			else {
+				//comprobar que existe la modalidad
+			}
 			// Crear alumno
 			
 		}
