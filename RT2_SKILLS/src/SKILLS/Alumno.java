@@ -3,15 +3,16 @@ package SKILLS;
 public class Alumno {
 
 	private int id;
-	private String nombre;
+	private String dni, nombre;
 	private int puntuacion;
 	private boolean finalizado;
 	private Modalidades modalidad;
 	
 	public Alumno() {}
 
-	public Alumno(int id, String nombre, int puntuacion, boolean finalizado, Modalidades modalidad) {
+	public Alumno(int id, String dni, String nombre, int puntuacion, boolean finalizado, Modalidades modalidad) {
 		this.id = id;
+		this.dni = dni;
 		this.nombre = nombre;
 		this.puntuacion = puntuacion;
 		this.finalizado = finalizado;
@@ -24,6 +25,14 @@ public class Alumno {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public String getDni() {
+		return dni;
+	}
+
+	public void setDni(String dni) {
+		this.dni = dni;
 	}
 
 	public String getNombre() {
@@ -60,10 +69,9 @@ public class Alumno {
 
 	@Override
 	public String toString() {
-		return "Alumno [id=" + id + ", nombre=" + nombre + ", puntuacion=" + puntuacion + ", finalizado=" + finalizado
-				+ ", modalidad=" + modalidad + "]";
+		return "Alumno [id=" + id + ", dni=" + dni + ", nombre=" + nombre + ", puntuacion=" + puntuacion
+				+ ", finalizado=" + finalizado + ", modalidad=" + modalidad + "]";
 	}
 
-	
 	
 }

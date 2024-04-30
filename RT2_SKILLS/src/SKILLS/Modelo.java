@@ -60,7 +60,7 @@ public class Modelo {
 			ResultSet rs = ps.executeQuery();
 			
 			if(rs.next()) {
-				resultado = new Alumno(rs.getInt(1), rs.getString(2), rs.getInt(4), rs.getBoolean(5),new Modalidades(rs.getInt(3),rs.getString(7)));
+				resultado = new Alumno(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getBoolean(5),new Modalidades(rs.getInt(3),rs.getString(7)));
 			}
 			
 			
