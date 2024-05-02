@@ -185,4 +185,26 @@ public class Modelo {
 		return resultado;
 	}
 
+	public ArrayList<Alumno> obtenerAlumnos(int mod) {
+		ArrayList<Alumno> resultado = new ArrayList();
+		
+		try {
+			PreparedStatement pS = conexion.prepareStatement("SELECT * FROM alumno WHERE modalidad = ?");
+			pS.setInt(1, mod);
+			ResultSet datos = pS.executeQuery();
+			
+			while (datos.next()) {
+				resultado.add(new Alumno(datos.getInt(1), datos.getString(2), datos.getString(3), datos.getInt(5), datos.getBoolean(6), 
+						new Modalidades(mod, null)));
+				
+			}
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
 }

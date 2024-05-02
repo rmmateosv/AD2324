@@ -35,7 +35,7 @@ public class Principal {
 					ejercicio2();
 					break;
 				case 3:
-					// ejercicio3();
+					ejercicio3();
 					;
 					break;
 				case 4:
@@ -46,6 +46,57 @@ public class Principal {
 			modelo.cerrar();
 		}
 
+	}
+
+	private static void ejercicio3() {
+		mostrarModalidades();
+
+		System.out.println("Introduce el código de una modalidad");
+		int mod = tec.nextInt();
+		tec.nextLine();
+		
+		if (modelo.obtenerModalidad(mod) != null) {
+			mostrarAlumnosModalidad(mod);
+			
+			System.out.println("Introduce un DNI del alumno: ");
+			Alumno al = modelo.obtenerAlumno(tec.nextLine());
+			
+			if (al != null && al.getModalidad().getId() == mod) {
+				ArrayList<Prueba> pruebas = modelo.obtenerPruebas(mod);
+				ArrayList<Correccion> correcciones = new ArrayList<Correccion>();
+				
+				for (Prueba prueba : pruebas) {
+				int nota = 0;	
+				
+					do {
+						System.out.println("Introduce la nota de " + al.getNombre() + " en la prueba " + prueba.getDescripcion());
+						nota = tec.nextInt();
+						tec.nextLine();
+						
+					} while (nota > prueba.getPuntuacion());
+					Correccion c = new Correccion(al.getId(), prueba.getId(), nota, null);
+					
+					System.out.println("Introduce un comentario: ");
+					c.setComentario(tec.nextLine());
+					
+					correcciones.add(c);
+				}
+			} else {
+				System.err.println("Error, el alumno no existe o no pertenece a la modalidad.");
+			}
+		} else {
+			System.err.println("Error, no se ha encontrado una modalidad con ese código.");
+		}
+		
+	}
+
+	private static void mostrarAlumnosModalidad(int mod) {
+		ArrayList<Alumno> modAlumnos = modelo.obtenerAlumnos(mod);
+		
+		for (Alumno alumno : modAlumnos) {
+			System.out.println(alumno);
+		}
+		
 	}
 
 	private static void ejercicio2() {
