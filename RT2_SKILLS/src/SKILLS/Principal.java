@@ -39,13 +39,27 @@ public class Principal {
 					;
 					break;
 				case 4:
-					// ejercicio4();
+					ejercicio4();
 					break;
 				}
 			} while (opc != 0);
 			modelo.cerrar();
 		}
 
+	}
+
+	private static void ejercicio4() {
+		// TODO Auto-generated method stub
+		ArrayList<Alumno> alumnos = modelo.obtenerGanadores();
+		for (Alumno a : alumnos) {
+			System.out.println("Modalidad: " + a.getModalidad().getModalidad() + " - Nombre: " + a.getNombre() + " - Puntuación: " + a.getPuntuacion());
+		}
+		
+		//Manera más óptima
+		ArrayList<Object[]> datos = modelo.obtenerGanadores2();
+		for (Object[] a : datos) {
+			System.out.println("Modalidad: " + a[0] + " - Nombre: " + a[1] + " - Puntuación: " + a[2]);
+		}
 	}
 
 	private static void ejercicio3() {
@@ -69,7 +83,7 @@ public class Principal {
 				int nota = 0;	
 				
 					do {
-						System.out.println("Introduce la nota de " + al.getNombre() + " en la prueba " + prueba.getDescripcion());
+						System.out.println("Introduce la nota de " + al.getNombre() + " en la prueba " + prueba.getDescripcion() + " max(" + prueba.getPuntuacion()+")");
 						nota = tec.nextInt();
 						tec.nextLine();
 						
@@ -80,7 +94,17 @@ public class Principal {
 					c.setComentario(tec.nextLine());
 					
 					correcciones.add(c);
+					
+					al.setPuntuacion(al.getPuntuacion() + nota);
 				}
+				al.setFinalizado(true);
+				
+				if(modelo.insertarCorreccion(al, correcciones)) {
+					System.out.println("Alumno corregido.");
+				}else {
+					System.err.println("Error al insertar la corrección.");
+				}
+				
 			} else {
 				System.err.println("Error, el alumno no existe o no pertenece a la modalidad.");
 			}

@@ -207,4 +207,90 @@ public class Modelo {
 		return resultado;
 	}
 
+	public boolean insertarCorreccion(Alumno al, ArrayList<Correccion> correcciones) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		
+		try {
+			conexion.setAutoCommit(false);
+			PreparedStatement ps = null;
+			for (Correccion c : correcciones) {
+				ps = conexion.prepareStatement("INSERT INTO correccion VALUES(?, ?, ?, ?)");
+				ps.setInt(1, c.getAlumno());
+				ps.setInt(2, c.getPrueba());
+				ps.setInt(3, c.getNota());
+				ps.setString(4, c.getComentario());
+				int numFilas = ps.executeUpdate();
+				if(numFilas != 1) {
+					conexion.rollback();
+				}
+			}
+			
+			ps = conexion.prepareStatement("UPDATE alumno SET puntuacion = ?, finalizado = true WHERE id = ?");
+			ps.setInt(1, al.getPuntuacion());
+			ps.setInt(2, al.getId());
+			int numFilas = ps.executeUpdate();
+			if(numFilas == 1) {
+				conexion.commit();
+				resultado = true;
+			}else {
+				conexion.rollback();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			try {
+				conexion.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}finally {
+			try {
+				conexion.setAutoCommit(true);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return resultado;
+	}
+
+	public ArrayList<Alumno> obtenerGanadores() {
+		// TODO Auto-generated method stub
+		ArrayList<Alumno> resultado = new ArrayList<Alumno>();
+		
+		try {
+			CallableStatement cs = conexion.prepareCall("{ call obtenerGandadores() }");
+			ResultSet datos = cs.executeQuery();
+			while(datos.next()) {
+				resultado.add(new Alumno(0, null, datos.getString(2), datos.getInt(3), false, new Modalidades(0, datos.getString(1))));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	public ArrayList<Object[]> obtenerGanadores2() {
+		// TODO Auto-generated method stub
+		ArrayList<Object[]> resultado = new ArrayList<Object[]>();
+
+		try {
+			CallableStatement cs = conexion.prepareCall("{ call obtenerGandadores() }");
+			ResultSet datos = cs.executeQuery();
+			while (datos.next()) {
+				resultado.add(new Object[] {datos.getString(1), datos.getString(2), datos.getInt(3)});
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return resultado;
+	}
+
 }
