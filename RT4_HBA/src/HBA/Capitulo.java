@@ -2,13 +2,33 @@ package HBA;
 
 import java.util.ArrayList;
 
-public class Capitulo {
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
+@Entity
+@Table
+public class Capitulo {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	@ManyToOne()
+	@JoinColumn(referencedColumnName = "id")
 	private Serie serie;
+	@Column(nullable = true)
 	private int numero;
+	@Column(nullable = true)
 	private String titulo;
+	@Column(nullable = true)
 	private int duracion;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "clave.capitulo")
 	private ArrayList<Reproduccion> listaReproducciones = new ArrayList();
 	
 	public Capitulo() {}
