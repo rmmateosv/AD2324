@@ -2,9 +2,21 @@ package HBA;
 
 import java.util.ArrayList;
 
-public class Usuario {
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
-	private String nick, email;
+@Entity
+@Table
+public class Usuario {
+	@Id
+	private String nick;
+	@Column(nullable = false)
+	private String email;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "clave.usuario")
 	private ArrayList<Reproduccion> listaReproducciones = new ArrayList();
 	
 	public Usuario() {}

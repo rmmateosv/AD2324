@@ -20,7 +20,7 @@ public class Capitulo {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	@ManyToOne()
-	@JoinColumn(referencedColumnName = "id")
+	@JoinColumn(name = "serie",referencedColumnName = "id")
 	private Serie serie;
 	@Column(nullable = true)
 	private int numero;

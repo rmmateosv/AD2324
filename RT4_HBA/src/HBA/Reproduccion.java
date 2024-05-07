@@ -2,10 +2,22 @@ package HBA;
 
 import java.util.Date;
 
-public class Reproduccion {
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
+@Entity
+@Table(name = "Reproducciones")
+public class Reproduccion {
+	@EmbeddedId
 	private ClaveReproduccion clave;
+	@Column(nullable = true)
+	@Temporal(TemporalType.DATE)
 	private Date fecha;
+	@Column(nullable = true)
 	private int minutoPausa;
 	
 	public Reproduccion() {}
