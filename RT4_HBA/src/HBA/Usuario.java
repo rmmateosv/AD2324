@@ -1,6 +1,7 @@
 package HBA;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -17,7 +18,7 @@ public class Usuario {
 	@Column(nullable = false)
 	private String email;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "clave.usuario")
-	private ArrayList<Reproduccion> listaReproducciones = new ArrayList();
+	private List<Reproduccion> listaReproducciones = new ArrayList();
 	
 	public Usuario() {}
 
@@ -42,11 +43,11 @@ public class Usuario {
 		this.email = email;
 	}
 
-	public ArrayList<Reproduccion> getListaReproducciones() {
+	public List<Reproduccion> getListaReproducciones() {
 		return listaReproducciones;
 	}
 
-	public void setListaReproducciones(ArrayList<Reproduccion> listaReproducciones) {
+	public void setListaReproducciones(List<Reproduccion> listaReproducciones) {
 		this.listaReproducciones = listaReproducciones;
 	}
 
