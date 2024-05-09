@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+	version="2.0">
+	<persistence-unit name="Biblioteca"
+		transaction-type="RESOURCE_LOCAL">
+		<!-- Persistence provider -->
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+		<properties>
+			<property name="hibernate.dialect"
+				value="org.hibernate.dialect.MySQL8Dialect" />
+			<!-- The JDBC URL to the database instance -->
+			<property name="jakarta.persistence.jdbc.url"
+				value="jdbc:mysql://localhost:3307/recup2223T4?serverTimezone=Europe/Madrid" />
+			<!-- The database username -->
+			<property name="jakarta.persistence.jdbc.user" value="root" />
+
+			<!-- The database password -->
+			<property name="jakarta.persistence.jdbc.password"
+				value="root" />
+			<property name="hibernate.hbm2ddl.auto" value="validate" />
+		</properties>
+	</persistence-unit>
+</persistence>

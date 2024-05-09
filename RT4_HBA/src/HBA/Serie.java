@@ -26,7 +26,7 @@ public class Serie {
 	@Column(nullable = true)
 	private int edad;
 	@OneToMany(cascade = CascadeType.ALL,mappedBy = "serie")
-	private List<Capitulo> listaCapitulos = new ArrayList();
+	private List<Capitulo> listaCapitulos = new ArrayList<Capitulo>();
 	
 	public Serie() {}
 

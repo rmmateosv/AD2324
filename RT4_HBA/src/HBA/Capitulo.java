@@ -30,7 +30,7 @@ public class Capitulo {
 	@Column(nullable = true)
 	private int duracion;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "clave.capitulo")
-	private List<Reproduccion> listaReproducciones = new ArrayList();
+	private List<Reproduccion> listaReproducciones = new ArrayList<Reproduccion>();
 	
 	public Capitulo() {}
 

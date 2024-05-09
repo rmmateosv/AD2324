@@ -120,4 +120,85 @@ public class Modelo {
 
 		return resultado;
 	}
+
+	public boolean guardarDatos() {
+		
+		boolean resultado = false;
+		
+		try {
+			
+			conexion.getTransaction().begin();
+			
+			conexion.getTransaction().commit();
+			
+			conexion.clear();
+			
+			resultado = true;
+			
+		} catch (Exception e) {
+			
+			conexion.getTransaction().rollback();
+			
+			e.printStackTrace();
+			
+		}	
+		
+		return resultado;
+	}
+
+	public boolean borrarCapitulo(Capitulo c) {
+		
+		boolean resultado =  false;
+		
+		try {
+			conexion.getTransaction().begin();
+			Query consulta = null;
+			int r=0;
+			if(c.getListaReproducciones().size() > 0) {
+				
+				consulta = conexion.createQuery("delete from Reproduccion where clave.capitulo = ?1");
+				
+				consulta.setParameter(1, c);
+				
+				 r =  consulta.executeUpdate();
+				
+				if(r <= 0) {
+					
+					conexion.getTransaction().rollback();
+					
+					return false;
+					
+					
+					
+				}
+				
+			}	
+			
+			consulta = conexion.createQuery("delete from Capitulo where id = ?1");
+			
+			consulta.setParameter(1, c.getId());
+			
+			r = consulta.executeUpdate();
+			
+			if(r == 1) {
+				
+				conexion.getTransaction().commit();
+				
+				conexion.clear();
+				
+				resultado = true;
+				
+			}else {
+				
+				conexion.getTransaction().rollback();
+				
+			}
+			
+		} catch (Exception e) {
+			conexion.getTransaction().rollback();
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
 }

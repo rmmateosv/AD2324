@@ -33,10 +33,10 @@ public class Principal {
 					ejercicio2();
 					break;
 				case 3:
-					
+					ejercicio3();
 					break;
 				case 4:
-					
+					ejercicio4();
 					break;
 				}
 
@@ -44,6 +44,137 @@ public class Principal {
 			bd.cerrar();
 		} else {
 			System.out.println("Error no hay conexión");
+		}
+	}
+
+	private static void ejercicio4() {
+		
+		if(us != null) {
+			
+			mostrarSeries();
+			
+			System.out.println("Introduce un codigo de serie");
+			
+			Serie s = bd.obtenerSerie(t.nextInt());t.nextLine();
+			
+			if(s != null) {
+				
+				System.out.println(s);
+				
+				System.out.println("Introduce el codigo del capitulo a borrar");
+				
+				Capitulo c = bd.obtenerCapitulo(t.nextInt());t.nextLine();
+				
+				if(c!=null) {
+					
+					if(c.getListaReproducciones().size() > 0) {
+						
+						System.out.println("El capitulo tiene reproduciones, se borraran las reproducciones. estas seguro? (1-SI|2-NO)");
+						
+						if(t.nextLine().equalsIgnoreCase("1")) {
+							
+							if(bd.borrarCapitulo(c)) {
+								
+								System.out.println("Serie borrada con exito");
+								
+							}else {
+								
+								System.out.println("Error al borrar la serie");
+								
+							}
+							
+						}else {
+							
+							System.out.println("No se ha borrado el capitulo");
+							
+							
+						}
+						
+					}else {
+						
+						if(bd.borrarCapitulo(c)) {
+							
+							System.out.println("Serie borrada con exito");
+							
+						}else {
+							
+							System.out.println("Error al borrar la serie");
+							
+						
+					}
+					
+				}
+				
+			}else {
+				
+				System.out.println("La serie no existe");
+				
+			}
+			}else {
+				
+				System.out.println("Error, no estas nogeado");
+				
+			}
+		}
+	}
+
+	private static void ejercicio3() {
+		
+		if(us != null) {
+		
+		mostrarSeries();
+		
+		System.out.println("Introduce un codigo de serie");
+		
+		Serie s = bd.obtenerSerie(t.nextInt());t.nextLine();
+		
+		if(s != null) {
+			
+			Capitulo c = new Capitulo();
+			
+			c.setSerie(s);
+			
+			if(s.getListaCapitulos().size() > 0) {
+			
+			c.setNumero(s.getListaCapitulos().get(s.getListaCapitulos().size()-1).getNumero()+1);
+			
+			}else {
+				
+				c.setNumero(1);
+				
+			}
+			
+			System.out.println("Introduce el titulo.");
+			
+			c.setTitulo(t.nextLine());
+			
+			System.out.println("Introduce la duración");
+			
+			c.setDuracion(t.nextInt());t.nextLine();
+			
+			s.getListaCapitulos().add(c);
+			
+			if(bd.guardarDatos()) {
+				
+				System.out.println("Capitulo creado con codigo "+c.getId());
+				
+				System.out.println(s);
+				
+			}else {
+				
+				System.out.println("Error, no se pudo crear el capitulo");
+				
+			}
+			
+		}else {
+			
+			System.out.println("La serie no existe");
+			
+		}
+		}else {
+			
+			System.out.println("Error, no estas nogeado");
+			
 		}
 	}
 
