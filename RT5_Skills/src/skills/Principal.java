@@ -1,5 +1,6 @@
 package skills;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,7 +10,7 @@ public class Principal {
 
 	public static Scanner t = new Scanner(System.in);
 	public static Modelo bd = new Modelo();
-	public static SimpleDateFormat formato = new SimpleDateFormat("ddMMyyHHmm");
+	public static SimpleDateFormat formato = new SimpleDateFormat("ddMMyyyy");
 
 	public static void main(String[] args) {
 		if (bd.getConexion() != null) {
@@ -28,10 +29,10 @@ public class Principal {
 					ejercicio1();
 					break;
 				case 2:
-					
+					ejercicio2();
 					break;
 				case 3:
-					
+					ejercicio3();
 					break;
 				case 4:
 					
@@ -43,6 +44,44 @@ public class Principal {
 		} else {
 			System.out.println("Error de conexión");
 		}
+	}
+
+	private static void ejercicio3() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void ejercicio2() {
+		// TODO Auto-generated method stub
+		mostrarPruebasModalidad(null);
+		System.out.println("Introduce el código de la prueba a modificar");
+		Prueba p = bd.obtenerPrueba(t.nextInt());t.nextLine();
+		try {
+			if (p != null) {
+				System.out.println("Introduce nueva fecha (ddmmyyyy):");
+				p.setFecha(formato.parse(t.nextLine()));
+				System.out.println("Introduce el nuevo título:");
+				p.getInfo().setTitulo(t.nextLine());
+				System.out.println("Introduce la nueva descripción:");
+				p.getInfo().setDescripcion(t.nextLine());
+				System.out.println("Introduce la nueva puntuación");
+				int nuevaNota =  t.nextInt();t.nextLine();
+				if (bd.obtenerPuntuacion(p.getModalidad()) - p.getPuntuacion() + nuevaNota > 10) {
+					System.err.println("La suma total de la nota es mayor que 10");
+				} else {
+					p.setPuntuacion(nuevaNota);
+					if (bd.modificarPrueba(p)) {
+						mostrarPruebasModalidad(bd.obtenerModalidad(p.getModalidad()));
+					}
+				}
+			} else {
+				System.err.println("Error, no existe la prueba");
+			}
+		} catch (ParseException e) {
+			// TODO: handle exception
+			System.err.println("Fecha con formato incorrecto");
+		}
+		
 	}
 
 	private static void ejercicio1() {

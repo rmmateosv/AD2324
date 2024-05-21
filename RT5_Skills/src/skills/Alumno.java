@@ -85,6 +85,13 @@ public class Alumno {
 	@Override
 	public String toString() {
 		return "Alumno [id=" + id + ", nombre=" + nombre + ", dni=" + dni + ", puntuacion=" + puntuacion
-				+ ", finalizado=" + finalizado + ", correccion=" + correccion + "]";
+				+ ", finalizado=" + finalizado + "]";
+	}
+	
+	public void mostrarCorreciones() 
+	{
+		for (String[] datos : correccion) {
+			System.out.println("Id de prueba: " +datos[0]+ "\t nota: " +datos[1]+ "\t descripción: " +datos[2]);
+		}
 	}
 }

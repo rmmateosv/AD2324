@@ -63,7 +63,8 @@ public class Prueba {
 
 	@Override
 	public String toString() {
-		return "Prueba [id=" + id + ", modalidad=" + modalidad + ", fecha=" + fecha + ", puntuacion=" + puntuacion
-				+ "]";
+		return "Prueba [id=" + id + ", modalidad=" + modalidad + ", fecha=" + fecha + ", info=" + info + ", puntuacion="
+				+ puntuacion + "]";
 	}
+
 }
