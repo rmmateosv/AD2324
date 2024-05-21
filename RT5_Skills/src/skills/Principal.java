@@ -80,6 +80,15 @@ public class Principal {
 		}
 	}
 
+	private static void mostrarPruebasModalidad(Modalidad m) {
+		// TODO Auto-generated method stub
+		ArrayList<Prueba> listapruebas = bd.obtenerPruebas(m);
+		for (Prueba prueba : listapruebas) {
+			System.out.println(prueba);
+		}
+	}
+
+
 	private static void mostrarModalidades() {
 		ArrayList<Modalidad> m = bd.obtenerModalidades();
 		
