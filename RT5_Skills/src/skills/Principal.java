@@ -47,7 +47,46 @@ public class Principal {
 	}
 
 	private static void ejercicio3() {
-		// TODO Auto-generated method stub
+		
+		mostrarAlumnos();
+		System.out.println("Introduce un id de alumno");
+		int id = t.nextInt(); t.nextLine();
+		Alumno al = bd.obtenerAlumno(id);
+		if(al != null) {
+			mostrarPruebasModalidad(al.getModalidad());
+			System.out.println("Introduce que puerba quieres corregir: ");
+			int idPrueba = t.nextInt(); t.nextLine();
+			Prueba p = bd.obtenerPrueba(idPrueba);
+			if(p != null && p.getModalidad() == al.getModalidad().getId() ) {
+				boolean corregida = false;
+				for (String[] c : al.getCorreccion()) {
+					
+					if(c[0].equalsIgnoreCase(String.valueOf(p.getId()))) {
+						corregida = true;
+						break;
+					}
+					
+				}
+				if(corregida) {System.err.println("!La prueba ya esta corregida!");}
+				else {
+					System.out.println("Introudce una puntuación: ");
+					int puntuacion = t.nextInt(); t.nextLine();
+					System.out.println("Itroduce un comentario: ");
+				}
+			}
+			else {System.out.println("La prueba no existe o no corresponde a su modalidad");}
+		}
+		else {System.err.println("!El alumno no existe!");}
+		
+		
+	}
+
+	private static void mostrarAlumnos() {
+		ArrayList<Alumno> listaAlumnos = bd.obtenerAlumnos();
+		
+		for (Alumno alumno : listaAlumnos) {
+			System.out.println(alumno);
+		}
 		
 	}
 

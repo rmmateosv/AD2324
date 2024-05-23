@@ -183,4 +183,64 @@ public class Modelo {
 		
 		return resultado;
 	}
+
+	public ArrayList<Alumno> obtenerAlumnos() {
+		
+		ArrayList<Alumno> resultado = new ArrayList<Alumno>();
+		
+		try {
+			Statement st = conexion.createStatement();
+			
+			ResultSet rs = st.executeQuery("select * from alumno as a inner join modalidad as m on a.modalidad = m.id");
+			
+			while(rs.next()) {
+				String [] [] datos = (String[][]) rs.getArray(7).getArray();
+				ArrayList<String[]> datosB = new ArrayList<String[]>();
+				for (String[] c : datos) {
+					datosB.add(c);
+				}
+				
+				resultado.add( new Alumno(rs.getInt(1), rs.getNString(2), rs.getString(3), new Modalidad(rs.getInt(4), rs.getString(9)),
+						rs.getInt(5) , rs.getBoolean(6), datosB));
+				
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	public Alumno obtenerAlumno(int id) {
+		Alumno resultado = null;
+		
+		try {
+			PreparedStatement ps = conexion.prepareStatement("select * from alumno as a inner "
+					+ "join modalidad as m on a.modalidad = m.id where a.id = ?");
+			ps.setInt(1, id);
+			
+			
+			ResultSet rs = ps.executeQuery();
+			
+			if(rs.next()) {
+				String [] [] datos = (String[][]) rs.getArray(7).getArray();
+				ArrayList<String[]> datosB = new ArrayList<String[]>();
+				for (String[] c : datos) {
+					datosB.add(c);
+				}
+				
+				resultado =  new Alumno(rs.getInt(1), rs.getNString(2), rs.getString(3), new Modalidad(rs.getInt(4), rs.getString(9)),
+						rs.getInt(5) , rs.getBoolean(6), datosB);
+				
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
 }
