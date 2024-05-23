@@ -71,7 +71,25 @@ public class Principal {
 				else {
 					System.out.println("Introudce una puntuación: ");
 					int puntuacion = t.nextInt(); t.nextLine();
-					System.out.println("Itroduce un comentario: ");
+					
+					
+					if(puntuacion > p.getPuntuacion()) {
+						System.err.println("!Error - Se excede el valor de la prueba!");
+					}
+					else {
+						System.out.println("Itroduce un comentario: ");
+						String comentario = t.nextLine();
+						
+						if(bd.anadirCorrecion(al,p,comentario,puntuacion)) {
+							System.out.println("Corrención creada.");
+							bd.actualizarPuntuacionAlumno(al,puntuacion);
+							if(bd.obtenerPruebas(al.getModalidad()).size()== al.getCorreccion().size()+1) {
+								bd.finalizarCorrecionAlumno();
+								mostrarAlumnos();
+							}
+						}
+						else {System.err.println("Error - Crear correción.");}
+					}
 				}
 			}
 			else {System.out.println("La prueba no existe o no corresponde a su modalidad");}
@@ -85,7 +103,10 @@ public class Principal {
 		ArrayList<Alumno> listaAlumnos = bd.obtenerAlumnos();
 		
 		for (Alumno alumno : listaAlumnos) {
+			System.out.println("--------ALUMNO---------");
 			System.out.println(alumno);
+			alumno.mostrarCorreciones();
+			System.out.println("-----------------");
 		}
 		
 	}

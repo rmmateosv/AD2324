@@ -87,27 +87,31 @@ public class Modelo {
 		ArrayList<Prueba> resultado = new ArrayList();
 		try {
 			if (m != null) {
-				PreparedStatement ps = conexion.prepareStatement("SELECT id, fecha, (info).titulo, (info).descripcion, puntuacion "
-						+ "FROM prueba WHERE modalidad = ?");
+				PreparedStatement ps = conexion
+						.prepareStatement("SELECT id, fecha, (info).titulo, (info).descripcion, puntuacion "
+								+ "FROM prueba WHERE modalidad = ?");
 				ps.setInt(1, m.getId());
 				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
-					resultado.add(new Prueba(rs.getInt(1), m.getId(), rs.getDate(2), new Infoprueba(rs.getString(3), rs.getString(4)), rs.getInt(5)));
+					resultado.add(new Prueba(rs.getInt(1), m.getId(), rs.getDate(2),
+							new Infoprueba(rs.getString(3), rs.getString(4)), rs.getInt(5)));
 				}
 			} else {
 				Statement s = conexion.createStatement();
-				ResultSet rs = s.executeQuery("SELECT id, fecha, (info).titulo, (info).descripcion, puntuacion, modalidad"
-						+ "	FROM prueba");
+				ResultSet rs = s
+						.executeQuery("SELECT id, fecha, (info).titulo, (info).descripcion, puntuacion, modalidad"
+								+ "	FROM prueba");
 				while (rs.next()) {
-					resultado.add(new Prueba(rs.getInt(1), rs.getInt(6),rs.getDate(2), new Infoprueba(rs.getString(3), rs.getString(4)), rs.getInt(5)));
+					resultado.add(new Prueba(rs.getInt(1), rs.getInt(6), rs.getDate(2),
+							new Infoprueba(rs.getString(3), rs.getString(4)), rs.getInt(5)));
 				}
 			}
-			
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return resultado;
 	}
 
@@ -124,7 +128,7 @@ public class Modelo {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return resultado;
 	}
 
@@ -141,7 +145,7 @@ public class Modelo {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return resultado;
 	}
 
@@ -149,12 +153,14 @@ public class Modelo {
 		// TODO Auto-generated method stub
 		Prueba resultado = null;
 		try {
-			PreparedStatement ps = conexion.prepareStatement("SELECT id, fecha, (info).titulo, (info).descripcion, puntuacion, modalidad"
-					+ "	FROM prueba WHERE id = ?");
+			PreparedStatement ps = conexion
+					.prepareStatement("SELECT id, fecha, (info).titulo, (info).descripcion, puntuacion, modalidad"
+							+ "	FROM prueba WHERE id = ?");
 			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-				resultado = new Prueba(rs.getInt(1), rs.getInt(6),rs.getDate(2), new Infoprueba(rs.getString(3), rs.getString(4)), rs.getInt(5));
+				resultado = new Prueba(rs.getInt(1), rs.getInt(6), rs.getDate(2),
+						new Infoprueba(rs.getString(3), rs.getString(4)), rs.getInt(5));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -167,7 +173,8 @@ public class Modelo {
 		// TODO Auto-generated method stub
 		boolean resultado = false;
 		try {
-			PreparedStatement ps = conexion.prepareStatement("UPDATE prueba SET fecha = ?, puntuacion = ?, info = (?, ?) WHERE id = ?");
+			PreparedStatement ps = conexion
+					.prepareStatement("UPDATE prueba SET fecha = ?, puntuacion = ?, info = (?, ?) WHERE id = ?");
 			ps.setDate(1, new Date(p.getFecha().getTime()));
 			ps.setInt(2, p.getPuntuacion());
 			ps.setString(3, p.getInfo().getTitulo());
@@ -180,67 +187,107 @@ public class Modelo {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return resultado;
 	}
 
 	public ArrayList<Alumno> obtenerAlumnos() {
-		
+
 		ArrayList<Alumno> resultado = new ArrayList<Alumno>();
-		
+
 		try {
 			Statement st = conexion.createStatement();
-			
+
 			ResultSet rs = st.executeQuery("select * from alumno as a inner join modalidad as m on a.modalidad = m.id");
-			
-			while(rs.next()) {
-				String [] [] datos = (String[][]) rs.getArray(7).getArray();
+
+			while (rs.next()) {
 				ArrayList<String[]> datosB = new ArrayList<String[]>();
-				for (String[] c : datos) {
-					datosB.add(c);
-				}
-				
-				resultado.add( new Alumno(rs.getInt(1), rs.getNString(2), rs.getString(3), new Modalidad(rs.getInt(4), rs.getString(9)),
-						rs.getInt(5) , rs.getBoolean(6), datosB));
-				
+
+				if (rs.getArray(7) != null) {
+					String[][] datos = (String[][]) rs.getArray(7).getArray();
+
+					datosB = new ArrayList<String[]>();
+					for (String[] c : datos) {
+						datosB.add(c);
+					}
+				} 
+
+				resultado.add(new Alumno(rs.getInt(1), rs.getNString(2), rs.getString(3),
+						new Modalidad(rs.getInt(4), rs.getString(9)), rs.getInt(5), rs.getBoolean(6), datosB));
+
 			}
-			
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return resultado;
 	}
 
 	public Alumno obtenerAlumno(int id) {
 		Alumno resultado = null;
-		
+
 		try {
-			PreparedStatement ps = conexion.prepareStatement("select * from alumno as a inner "
-					+ "join modalidad as m on a.modalidad = m.id where a.id = ?");
+			PreparedStatement ps = conexion.prepareStatement(
+					"select * from alumno as a inner " + "join modalidad as m on a.modalidad = m.id where a.id = ?");
 			ps.setInt(1, id);
-			
-			
+
 			ResultSet rs = ps.executeQuery();
-			
-			if(rs.next()) {
-				String [] [] datos = (String[][]) rs.getArray(7).getArray();
+
+			if (rs.next()) {
 				ArrayList<String[]> datosB = new ArrayList<String[]>();
-				for (String[] c : datos) {
-					datosB.add(c);
-				}
-				
-				resultado =  new Alumno(rs.getInt(1), rs.getNString(2), rs.getString(3), new Modalidad(rs.getInt(4), rs.getString(9)),
-						rs.getInt(5) , rs.getBoolean(6), datosB);
-				
+
+				if (rs.getArray(7) != null) {
+					String[][] datos = (String[][]) rs.getArray(7).getArray();
+
+					datosB = new ArrayList<String[]>();
+					for (String[] c : datos) {
+						datosB.add(c);
+					}
+				} 
+
+				resultado = new Alumno(rs.getInt(1), rs.getNString(2), rs.getString(3),
+						new Modalidad(rs.getInt(4), rs.getString(9)), rs.getInt(5), rs.getBoolean(6), datosB);
+
 			}
-			
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
+		return resultado;
+	}
+
+	public boolean anadirCorrecion(Alumno al, Prueba p, String comentario, int puntuacion) {
+
+		boolean resultado = false;
+		PreparedStatement ps = null;
+
+		try {
+			if (al.getCorreccion().size() > 0) {
+				ps = conexion.prepareStatement("update alumno set "
+						+ "coreccion = array_concat(correccion, array[array[?,?,?]]text[][]) where id = ?");
+
+			} else {
+				ps = conexion.prepareStatement("update alumno set coreccion = array[array[?,?,?]] where id = ?");
+
+			}
+			ps.setString(1, String.valueOf(p.getId()));
+			ps.setString(2, String.valueOf(puntuacion));
+			ps.setString(3, String.valueOf(comentario));
+			ps.setInt(4, al.getId());
+
+			if (ps.executeUpdate() == 1) {
+				resultado = true;
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return resultado;
 	}
 }
