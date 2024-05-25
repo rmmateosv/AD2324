@@ -10,7 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class Modelo {
-	final String URL = "jdbc:postgresql://localhost:5432/Skills";
+	final String URL = "jdbc:postgresql://postgres.cuiqyq8gvjr4.us-east-1.rds.amazonaws.com/skill";
 	final String USR = "postgres";
 	final String PS = "postgres";
 
@@ -212,7 +212,7 @@ public class Modelo {
 					}
 				} 
 
-				resultado.add(new Alumno(rs.getInt(1), rs.getNString(2), rs.getString(3),
+				resultado.add(new Alumno(rs.getInt(1), rs.getString(2), rs.getString(3),
 						new Modalidad(rs.getInt(4), rs.getString(9)), rs.getInt(5), rs.getBoolean(6), datosB));
 
 			}
@@ -247,7 +247,7 @@ public class Modelo {
 					}
 				} 
 
-				resultado = new Alumno(rs.getInt(1), rs.getNString(2), rs.getString(3),
+				resultado = new Alumno(rs.getInt(1), rs.getString(2), rs.getString(3),
 						new Modalidad(rs.getInt(4), rs.getString(9)), rs.getInt(5), rs.getBoolean(6), datosB);
 
 			}
@@ -268,10 +268,10 @@ public class Modelo {
 		try {
 			if (al.getCorreccion().size() > 0) {
 				ps = conexion.prepareStatement("update alumno set "
-						+ "coreccion = array_concat(correccion, array[array[?,?,?]]text[][]) where id = ?");
+						+ "correccion = array_cat(correccion, array[?,?,?]::text[][]) where id = ?");
 
 			} else {
-				ps = conexion.prepareStatement("update alumno set coreccion = array[array[?,?,?]] where id = ?");
+				ps = conexion.prepareStatement("update alumno set correccion = array[array[?,?,?]] where id = ?");
 
 			}
 			ps.setString(1, String.valueOf(p.getId()));
@@ -357,7 +357,7 @@ public class Modelo {
 					}
 				} 
 
-				resultado.add( new Alumno(rs.getInt(1), rs.getNString(2), rs.getString(3),
+				resultado.add( new Alumno(rs.getInt(1), rs.getString(2), rs.getString(3),
 						new Modalidad(rs.getInt(4), rs.getString(9)), rs.getInt(5), rs.getBoolean(6), datosB));
 
 			}
@@ -420,7 +420,7 @@ public class Modelo {
 
 		try {
 			PreparedStatement ps = conexion.prepareStatement(
-					"select * from alumno as a inner " + "join modalidad as m on a.modalidad = m.id where a.modalidad = ? and nota = ?");
+					"select * from alumno as a inner " + "join modalidad as m on a.modalidad = m.id where a.modalidad = ? and puntuacion = ?");
 			ps.setInt(1, id);
 			ps.setInt(2, notaMax);
 			ResultSet rs = ps.executeQuery();
@@ -435,7 +435,7 @@ public class Modelo {
 						datosB.add(c);
 					}
 				} 
-				resultado.add( new Alumno(rs.getInt(1), rs.getNString(2), rs.getString(3),
+				resultado.add( new Alumno(rs.getInt(1), rs.getString(2), rs.getString(3),
 						new Modalidad(rs.getInt(4), rs.getString(9)), rs.getInt(5), rs.getBoolean(6), datosB));
 			}
 

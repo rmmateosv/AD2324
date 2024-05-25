@@ -73,7 +73,7 @@ public class Principal {
 			for (Alumno a : al) {
 				if(!existe) {
 					for (String[] c : a.getCorreccion()) {
-						if(c[0].equals(p.getId())) {
+						if(c[0].equals(String.valueOf(p.getId()))) {
 							existe = true;
 							break;
 						}
