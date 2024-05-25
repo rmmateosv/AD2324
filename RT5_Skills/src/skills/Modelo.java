@@ -290,4 +290,159 @@ public class Modelo {
 
 		return resultado;
 	}
+
+	public boolean actualizarPuntuacionAlumno(Alumno al, int puntuacion) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		PreparedStatement ps = null;
+
+		try {
+			ps = conexion.prepareStatement("update alumno set puntuacion = puntuacion + ?  where id = ?");
+			ps.setInt(1, puntuacion);
+			ps.setInt(2, al.getId());
+
+			if (ps.executeUpdate() == 1) {
+				resultado = true;
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return resultado;
+	}
+
+	public boolean finalizarCorrecionAlumno(Alumno al) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		PreparedStatement ps = null;
+
+		try {
+			ps = conexion.prepareStatement("update alumno set finalizado = true  where id = ?");
+			ps.setInt(1, al.getId());
+
+			if (ps.executeUpdate() == 1) {
+				resultado = true;
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return resultado;
+	}
+
+	public ArrayList<Alumno> obtenerAlumnosModalidad(int modalidad) {
+		// TODO Auto-generated method stub
+		ArrayList<Alumno> resultado = new ArrayList<Alumno>();
+
+		try {
+			PreparedStatement ps = conexion.prepareStatement(
+					"select * from alumno as a inner " + "join modalidad as m on a.modalidad = m.id where a.modalidad = ?");
+			ps.setInt(1, modalidad);
+
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				ArrayList<String[]> datosB = new ArrayList<String[]>();
+
+				if (rs.getArray(7) != null) {
+					String[][] datos = (String[][]) rs.getArray(7).getArray();
+
+					datosB = new ArrayList<String[]>();
+					for (String[] c : datos) {
+						datosB.add(c);
+					}
+				} 
+
+				resultado.add( new Alumno(rs.getInt(1), rs.getNString(2), rs.getString(3),
+						new Modalidad(rs.getInt(4), rs.getString(9)), rs.getInt(5), rs.getBoolean(6), datosB));
+
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return resultado;
+	}
+
+	public boolean borrarPrueba(Prueba p) {
+		// TODO Auto-generated method stub
+		boolean resultado = false;
+		PreparedStatement ps = null;
+
+		try {
+			ps = conexion.prepareStatement("delete from prueba where id = ?");
+			ps.setInt(1, p.getId());
+
+			if (ps.executeUpdate() == 1) {
+				resultado = true;
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return resultado;
+	}
+
+	public int obtenerNotaMax(int id) {
+		// TODO Auto-generated method stub
+		int resultado=0;
+		try {
+			PreparedStatement ps = conexion.prepareStatement(
+					"select max(puntuacion) from alumno where modalidad = ?");
+			ps.setInt(1, id);
+
+			ResultSet rs = ps.executeQuery();
+
+			if (rs.next()) {
+				resultado = rs.getInt(1);
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return resultado;
+	}
+
+	public ArrayList<Alumno> obtenerAlumnosNota(int id, int notaMax) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		ArrayList<Alumno> resultado = new ArrayList<Alumno>();
+
+		try {
+			PreparedStatement ps = conexion.prepareStatement(
+					"select * from alumno as a inner " + "join modalidad as m on a.modalidad = m.id where a.modalidad = ? and nota = ?");
+			ps.setInt(1, id);
+			ps.setInt(2, notaMax);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				ArrayList<String[]> datosB = new ArrayList<String[]>();
+
+				if (rs.getArray(7) != null) {
+					String[][] datos = (String[][]) rs.getArray(7).getArray();
+
+					datosB = new ArrayList<String[]>();
+					for (String[] c : datos) {
+						datosB.add(c);
+					}
+				} 
+				resultado.add( new Alumno(rs.getInt(1), rs.getNString(2), rs.getString(3),
+						new Modalidad(rs.getInt(4), rs.getString(9)), rs.getInt(5), rs.getBoolean(6), datosB));
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
 }

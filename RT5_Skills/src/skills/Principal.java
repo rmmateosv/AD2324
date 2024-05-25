@@ -22,6 +22,7 @@ public class Principal {
 				System.out.println("2 - Modificar prueba");
 				System.out.println("3 - Corregir prueba");
 				System.out.println("4 - Borrar prueba)");
+				System.out.println("5 - Mostrar notas más altas)");
 				opcion = t.nextInt();
 				t.nextLine();
 				switch (opcion) {
@@ -35,7 +36,10 @@ public class Principal {
 					ejercicio3();
 					break;
 				case 4:
-					
+					ejercicio4();
+					break;
+				case 5:
+					ejercicio5();
 					break;
 				}
 
@@ -43,6 +47,50 @@ public class Principal {
 			bd.cerrar();
 		} else {
 			System.out.println("Error de conexión");
+		}
+	}
+
+	private static void ejercicio5() {
+		// TODO Auto-generated method stub
+		ArrayList<Modalidad> mod =bd.obtenerModalidades();
+		for (Modalidad m : mod) {
+			int notaMax = bd.obtenerNotaMax(m.getId());
+			ArrayList<Alumno> al = bd.obtenerAlumnosNota(m.getId(),notaMax);
+			for (Alumno a : al) {
+				System.out.println(a);
+			}
+		}
+	}
+
+	private static void ejercicio4() {
+		// TODO Auto-generated method stub
+		mostrarPruebasModalidad(null);
+		System.out.println("Introduce que puerba quieres borrar: ");
+		Prueba p = bd.obtenerPrueba(t.nextInt());t.nextLine();
+		if(p!=null) {
+			ArrayList<Alumno> al = bd.obtenerAlumnosModalidad(p.getModalidad());
+			boolean existe = false;
+			for (Alumno a : al) {
+				if(!existe) {
+					for (String[] c : a.getCorreccion()) {
+						if(c[0].equals(p.getId())) {
+							existe = true;
+							break;
+						}
+					}
+				}
+				else {
+					break;
+				}
+			}
+			if(!existe)
+				bd.borrarPrueba(p);
+			else 
+				System.out.println("No se puede borrar la prueba porque hay correcciones");
+			
+		}
+		else {
+			System.out.println("Error, prueba no existe");
 		}
 	}
 
@@ -84,7 +132,7 @@ public class Principal {
 							System.out.println("Corrención creada.");
 							bd.actualizarPuntuacionAlumno(al,puntuacion);
 							if(bd.obtenerPruebas(al.getModalidad()).size()== al.getCorreccion().size()+1) {
-								bd.finalizarCorrecionAlumno();
+								bd.finalizarCorrecionAlumno(al);
 								mostrarAlumnos();
 							}
 						}
