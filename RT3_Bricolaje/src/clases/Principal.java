@@ -72,7 +72,10 @@ public class Principal {
 		}else {
 			if(bd.crearFactura(f)) {
 				for (Detalle i : f.getListaDetalles()) {
-					bd.actualizarStock(i);
+					if (!bd.actualizarStock(i)) {
+						System.err.println("No se ha actualizado el stock del producto: " +i.getProducto());
+					} 
+					
 				}
 			}else {
 				System.err.println("Error al crear la factura.");
