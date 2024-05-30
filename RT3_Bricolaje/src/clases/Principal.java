@@ -48,9 +48,9 @@ public class Principal {
 		ArrayList<Object[]> datos = bd.obtenerEstadisticas();
 		
 		for (Object[] objects : datos) {
-			System.out.println("Productos: " + objects[0] + " - " + objects[1]);
-			System.out.println("Número de ventas: " + objects[2]);
-			System.out.println("Cantidades vendidas: " + objects[3]);
+			System.out.print("Productos: " + objects[0] + " - " + objects[1]);
+			System.out.print("Número de ventas: " + objects[2]);
+			System.out.print("Cantidades vendidas: " + objects[3]);
 			System.out.println("Importe recaudado: " + objects[4]);
 		}
 		

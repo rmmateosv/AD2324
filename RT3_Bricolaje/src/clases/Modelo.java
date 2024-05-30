@@ -13,6 +13,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Field;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.InsertOneResult;
@@ -231,12 +232,28 @@ public class Modelo {
 		try {
 			MongoCollection<Document> col = bd.getCollection("facturas");
 			
-			MongoCursor<Document> r = col.aggregate(Arrays.asList(Aggregates.unwind("$detalle"), 
-					Aggregates.group("$detalle.producto", Accumulators.sum("cantidad", "$detalle.cantidad")))).iterator();
+			MongoCursor<Document> r = col.aggregate(Arrays.asList(Aggregates.unwind("$detalle"),
+					Aggregates.addFields(new Field("importe",new Document("$multiply",Arrays.asList("$detalle.PrecioUnidad","$detalle.cantidad")))),
+					Aggregates.group("$detalle.producto", 
+							Accumulators.sum("numVentas", 1), //Equivale a count
+							Accumulators.sum("cantidad", "$detalle.cantidad"),
+							Accumulators.sum("importe", "$importe")),
+									//Colec Dest, clave externa, clave primaria, alias
+					Aggregates.lookup("productos", "_id", "codigo","datosProducto")
+					)).iterator();
 			
 			while (r.hasNext()) {
-				System.out.println(r.next().toJson());
 				
+				Document d = r.next();
+				System.out.println("**** Datos en JSON *****");
+				System.out.println(d.toJson());
+				System.out.println("**** Fin Datos en JSON *****");
+				ArrayList<Document> producto = (ArrayList<Document>) d.get("datosProducto");
+				resultado.add(new Object[] {d.getString("_id"),
+						producto.get(0).getString("nombre"),
+						d.getInteger("numVentas"),
+						d.getInteger("cantidad"),
+						d.getDouble("importe")});
 			}
 			
 		} catch (Exception e) {
