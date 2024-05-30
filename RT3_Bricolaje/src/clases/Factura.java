@@ -65,10 +65,11 @@ public class Factura {
 
 	@Override
 	public String toString() {
-		String r = "Factura [numero=" + numero + ", fecha=" + fecha + ", cliente=" + cliente + ", facturaAnulacion=" + facturaAnulacion + "]";
+		String r = "** FACTURA **\n Factura [numero=" + numero + ", fecha=" + fecha + ", cliente=" + cliente + ", facturaAnulacion=" + facturaAnulacion + "]";
 		for (Detalle d : listaDetalles) {
 			r+="\n"+d;
 		}
+		r+= "\n*************";
 		return r;
 	}
 

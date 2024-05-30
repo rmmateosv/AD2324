@@ -30,7 +30,7 @@ public class Principal {
 					ejercicio2();
 					break;
 				case 3:
-					
+					ejercicio3();
 					break;
 				case 4:
 					
@@ -41,6 +41,30 @@ public class Principal {
 			} while (opcion != 0);
 		} else {
 			System.out.println("Error de conexión");
+		}
+	}
+
+	private static void ejercicio3() {
+		mostrarFacturas();
+		
+		
+		
+	}
+
+	private static void mostrarFacturas() {
+		ArrayList<Factura> listaFacturas = bd.obtenerFacturas();
+		
+		for (Factura factura : listaFacturas) {
+			System.out.println(factura);
+		}
+		
+		System.out.println("Introduce un código de la factura a anular: ");
+		Factura f = bd.obtenerFactura(t.nextInt());
+		
+		if (f != null) {
+			
+		} else {
+			System.err.println("Error, no existe ninguna factura con el código indicado");
 		}
 	}
 

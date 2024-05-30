@@ -151,4 +151,29 @@ public class Modelo {
 		
 	}
 
+	public ArrayList<Factura> obtenerFacturas() {
+		ArrayList<Factura> resultado = new ArrayList();
+		
+		try {
+			MongoCollection<Document> col = bd.getCollection("facturas");
+			Bson filtro = Filters.eq("facturaAnulacion", 0);
+			MongoCursor<Document> r = col.find(filtro).iterator();
+			
+			while (r.hasNext()) {
+				Document d = r.next();
+				ArrayList<Detalle> detalle = new ArrayList<Detalle>();
+				ArrayList<Document> d1 = (ArrayList<Document>) d.get("detalle");
+				for (Document doc : d1) {
+					detalle.add(new Detalle(doc.getString("producto"), doc.getInteger("cantidad"), doc.getDouble("PrecioUnidad")));
+				}
+				
+				resultado.add(new Factura(d.getInteger("numero", 0), d.getDate("fecha"), d.getString("cliente"), detalle, d.getInteger("facturaAnulacion", 0)));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
 }
