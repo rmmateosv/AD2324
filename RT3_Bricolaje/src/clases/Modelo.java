@@ -103,7 +103,7 @@ public class Modelo {
 			if (d != null) {
 				resultado = d.getInteger("n", 1) + 1;
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -148,27 +148,97 @@ public class Modelo {
 			e.printStackTrace();
 		}
 		return resultado;
-		
+
 	}
 
 	public ArrayList<Factura> obtenerFacturas() {
 		ArrayList<Factura> resultado = new ArrayList();
-		
+
 		try {
 			MongoCollection<Document> col = bd.getCollection("facturas");
 			Bson filtro = Filters.eq("facturaAnulacion", 0);
 			MongoCursor<Document> r = col.find(filtro).iterator();
-			
+
 			while (r.hasNext()) {
 				Document d = r.next();
 				ArrayList<Detalle> detalle = new ArrayList<Detalle>();
 				ArrayList<Document> d1 = (ArrayList<Document>) d.get("detalle");
 				for (Document doc : d1) {
-					detalle.add(new Detalle(doc.getString("producto"), doc.getInteger("cantidad"), doc.getDouble("PrecioUnidad")));
+					detalle.add(new Detalle(doc.getString("producto"), doc.getInteger("cantidad"),
+							doc.getDouble("PrecioUnidad")));
 				}
-				
-				resultado.add(new Factura(d.getInteger("numero", 0), d.getDate("fecha"), d.getString("cliente"), detalle, d.getInteger("facturaAnulacion", 0)));
+
+				resultado.add(new Factura(d.getInteger("numero", 0), d.getDate("fecha"), d.getString("cliente"),
+						detalle, d.getInteger("facturaAnulacion", 0)));
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return resultado;
+	}
+
+	public Factura obtenerFactura(int numFactura) {
+		Factura resultado = null;
+
+		try {
+			MongoCollection<Document> col = bd.getCollection("facturas");
+			Bson filtro = Filters.and(Filters.eq("facturaAnulacion", 0), Filters.eq("numero", numFactura));
+			Document r = col.find(filtro).first();
+
+			if (r != null) {
+				Document d = r;
+				ArrayList<Detalle> detalle = new ArrayList<Detalle>();
+				ArrayList<Document> d1 = (ArrayList<Document>) d.get("detalle");
+				for (Document doc : d1) {
+					detalle.add(new Detalle(doc.getString("producto"), doc.getInteger("cantidad"),
+							doc.getDouble("PrecioUnidad")));
+				}
+
+				resultado = new Factura(d.getInteger("numero", 0), d.getDate("fecha"), d.getString("cliente"),
+						detalle, d.getInteger("facturaAnulacion", 0));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return resultado;
+	}
+
+	public boolean modificarFacturaOriginal(int nAnulacion, int nOriginal) {
+		boolean resultado = false;
+		
+		try {
+			MongoCollection<Document> col = bd.getCollection("facturas");
+			Bson filtro = Filters.eq("numero", nOriginal);
+			Bson modif = Updates.set("facturaAnulacion", nAnulacion);
+			UpdateResult r = col.updateOne(filtro, modif);
+			
+			if (r.getModifiedCount() == 1) {
+				resultado = true;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultado;
+	}
+
+	public ArrayList<Object[]> obtenerEstadisticas() {
+		ArrayList<Object[]> resultado = new ArrayList<Object[]>();
+		
+		try {
+			MongoCollection<Document> col = bd.getCollection("facturas");
+			
+			MongoCursor<Document> r = col.aggregate(Arrays.asList(Aggregates.unwind("$detalle"), 
+					Aggregates.group("$detalle.producto", Accumulators.sum("cantidad", "$detalle.cantidad")))).iterator();
+			
+			while (r.hasNext()) {
+				System.out.println(r.next().toJson());
+				
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -33,7 +33,7 @@ public class Principal {
 					ejercicio3();
 					break;
 				case 4:
-					
+					ejercicio4();
 					break;
 				
 				}
@@ -44,10 +44,53 @@ public class Principal {
 		}
 	}
 
+	private static void ejercicio4() {
+		ArrayList<Object[]> datos = bd.obtenerEstadisticas();
+		
+		for (Object[] objects : datos) {
+			System.out.println("Productos: " + objects[0] + " - " + objects[1]);
+			System.out.println("Número de ventas: " + objects[2]);
+			System.out.println("Cantidades vendidas: " + objects[3]);
+			System.out.println("Importe recaudado: " + objects[4]);
+		}
+		
+	}
+
 	private static void ejercicio3() {
 		mostrarFacturas();
 		
+		System.out.println("Introduce un código de la factura a anular: ");
+		int num = t.nextInt();
+		t.nextLine();
+		Factura f = bd.obtenerFactura(num);
 		
+		if (f != null) {
+			for (Detalle d : f.getListaDetalles()) {
+				d.setCantidad(d.getCantidad() * -1);
+			}
+			f.setNumero(bd.obtenerNumeroFactura());
+			f.setFecha(new Date());
+			
+			if (bd.crearFactura(f)) {
+				for (Detalle d : f.getListaDetalles()) {
+					bd.actualizarStock(d);
+				}
+				if (bd.modificarFacturaOriginal(f.getNumero(), num)) {
+					System.out.println("Factura inicial:");
+					System.out.println(bd.obtenerFactura(num));
+					
+					System.out.println("Factura de anulación:");
+					System.out.println(bd.obtenerFactura(f.getNumero()));
+					
+				} else {
+					System.err.println("Error, no se ha podido anular la factura correctamente.");
+				}
+			} else {
+				System.err.println("Error, no se ha podido crear la factura.");
+			}
+		} else {
+			System.err.println("Error, no existe ninguna factura con el código indicado");
+		}
 		
 	}
 
@@ -56,16 +99,8 @@ public class Principal {
 		
 		for (Factura factura : listaFacturas) {
 			System.out.println(factura);
-		}
+		}	
 		
-		System.out.println("Introduce un código de la factura a anular: ");
-		Factura f = bd.obtenerFactura(t.nextInt());
-		
-		if (f != null) {
-			
-		} else {
-			System.err.println("Error, no existe ninguna factura con el código indicado");
-		}
 	}
 
 	private static void ejercicio2() {
